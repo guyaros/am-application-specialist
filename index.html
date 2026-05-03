@@ -83,7 +83,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
   box-shadow:0 1px 4px rgba(0,0,0,.05);
 }
-.topbar-title{font-size:14px;font-weight:700;color:var(--text)}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text)}
 .topbar-sub{font-size:10px;color:var(--text3);margin-top:1px}
 .tech-pills{display:flex;gap:6px}
 .tech-pill{
@@ -98,6 +98,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   display:flex;flex-direction:column;gap:14px;
   scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
 }
+#messages>*{max-width:760px;width:100%;align-self:flex-start;}
+#messages>.msg.user{align-self:flex-end;}
 #messages::-webkit-scrollbar{width:4px}
 #messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
@@ -390,7 +392,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div id="main">
     <div id="topbar">
       <div>
-        <div class="topbar-title">AM Application Specialist</div>
+        <div class="topbar-title">Systematics AM Application Specialist</div>
         <div class="topbar-sub">Ashby Methodology · 27 materials · 11 printers</div>
       </div>
       <div class="tech-pills">
@@ -551,6 +553,7 @@ function updateIterChip() {
 
 // ── MESSAGES ───────────────────────────────────────────────────────────────
 function scrollBot(){ const m=document.getElementById("messages"); m.scrollTop=m.scrollHeight; }
+function focusInput(){ const b=document.getElementById("inputBox"); if(b&&!b.disabled) b.focus(); }
 
 function addAgent(text, options) {
   const id=++msgId;
@@ -562,6 +565,7 @@ function addAgent(text, options) {
   </div>`;
   document.getElementById("messages").appendChild(wrap);
   scrollBot();
+  setTimeout(focusInput, 50);
 }
 
 function addUser(text) {
