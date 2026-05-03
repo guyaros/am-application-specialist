@@ -316,6 +316,21 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 #sendBtn:hover{opacity:.9;box-shadow:0 4px 14px rgba(37,99,235,.35)}
 #sendBtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 
+/* SETTINGS MODAL */
+#settingsModal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:200;}
+#settingsModal.open{display:flex;}
+.settings-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px;width:420px;max-width:90vw;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.settings-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.settings-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
+.settings-section{margin-bottom:18px;}
+.settings-label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;}
+.settings-current{font-size:12px;color:var(--text3);font-family:var(--mono);background:var(--surface3);border:1px solid var(--border);border-radius:7px;padding:7px 11px;margin-bottom:10px;}
+.settings-row{display:flex;gap:8px;}
+.settings-footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
+.btn-danger{background:transparent;border:1px solid rgba(220,38,38,.3);color:#dc2626;border-radius:7px;padding:7px 13px;font-size:12px;cursor:pointer;font-family:var(--font);transition:all .13s;}
+.btn-danger:hover{background:rgba(220,38,38,.06);}
+.btn-close-settings{background:var(--surface3);border:1px solid var(--border2);color:var(--text2);border-radius:7px;padding:7px 13px;font-size:12px;cursor:pointer;font-family:var(--font);}
+
 /* BRANDING */
 .branding{padding:10px 10px 2px;text-align:center;}
 .branding-company{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.3px;}
@@ -339,7 +354,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div><div style="font-weight:700;font-size:15px;color:var(--text)">Application Specialist</div><div style="font-size:10px;color:var(--text3)">3D Printing Material Advisor</div></div>
     </div>
     <div class="key-title">Enter your API Key</div>
-    <div class="key-sub">This tool requires an Anthropic API key. Your key is stored only in this browser session and never sent to any server.</div>
+    <div class="key-sub">This tool requires an Anthropic API key. Your key is saved locally in your browser and never sent to any server other than Anthropic.</div>
     <label class="key-label">Anthropic API Key</label>
     <input class="key-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
     <div class="key-err" id="keyErr"></div>
@@ -354,6 +369,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.3px;">Systematics</div>
       <div style="font-size:10px;color:var(--text3);margin-top:2px;">Made by Guy Yaros</div>
       <div style="font-size:9px;color:var(--text3);margin-top:1px;font-family:var(--mono)" id="verLabelKey"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-card">
+    <div class="settings-title">Settings</div>
+    <div class="settings-sub">Manage your API key and preferences.</div>
+    <div class="settings-section">
+      <label class="settings-label">Current API Key</label>
+      <div class="settings-current" id="settingsCurrentKey">—</div>
+      <label class="settings-label">Change API Key</label>
+      <div class="settings-row">
+        <input class="key-input" type="password" id="settingsKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" style="flex:1"/>
+        <button class="key-btn" id="settingsSaveBtn" onclick="saveSettingsKey()" style="width:auto;margin-top:0;padding:11px 16px;font-size:13px;">Save</button>
+      </div>
+      <div class="key-err" id="settingsErr" style="margin-top:6px;"></div>
+    </div>
+    <div class="settings-footer">
+      <button class="btn-danger" onclick="removeKey()">Remove saved key</button>
+      <button class="btn-close-settings" onclick="closeSettings()">Close</button>
     </div>
   </div>
 </div>
@@ -379,7 +416,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div class="sidebar-bottom">
       <button class="sidebar-btn" onclick="exportPDF()">⬇ Export PDF</button>
       <button class="sidebar-btn" onclick="clearSession()" style="border-color:rgba(220,38,38,.3);color:#dc2626;" onmouseover="this.style.background='rgba(220,38,38,.06)'" onmouseout="this.style.background='transparent'">↺ New Run</button>
-      <button class="sidebar-btn" onclick="clearKey()">🔑 Change API Key</button>
+      <button class="sidebar-btn" onclick="openSettings()">⚙ Settings</button>
     </div>
     <div class="branding">
       <div class="branding-company">Systematics</div>
@@ -500,13 +537,49 @@ function startWithKey() {
   }).then(r=>r.json()).then(d=>{
     if(d.error){ errEl.textContent="Invalid key: "+d.error.message; btn.disabled=false; btnText.textContent="Launch Agent →"; return; }
     apiKey=k;
+    localStorage.setItem("am_api_key",k);
     document.getElementById("keyScreen").style.display="none";
     document.getElementById("app").style.display="flex";
     initAgent();
   }).catch(e=>{ errEl.textContent="Network error. Try again."; btn.disabled=false; btnText.textContent="Launch Agent →"; });
 }
 
-function clearKey(){ apiKey=""; document.getElementById("keyScreen").style.display="flex"; document.getElementById("app").style.display="none"; document.getElementById("keyInput").value=""; }
+function clearKey(){ apiKey=""; localStorage.removeItem("am_api_key"); document.getElementById("keyScreen").style.display="flex"; document.getElementById("app").style.display="none"; document.getElementById("keyInput").value=""; }
+
+function openSettings(){
+  const masked=apiKey?apiKey.slice(0,10)+"..."+apiKey.slice(-4):"No key saved";
+  document.getElementById("settingsCurrentKey").textContent=masked;
+  document.getElementById("settingsKeyInput").value="";
+  document.getElementById("settingsErr").textContent="";
+  document.getElementById("settingsModal").classList.add("open");
+}
+function closeSettings(){ document.getElementById("settingsModal").classList.remove("open"); }
+
+function removeKey(){
+  if(!confirm("Remove saved API key? You will need to enter it again on next visit.")) return;
+  closeSettings();
+  clearKey();
+}
+
+function saveSettingsKey(){
+  const k=document.getElementById("settingsKeyInput").value.trim();
+  const errEl=document.getElementById("settingsErr");
+  const btn=document.getElementById("settingsSaveBtn");
+  if(!k){errEl.textContent="Please enter a key"; return;}
+  if(!k.startsWith("sk-ant-")){errEl.textContent="Invalid key — must start with sk-ant-"; return;}
+  errEl.textContent=""; btn.disabled=true; btn.textContent="Saving...";
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:10,messages:[{role:"user",content:"hi"}]})
+  }).then(r=>r.json()).then(d=>{
+    btn.disabled=false; btn.textContent="Save";
+    if(d.error){errEl.textContent="Invalid key: "+d.error.message; return;}
+    apiKey=k; localStorage.setItem("am_api_key",k);
+    closeSettings();
+    addAgent("API key updated successfully ✓");
+  }).catch(()=>{btn.disabled=false; btn.textContent="Save"; errEl.textContent="Network error. Try again.";});
+}
 
 function clearSession(){
   if(!confirm("Start a new run? This will clear the current session.")) return;
@@ -869,6 +942,12 @@ async function sendMsg(override) {
 
 function setReqs(r){ reqs=r; }
 function handleKey(e){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();} }
+
+// ── AUTO-LOAD SAVED KEY ────────────────────────────────────────────────────
+(function(){
+  const saved=localStorage.getItem("am_api_key");
+  if(saved){ apiKey=saved; document.getElementById("keyScreen").style.display="none"; document.getElementById("app").style.display="flex"; initAgent(); }
+})();
 </script>
 </body>
 </html>
