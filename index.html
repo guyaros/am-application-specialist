@@ -430,7 +430,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div id="topbar">
       <div>
         <div class="topbar-title">Systematics AM Application Specialist</div>
-        <div class="topbar-sub">Ashby Methodology · 48 materials · 11 printers</div>
+        <div class="topbar-sub">Ashby Methodology · 51 materials · 13 printers</div>
       </div>
       <div class="tech-pills">
         <span class="tech-pill">SLA/DLP</span>
@@ -449,7 +449,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.4";
+const VERSION="v1.5";
 const REL_DATE="May 2026";
 
 // ── DATABASES ──────────────────────────────────────────────────────────────
@@ -503,18 +503,23 @@ const MAT = [
   {n:"Onyx FR",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:40,em:3.0,el:18,cost:1170,std:"UL94 V0"},
   {n:"Onyx FR-A",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:16.2,em:3.27,el:3.9,cost:1225,std:"UL94 V0"},
   {n:"Onyx ESD",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:138,ts:50,em:4.2,imp:44,cost:1150},
-  {n:"TPU (Markforged)",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:26,el:550,cost:null,shore:"95A"},
-  {n:"Ultem 9085",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:175,ts:48,em:2.52,el:2.1,imp:70,cost:2100,std:"FAR 25.853"},
-  {n:"Vega",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:164,ts:48,em:5.2,el:2.5,imp:48,cost:4700,std:"FAR 25.853"},
+  {n:"Nylon White",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:36,em:1.7,el:150,imp:110,cost:923},
+  {n:"Nylon White FS",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"no",ts:47,em:1.8,el:23,imp:110,cost:null,std:"NSF/ANSI 51"},
+  {n:"PLA",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:52,ts:18,em:2.3,el:27,imp:62,cost:100},
+  {n:"TPU (Markforged)",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:26,em:0.013,el:550,cost:820,shore:"95A"},
+  {n:"Ultem 9085",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:175,ts:76.5,em:2.52,el:5.7,imp:70,cost:2100,std:"FAR 25.853"},
+  {n:"Vega",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:165.1,ts:87.6,em:5.2,el:3,imp:48,cost:4700,std:"FAR 25.853"},
 ];
 
 const PRN = [
   {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
   {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes"},
   {n:"Form 4L",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
+  {n:"Form 4BL",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes"},
   {n:"Fuse1+",mfr:"Formlabs",tech:"SLS",bx:165,by:165,bz:300,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
   {n:"Mark Two",mfr:"Markforged",tech:"FFF+CFR",bx:320,by:152,bz:154,res:400,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
   {n:"X7",mfr:"Markforged",tech:"FFF+CFR",bx:330,by:270,bz:200,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
+  {n:"FX10",mfr:"Markforged",tech:"FFF+CFR",bx:375,by:300,bz:300,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
   {n:"FX20",mfr:"Markforged",tech:"FFF+CFR",bx:525,by:400,bz:400,res:400,acc:"±125µm",esd:"yes",fr:"yes",bio:"no",opt:"no"},
   {n:"HP 4200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no"},
   {n:"HP 5200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no"},
