@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AM Application Specialist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--blue:#1a56db;--blue-light:#3b82f6;--cyan:#06b6d4;
+  --green:#10b981;--amber:#f59e0b;--red:#ef4444;--purple:#8b5cf6;
+  --surface:#0f1e35;--surface2:#162440;--surface3:#1d2f4d;
+  --border:#243656;--border2:#2d4270;
+  --text:#e8edf5;--text2:#8fa3c0;--text3:#5a7099;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:10px;--r-lg:14px;
+}
+html,body{height:100%;background:var(--navy);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;overflow:hidden}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:230px;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
+}
+.sidebar-top{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:0}
+.logo-mark{
+  width:36px;height:36px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:12px;color:#fff;letter-spacing:-.3px;
+  box-shadow:0 4px 12px rgba(26,86,219,.4);
+}
+.logo-text{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.logo-sub{font-size:10px;color:var(--text3);font-weight:400}
+
+.steps-wrap{flex:1;overflow-y:auto;padding:14px 10px}
+.steps-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:0 6px;margin-bottom:10px}
+.step{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;margin-bottom:2px;transition:background .15s}
+.step.active{background:rgba(26,86,219,.15)}
+.step.done{background:rgba(16,185,129,.08)}
+.step-num{
+  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;flex-shrink:0;
+  background:var(--surface3);color:var(--text3);border:1.5px solid var(--border2);
+  transition:all .2s;
+}
+.step.active .step-num{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.25)}
+.step.done .step-num{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.2)}
+.step-lbl{font-size:11.5px;color:var(--text3);transition:color .15s}
+.step.active .step-lbl{color:var(--blue-light);font-weight:500}
+.step.done .step-lbl{color:var(--green)}
+
+.iter-chip{
+  margin:0 10px 10px;padding:8px 10px;
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+  border-radius:8px;display:none;
+}
+.iter-chip.visible{display:block}
+
+.sidebar-bottom{padding:12px 10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.sidebar-btn{
+  width:100%;padding:7px 10px;background:transparent;border:1px solid var(--border2);
+  border-radius:7px;font-size:11.5px;color:var(--text2);cursor:pointer;
+  font-family:var(--font);transition:all .15s;text-align:center;
+}
+.sidebar-btn:hover{background:var(--surface3);color:var(--text)}
+
+/* ── MAIN ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOPBAR */
+#topbar{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:11px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.topbar-title{font-size:14px;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.tech-pills{display:flex;gap:6px}
+.tech-pill{
+  font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;
+  background:var(--surface3);color:var(--text3);border:1px solid var(--border2);
+  letter-spacing:.3px;text-transform:uppercase;
+}
+
+/* MESSAGES */
+#messages{
+  flex:1;overflow-y:auto;padding:20px;
+  display:flex;flex-direction:column;gap:14px;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
+}
+#messages::-webkit-scrollbar{width:4px}
+#messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.msg{display:flex;gap:9px;animation:fadeUp .2s ease}
+.msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:75%}
+.msg.agent{align-self:flex-start;max-width:84%}
+
+.avatar{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+}
+.avatar.agent{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff}
+.avatar.user{background:var(--surface3);color:var(--text2);border:1px solid var(--border2)}
+
+.bubble{
+  padding:10px 14px;font-size:13px;line-height:1.7;white-space:pre-wrap;
+  border-radius:3px 12px 12px 12px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);
+}
+.bubble.user{
+  background:var(--blue);color:#fff;border:none;
+  border-radius:12px 3px 12px 12px;
+  box-shadow:0 4px 12px rgba(26,86,219,.3);
+}
+
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.opt{
+  padding:6px 13px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--surface2);
+  color:var(--text2);font-size:12px;cursor:pointer;
+  font-family:var(--font);transition:all .15s;font-weight:500;
+}
+.opt:hover{border-color:var(--blue-light);color:var(--blue-light);background:rgba(26,86,219,.1)}
+.opt.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* LOADING */
+.loading-bubble{
+  display:flex;gap:9px;align-items:center;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;font-size:12px;color:var(--blue-light);
+  align-self:flex-start;
+}
+.spinner{
+  width:13px;height:13px;border:2px solid rgba(59,130,246,.3);
+  border-top-color:var(--blue-light);border-radius:50%;
+  animation:spin .7s linear infinite;flex-shrink:0;
+}
+
+/* REPORT */
+.report-wrap{align-self:flex-start;width:calc(100% - 37px);margin-left:37px;animation:fadeUp .3s ease}
+.report-box{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.report-header{background:linear-gradient(135deg,#071020,#0f2045);padding:16px 20px;border-bottom:1px solid var(--border)}
+.report-meta{font-size:10px;font-weight:600;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.report-summary{font-size:13px;color:var(--text);line-height:1.6;max-width:560px}
+.updated-tag{background:rgba(245,158,11,.15);color:var(--amber);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(245,158,11,.3);white-space:nowrap}
+
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border)}
+.tab{
+  padding:10px 16px;border:none;background:transparent;
+  font-size:12px;font-weight:400;color:var(--text2);
+  border-bottom:2px solid transparent;cursor:pointer;font-family:var(--font);
+  transition:all .15s;
+}
+.tab.active{color:var(--blue-light);font-weight:600;border-bottom-color:var(--blue-light)}
+.tab-body{padding:16px;background:var(--surface)}
+
+/* MAT CARDS */
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.mat-card{border-radius:var(--r);overflow:hidden}
+.mat-card-top{padding:9px 13px}
+.mat-card-rank{color:#fff;font-weight:700;font-size:11px}
+.mat-card-body{padding:13px}
+.mat-name{font-weight:700;font-size:13px;color:var(--text);margin-bottom:2px}
+.mat-vendor{font-size:11px;color:var(--text3);margin-bottom:11px;font-family:var(--mono)}
+.mat-props{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px}
+.mat-prop{border-radius:6px;padding:5px 8px;border:1px solid var(--border)}
+.mat-prop-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px}
+.mat-prop-val{font-weight:700;font-size:12px;color:var(--text);font-family:var(--mono)}
+.mat-prop-unit{font-size:9px;color:var(--text3);margin-left:2px;font-weight:400}
+.mat-rationale{font-size:11px;color:var(--text2);line-height:1.55;border-radius:6px;padding:7px 9px;border:1px solid var(--border);font-style:italic}
+
+/* COMPARISON TABLE */
+.cmp-wrap{overflow-x:auto}
+.cmp-table{width:100%;border-collapse:collapse;font-size:12px;font-family:var(--mono)}
+.cmp-table thead tr{background:rgba(10,22,40,.8)}
+.cmp-table th{padding:10px 13px;font-weight:600;text-align:center;border-bottom:1px solid var(--border2)}
+.cmp-table th:first-child{text-align:left;color:var(--text3);min-width:140px;font-family:var(--font)}
+.cmp-table td{padding:9px 13px;text-align:center;border-bottom:1px solid var(--border);color:var(--text)}
+.cmp-table td:first-child{text-align:left;color:var(--text2);font-family:var(--font);font-size:11.5px;font-weight:500}
+.cmp-table tr:hover td{background:rgba(255,255,255,.02)}
+.bar-wrap{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:3px}
+.bar{height:100%;border-radius:2px;transition:width .6s ease}
+
+/* PRINTER CARDS */
+.printer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.printer-card{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--surface2)}
+.printer-top{padding:9px 13px;display:flex;justify-content:space-between;align-items:center}
+.printer-name{color:#fff;font-weight:700;font-size:12px}
+.printer-tech{background:rgba(255,255,255,.15);color:#fff;font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.4px;text-transform:uppercase}
+.printer-body{padding:10px 13px}
+.printer-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:7px}
+.printer-stat{text-align:center;background:var(--surface);border-radius:6px;padding:5px 4px;border:1px solid var(--border)}
+.printer-stat-lbl{color:var(--text3);font-size:9px;text-transform:uppercase;letter-spacing:.3px}
+.printer-stat-val{font-weight:600;color:var(--text);font-size:10px;font-family:var(--mono)}
+.printer-note{font-size:11px;color:var(--text3);font-style:italic;border-top:1px solid var(--border);padding-top:7px}
+
+/* RISKS */
+.risks-list{display:flex;flex-direction:column;gap:8px}
+.risk-item{border-radius:8px;padding:10px 13px;display:flex;gap:9px;border-left:3px solid}
+.risk-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.risk-level{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.risk-text{font-size:12.5px;color:var(--text);line-height:1.55}
+.pro-note{margin-top:10px;background:rgba(26,86,219,.08);border:1px solid rgba(26,86,219,.2);border-radius:8px;padding:12px 14px}
+.pro-note-lbl{font-size:9px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:var(--mono)}
+
+/* FEEDBACK PANEL */
+.fb-panel{
+  background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);
+  border-radius:var(--r-lg);padding:16px;
+  align-self:flex-start;width:calc(100% - 37px);margin-left:37px;animation:fadeUp .3s ease;
+}
+.fb-header{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.fb-icon{font-size:18px}
+.fb-title{font-weight:700;font-size:13px;color:var(--amber)}
+.fb-sub{font-size:11px;color:var(--text3)}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.quick-btn{
+  padding:5px 11px;border-radius:7px;
+  border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.07);
+  color:var(--amber);font-size:11px;cursor:pointer;font-family:var(--font);font-weight:500;
+  transition:all .13s;
+}
+.quick-btn:hover{background:rgba(245,158,11,.15);border-color:var(--amber)}
+.quick-btn:disabled{opacity:.4;cursor:not-allowed}
+.fb-row{display:flex;gap:8px}
+.fb-ta{
+  flex:1;border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:8px 12px;
+  font-size:12px;font-family:var(--font);resize:none;outline:none;
+  background:rgba(245,158,11,.04);color:var(--text);
+}
+.fb-ta::placeholder{color:var(--text3)}
+.fb-actions{display:flex;flex-direction:column;gap:6px}
+.btn-refine{
+  padding:7px 14px;background:var(--amber);color:#000;border:none;border-radius:7px;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .13s;white-space:nowrap;
+}
+.btn-refine:disabled{opacity:.4}
+.btn-approve{
+  padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:7px;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;
+}
+
+/* API KEY SCREEN */
+#keyScreen{
+  position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:100;
+}
+.key-card{
+  background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:32px;
+  width:420px;max-width:90vw;box-shadow:0 24px 60px rgba(0,0,0,.5);
+}
+.key-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.key-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.key-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:22px}
+.key-label{font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px}
+.key-input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border2);border-radius:9px;
+  font-size:13px;font-family:var(--mono);outline:none;
+  background:var(--surface2);color:var(--text);
+  transition:border .15s;direction:ltr;
+}
+.key-input:focus{border-color:var(--blue)}
+.key-input.err{border-color:var(--red)}
+.key-err{font-size:11px;color:var(--red);margin-top:5px;min-height:16px}
+.key-btn{
+  width:100%;margin-top:16px;padding:12px;border:none;border-radius:9px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;
+}
+.key-btn:disabled{opacity:.5;cursor:not-allowed}
+.key-note{
+  margin-top:14px;padding:10px 12px;background:rgba(6,182,212,.07);
+  border-radius:8px;border:1px solid rgba(6,182,212,.2);font-size:11px;color:var(--cyan);line-height:1.65;
+}
+.key-note a{color:var(--cyan)}
+
+/* INPUT AREA */
+#inputArea{
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:12px 20px;display:flex;gap:8px;flex-shrink:0;
+}
+#inputBox{
+  flex:1;border:1.5px solid var(--border2);border-radius:10px;padding:9px 13px;
+  font-size:13px;font-family:var(--font);resize:none;outline:none;
+  background:var(--surface2);color:var(--text);transition:border .15s;line-height:1.5;
+}
+#inputBox:focus{border-color:var(--blue)}
+#inputBox::placeholder{color:var(--text3)}
+#sendBtn{
+  padding:9px 20px;background:var(--blue);color:#fff;border:none;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .15s;
+  white-space:nowrap;
+}
+#sendBtn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ANIMATIONS */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+@media print{#sidebar,#topbar,#inputArea,.fb-panel{display:none!important}#main{height:auto}#messages{overflow:visible}}
+</style>
+</head>
+<body>
+
+<!-- API KEY SCREEN -->
+<div id="keyScreen">
+  <div class="key-card">
+    <div class="key-logo">
+      <div class="logo-mark">AM</div>
+      <div><div style="font-weight:700;font-size:15px;color:var(--text)">Application Specialist</div><div style="font-size:10px;color:var(--text3)">3D Printing Material Advisor</div></div>
+    </div>
+    <div class="key-title">Enter your API Key</div>
+    <div class="key-sub">This tool requires an Anthropic API key. Your key is stored only in this browser session and never sent to any server.</div>
+    <label class="key-label">Anthropic API Key</label>
+    <input class="key-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    <div class="key-err" id="keyErr"></div>
+    <button class="key-btn" id="keyBtn" onclick="startWithKey()">
+      <span id="keyBtnText">Launch Agent →</span>
+    </button>
+    <div class="key-note">
+      🔒 Your key is only held in memory for this session.<br/>
+      Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-top">
+      <div class="logo">
+        <div class="logo-mark">AM</div>
+        <div><div class="logo-text">Application<br/>Specialist</div></div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="steps-label">Ashby Steps</div>
+      <div id="stepsContainer"></div>
+    </div>
+    <div class="iter-chip" id="iterChip">
+      <div style="font-size:10px;font-weight:700;color:var(--amber)" id="iterNum">Iteration #1</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:1px" id="iterStatus">Processing...</div>
+    </div>
+    <div class="sidebar-bottom">
+      <button class="sidebar-btn" onclick="window.print()">⬇ Export PDF</button>
+      <button class="sidebar-btn" onclick="clearKey()">🔑 Change API Key</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div>
+        <div class="topbar-title">AM Application Specialist</div>
+        <div class="topbar-sub">Ashby Methodology · 27 materials · 11 printers</div>
+      </div>
+      <div class="tech-pills">
+        <span class="tech-pill">SLA/DLP</span>
+        <span class="tech-pill">SLS</span>
+        <span class="tech-pill">MJF</span>
+        <span class="tech-pill">FFF+CFR</span>
+      </div>
+    </div>
+    <div id="messages"></div>
+    <div id="inputArea">
+      <textarea id="inputBox" placeholder="Type your answer..." rows="1" onkeydown="handleKey(event)"></textarea>
+      <button id="sendBtn" onclick="sendMsg()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATABASES ──────────────────────────────────────────────────────────────
+const MAT = [
+  {n:"Black V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:69,ts:61,em:2.7,el:10,imp:29,cost:383},
+  {n:"Grey V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.6,el:13,imp:32,cost:383},
+  {n:"White V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.675,el:13,imp:32,cost:383},
+  {n:"Clear V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"no",hdt:69,ts:60,em:2.75,el:8,imp:29,cost:383},
+  {n:"Tough 2000 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:70,ts:43,em:1.8,el:79,imp:25,cost:685},
+  {n:"Tough 1500 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:66,ts:34,em:1.46,el:155,imp:42,cost:685},
+  {n:"Tough 1000",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:55.3,ts:26.3,em:0.93,el:180,imp:72,cost:685},
+  {n:"Rigid 10K V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:163,ts:65,em:10,el:1,imp:16,cost:1340},
+  {n:"Rigid 10K + Heat Treatment",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:218,ts:53,em:10,el:1,imp:18,cost:1340},
+  {n:"High Temp V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:120,ts:51,em:2.8,el:3.3,imp:18,cost:938},
+  {n:"High Temp V2 + HT",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:238,ts:49,em:2.8,el:2.3,imp:17,cost:938},
+  {n:"Flame Retardant",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:111,ts:41,em:3.1,el:7.1,imp:22,cost:1135,std:"UL94 V0"},
+  {n:"ESD Resin",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:62.2,ts:44,em:1.9,el:12,imp:26,cost:1050},
+  {n:"BioMed Clear",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"yes",autoclave:"yes",hdt:67,ts:52,em:2.08,el:12,imp:35,cost:1550,std:"ISO 10993 / USP VI"},
+  {n:"BioMed Amber",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:78,ts:73,em:2.9,el:12,imp:28,cost:1135,std:"ISO 10993"},
+  {n:"BioMed Durable",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:46,ts:29,em:0.994,el:33,imp:98,cost:1890,std:"ISO 10993 / USP VI"},
+  {n:"Nylon 12",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:171,ts:50,em:1.85,el:6,imp:32,cost:430,std:"UL94 HB"},
+  {n:"Nylon 12 Tough",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:161,ts:42,em:1.45,el:15,imp:60,cost:430,std:"UL94 HB"},
+  {n:"Nylon 11",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:182,ts:49,em:1.6,el:40,imp:71,cost:515,std:"UL94 HB"},
+  {n:"Nylon 11 CF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",hdt:188,ts:38,em:5.3,el:5,imp:74,cost:708},
+  {n:"Nylon 12 GF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:170,ts:38,em:2.8,el:3,imp:36,cost:480},
+  {n:"Nylon 12 (HP MJF)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:172,ts:54,em:null,el:9,imp:null,cost:null},
+  {n:"Nylon 12 FR (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:172,ts:46,em:2.5,el:4,imp:null,cost:null,std:"UL94 V0"},
+  {n:"Onyx",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:145,ts:37,em:2.4,el:25,imp:330,cost:1000},
+  {n:"Onyx FR",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:40,em:3.0,el:18,imp:null,cost:1170,std:"UL94 V0"},
+  {n:"Onyx ESD",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:138,ts:50,em:4.2,el:null,imp:44,cost:1150},
+  {n:"Ultem 9085",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:175,ts:48,em:2.52,el:2.1,imp:70,cost:2100,std:"FAR 25.853"},
+];
+
+const PRN = [
+  {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
+  {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes"},
+  {n:"Form 4L",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
+  {n:"Fuse1+",mfr:"Formlabs",tech:"SLS",bx:165,by:165,bz:300,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
+  {n:"Mark Two",mfr:"Markforged",tech:"FFF+CFR",bx:320,by:152,bz:154,res:400,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
+  {n:"X7",mfr:"Markforged",tech:"FFF+CFR",bx:330,by:270,bz:200,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
+  {n:"FX20",mfr:"Markforged",tech:"FFF+CFR",bx:525,by:400,bz:400,res:400,acc:"±125µm",esd:"yes",fr:"yes",bio:"no",opt:"no"},
+  {n:"HP 4200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no"},
+  {n:"HP 5200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no"},
+  {n:"HP 5600",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"yes",fr:"yes",bio:"yes",opt:"no"},
+  {n:"Snapemaker U1",mfr:"Snapemaker",tech:"FDM/FFF",bx:270,by:270,bz:270,res:400,acc:"±200µm",esd:"no",fr:"no",bio:"no",opt:"no"},
+];
+
+const STEPS_CFG = [
+  {id:0,lbl:"Application type"},{id:1,lbl:"Part description"},
+  {id:2,lbl:"Functional req."},{id:3,lbl:"Mechanical req."},
+  {id:4,lbl:"Environmental"},{id:5,lbl:"Geometry"},
+  {id:6,lbl:"Manufacturing"},{id:7,lbl:"Analysis"},
+  {id:8,lbl:"Feedback loop"},{id:9,lbl:"Final report"},
+];
+
+const RC = [
+  {bg:"rgba(16,185,129,.08)",border:"#10b981",acc:"#10b981",lbl:"#1 Recommended"},
+  {bg:"rgba(26,86,219,.08)",border:"#1a56db",acc:"#3b82f6",lbl:"#2 Alternative A"},
+  {bg:"rgba(139,92,246,.08)",border:"#8b5cf6",acc:"#8b5cf6",lbl:"#3 Alternative B"},
+];
+const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b981","FDM/FFF":"#64748b"};
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat";
+let msgId=0;
+
+// ── API KEY ────────────────────────────────────────────────────────────────
+function startWithKey() {
+  const k = document.getElementById("keyInput").value.trim();
+  const errEl = document.getElementById("keyErr");
+  const btn = document.getElementById("keyBtn");
+  const btnText = document.getElementById("keyBtnText");
+
+  if (!k) { errEl.textContent="Please enter your API key"; return; }
+  if (!k.startsWith("sk-ant-")) { errEl.textContent="Invalid key — must start with sk-ant-"; return; }
+
+  errEl.textContent="";
+  btn.disabled=true;
+  btnText.innerHTML='<div class="spinner"></div> Verifying...';
+
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01"},
+    body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:10,messages:[{role:"user",content:"hi"}]})
+  }).then(r=>r.json()).then(d=>{
+    if(d.error){ errEl.textContent="Invalid key: "+d.error.message; btn.disabled=false; btnText.textContent="Launch Agent →"; return; }
+    apiKey=k;
+    document.getElementById("keyScreen").style.display="none";
+    document.getElementById("app").style.display="flex";
+    initAgent();
+  }).catch(e=>{ errEl.textContent="Network error. Try again."; btn.disabled=false; btnText.textContent="Launch Agent →"; });
+}
+
+function clearKey(){ apiKey=""; document.getElementById("keyScreen").style.display="flex"; document.getElementById("app").style.display="none"; document.getElementById("keyInput").value=""; }
+
+document.getElementById("keyInput").addEventListener("keydown", e=>{ if(e.key==="Enter") startWithKey(); });
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+function initAgent() {
+  renderSteps();
+  addAgent("Hello! I'm your AM Application Specialist.\nI'll guide you through selecting the optimal 3D printing material and technology using the Ashby methodology.\n\nLet's start — what is the application type?",
+    ["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]);
+}
+
+// ── STEPS ──────────────────────────────────────────────────────────────────
+function renderSteps() {
+  const c=document.getElementById("stepsContainer");
+  c.innerHTML=STEPS_CFG.map(s=>{
+    const active=step===s.id||(s.id===8&&phase==="feedback");
+    const done=(s.id<step)||(s.id===7&&["feedback","approved","done"].includes(phase))||(s.id===8&&["approved","done"].includes(phase));
+    return`<div class="step${active?" active":done?" done":""}">
+      <div class="step-num">${done?"✓":s.id+1}</div>
+      <span class="step-lbl">${s.lbl}</span>
+    </div>`;
+  }).join("");
+}
+
+function updateIterChip() {
+  if(iteration<1) return;
+  const c=document.getElementById("iterChip"); c.classList.add("visible");
+  document.getElementById("iterNum").textContent="Iteration #"+iteration;
+  document.getElementById("iterStatus").textContent=
+    phase==="feedback"?"Awaiting feedback":phase==="approved"?"Approved ✓":phase==="done"?"Complete ✅":"Processing...";
+}
+
+// ── MESSAGES ───────────────────────────────────────────────────────────────
+function scrollBot(){ const m=document.getElementById("messages"); m.scrollTop=m.scrollHeight; }
+
+function addAgent(text, options) {
+  const id=++msgId;
+  const wrap=document.createElement("div");
+  wrap.className="msg agent"; wrap.id="msg-"+id;
+  wrap.innerHTML=`<div class="avatar agent">A</div><div>
+    <div class="bubble">${esc(text)}</div>
+    ${options?`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`:""}
+  </div>`;
+  document.getElementById("messages").appendChild(wrap);
+  scrollBot();
+}
+
+function addUser(text) {
+  const wrap=document.createElement("div");
+  wrap.className="msg user";
+  wrap.innerHTML=`<div class="avatar user">U</div><div><div class="bubble user">${esc(text)}</div></div>`;
+  document.getElementById("messages").appendChild(wrap);
+  scrollBot();
+}
+
+function setLoading(on,txt="Analyzing requirements...") {
+  document.getElementById("sendBtn").disabled=on;
+  document.getElementById("inputBox").disabled=on;
+  document.getElementById("loadingEl")?.remove();
+  if(on){
+    const el=document.createElement("div"); el.className="loading-bubble"; el.id="loadingEl";
+    el.innerHTML=`<div class="spinner"></div><span>${txt}</span>`;
+    document.getElementById("messages").appendChild(el); scrollBot();
+  }
+}
+
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br/>"); }
+function esc2(s){ return String(s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
+
+function selOpt(btn,opt,id){
+  document.querySelectorAll(`#msg-${id} .opt`).forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");
+  sendMsg(opt);
+}
+
+// ── CLAUDE API ─────────────────────────────────────────────────────────────
+function buildSystem() {
+  return `You are AM Application Specialist — an expert advisor for 3D printing material and technology selection using the Ashby methodology (Materials Selection in Mechanical Design).
+Ask one focused question at a time. Use only data from the databases. Be concise and engineering-focused.
+=== MATERIALS DB ===\n${JSON.stringify(MAT)}
+=== PRINTERS DB ===\n${JSON.stringify(PRN)}
+=== Collected requirements ===\n${JSON.stringify(reqs,null,2)}`;
+}
+
+async function callClaude(messages) {
+  const res = await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2500,system:buildSystem(),messages}),
+  });
+  const d = await res.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.content?.[0]?.text||"";
+}
+
+// ── ANALYSIS ───────────────────────────────────────────────────────────────
+async function runAnalysis(feedbackNote="") {
+  setLoading(true,"Running Ashby screening & ranking...");
+  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string"}`;
+  const prompt = feedbackNote
+    ? `User feedback: "${feedbackNote}". Refine analysis accordingly. Return JSON only:\n${spec}`
+    : `Analyze all collected requirements using Ashby screening and ranking. Return JSON only:\n${spec}`;
+  try {
+    const resp = await callClaude([...history,{role:"user",content:prompt}]);
+    const m = resp.match(/\{[\s\S]*\}/);
+    if(m){ report=JSON.parse(m[0]); iteration++; phase="feedback"; history.push({role:"assistant",content:resp}); setLoading(false); renderReport(); renderFeedback(); step=8; renderSteps(); updateIterChip(); }
+    else { setLoading(false); addAgent(resp); }
+  } catch(e) { setLoading(false); addAgent("Error: "+e.message); }
+}
+
+// ── REPORT ─────────────────────────────────────────────────────────────────
+let activeTab="overview";
+
+function renderReport() {
+  document.getElementById("reportEl")?.remove();
+  const wrap=document.createElement("div");
+  wrap.className="report-wrap"; wrap.id="reportEl";
+  wrap.innerHTML=`<div class="report-box">
+    <div class="report-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="report-meta">${iteration>1?`✦ Revised #${iteration}`:"Initial Analysis"} · AM Application Specialist</div>
+          <div class="report-summary">${esc(report.summary||"")}</div>
+        </div>
+        ${iteration>1?`<span class="updated-tag">Updated</span>`:""}
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab ${activeTab==="overview"?"active":""}" onclick="switchTab('overview',this)">Overview</button>
+      <button class="tab ${activeTab==="compare"?"active":""}" onclick="switchTab('compare',this)">Comparison</button>
+      <button class="tab ${activeTab==="printers"?"active":""}" onclick="switchTab('printers',this)">Equipment</button>
+      <button class="tab ${activeTab==="risks"?"active":""}" onclick="switchTab('risks',this)">Risks</button>
+    </div>
+    <div class="tab-body" id="tabBody">${buildTab(activeTab)}</div>
+  </div>`;
+  document.getElementById("messages").appendChild(wrap);
+  scrollBot();
+}
+
+function switchTab(id,btn) {
+  activeTab=id;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("tabBody").innerHTML=buildTab(id);
+}
+
+function buildTab(id) {
+  if(id==="overview") return buildOverview();
+  if(id==="compare")  return buildCompare();
+  if(id==="printers") return buildPrinters();
+  if(id==="risks")    return buildRisks();
+  return "";
+}
+
+function buildOverview() {
+  return `<div class="mat-grid">${(report.materials||[]).map((m,i)=>{
+    const rc=RC[i];
+    return `<div class="mat-card" style="border:1.5px solid ${rc.border};">
+      <div class="mat-card-top" style="background:${rc.border}20;border-bottom:1px solid ${rc.border}40;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span class="mat-card-rank" style="color:${rc.acc}">${rc.lbl}</span>
+          <span style="font-size:9px;color:var(--text3);font-family:var(--mono)">${m.vendor||""}</span>
+        </div>
+      </div>
+      <div class="mat-card-body" style="background:${rc.bg}">
+        <div class="mat-name">${esc(m.name)}</div>
+        <div class="mat-vendor">${esc(m.technology)}</div>
+        <div class="mat-props">
+          ${[["TS",m.tensile,"MPa"],["E",m.modulus,"GPa"],["HDT",m.hdt,"°C"],["Cost",m.cost,"₪/kg"]].map(([l,v,u])=>v!=null?`<div class="mat-prop" style="background:var(--surface3);border-color:var(--border2)"><div class="mat-prop-lbl">${l}</div><div class="mat-prop-val">${v}<span class="mat-prop-unit">${u}</span></div></div>`:"").join("")}
+        </div>
+        ${m.rationale?`<div class="mat-rationale">${esc(m.rationale)}</div>`:""}
+      </div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function buildCompare() {
+  const cols=[{k:"tensile",l:"Tensile Strength (MPa)",mx:120},{k:"modulus",l:"Elastic Modulus (GPa)",mx:12},{k:"hdt",l:"HDT (°C)",mx:250},{k:"elongation",l:"Elongation at Break (%)",mx:200},{k:"impact",l:"Impact Strength (J/m)",mx:400},{k:"cost",l:"Cost (₪/kg)",mx:2500}];
+  const mats=report.materials||[];
+  return `<div class="cmp-wrap"><table class="cmp-table">
+    <thead><tr>
+      <th style="text-align:left;color:var(--text3)">Property</th>
+      ${mats.map((m,i)=>`<th><div style="background:${RC[i].acc}20;color:${RC[i].acc};font-size:10px;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:3px;font-family:var(--mono)">${RC[i].lbl}</div><br/><span style="color:var(--text);font-family:var(--font)">${esc(m.name)}</span></th>`).join("")}
+    </tr></thead>
+    <tbody>
+      ${cols.map(col=>{
+        const vals=mats.map(m=>m[col.k]!=null?Number(m[col.k]):null);
+        if(!vals.some(v=>v!=null)) return "";
+        return `<tr><td>${col.l}</td>${vals.map((v,vi)=>v!=null?`<td><span style="font-weight:700;font-family:var(--mono)">${v}</span><div class="bar-wrap"><div class="bar" style="width:${Math.min(100,(v/col.mx)*100)}%;background:${RC[vi]?.acc||"#3b82f6"}"></div></div></td>`:`<td style="color:var(--text3)">—</td>`).join("")}</tr>`;
+      }).join("")}
+    </tbody>
+  </table></div>`;
+}
+
+function buildPrinters() {
+  return `<div class="printer-grid">${(report.printers||[]).map(p=>{
+    const db=PRN.find(x=>x.n===p.name);
+    const tc=TC[p.technology]||"#3b82f6";
+    return `<div class="printer-card">
+      <div class="printer-top" style="background:${tc}22;border-bottom:1px solid ${tc}33;">
+        <span class="printer-name" style="color:${tc}">${esc(p.name)}</span>
+        <span class="printer-tech" style="background:${tc}33;color:${tc};border:1px solid ${tc}44">${esc(p.technology)}</span>
+      </div>
+      ${db?`<div class="printer-body">
+        <div class="printer-stats">
+          <div class="printer-stat"><div class="printer-stat-lbl">Volume</div><div class="printer-stat-val">${db.bx}×${db.by}×${db.bz}</div></div>
+          <div class="printer-stat"><div class="printer-stat-lbl">XY Res.</div><div class="printer-stat-val">${db.res}µm</div></div>
+          <div class="printer-stat"><div class="printer-stat-lbl">Accuracy</div><div class="printer-stat-val">${db.acc}</div></div>
+        </div>
+        ${p.note?`<div class="printer-note">${esc(p.note)}</div>`:""}
+      </div>`:""}
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function buildRisks() {
+  const cfg={high:["rgba(239,68,68,.08)","#ef4444","⚠","HIGH RISK"],medium:["rgba(245,158,11,.08)","#f59e0b","ℹ","NOTE"],low:["rgba(16,185,129,.08)","#10b981","✓","ADVANTAGE"]};
+  return `<div class="risks-list">
+    ${(report.risks||[]).map(rk=>{const c=cfg[rk.level||"medium"];return`<div class="risk-item" style="background:${c[0]};border-left-color:${c[1]};"><span class="risk-icon">${c[2]}</span><div><div class="risk-level" style="color:${c[1]}">${c[3]}</div><div class="risk-text">${esc(rk.text)}</div></div></div>`;}).join("")}
+    ${report.professional_note?`<div class="pro-note"><div class="pro-note-lbl">Expert Note</div><div style="font-size:12.5px;color:var(--text);line-height:1.6">${esc(report.professional_note)}</div></div>`:""}
+  </div>`;
+}
+
+// ── FEEDBACK PANEL ─────────────────────────────────────────────────────────
+function renderFeedback() {
+  document.getElementById("fbPanel")?.remove();
+  const panel=document.createElement("div"); panel.className="fb-panel"; panel.id="fbPanel";
+  const quick=["Higher mechanical requirements","Better temperature resistance","Cost is priority","Medical/biocompatibility needed","Outdoor UV resistance","Higher accuracy needed"];
+  panel.innerHTML=`
+    <div class="fb-header"><span class="fb-icon">🔄</span>
+      <div><div class="fb-title">Refinement Loop — Ashby Step 4</div>
+      <div class="fb-sub">Does this meet your requirements? Refine or approve for final report.</div></div>
+    </div>
+    <div class="quick-btns">${quick.map(q=>`<button class="quick-btn" onclick="doFeedback('${q}')">${q}</button>`).join("")}</div>
+    <div class="fb-row">
+      <textarea class="fb-ta" id="customFb" rows="2" placeholder="Custom refinement..."></textarea>
+      <div class="fb-actions">
+        <button class="btn-refine" id="refineBtn" onclick="doCustomFb()">Refine ↻</button>
+        <button class="btn-approve" onclick="doApprove()">✓ Approve</button>
+      </div>
+    </div>`;
+  document.getElementById("messages").appendChild(panel);
+  scrollBot();
+}
+
+async function doFeedback(text) {
+  addUser(text); document.getElementById("fbPanel")?.remove(); phase="chat";
+  reqs.latest_feedback=text; history.push({role:"user",content:"Feedback: "+text});
+  addAgent("Refining analysis... ⟳");
+  await runAnalysis(text);
+}
+
+async function doCustomFb() {
+  const text=document.getElementById("customFb").value.trim();
+  if(text) await doFeedback(text);
+}
+
+function doApprove() {
+  document.getElementById("fbPanel")?.remove(); phase="approved"; step=9; renderSteps(); updateIterChip();
+  addAgent("Great! Would you like to export this as a PDF report?",["Yes, export PDF","No thanks"]);
+}
+
+// ── SEND ───────────────────────────────────────────────────────────────────
+async function sendMsg(override) {
+  const box=document.getElementById("inputBox");
+  const text=(override||box.value).trim();
+  if(!text||box.disabled) return;
+  if(!override) box.value="";
+
+  if(phase==="approved"){
+    addUser(text);
+    if(text.toLowerCase().includes("yes")||text.toLowerCase().includes("pdf")){
+      phase="done"; addAgent("Ready to print ✅\n\nPress Ctrl+P (or Cmd+P) → select 'Save as PDF'");
+      setTimeout(()=>window.print(),500);
+    } else { phase="done"; addAgent("Done! Thank you for using AM Application Specialist."); }
+    return;
+  }
+
+  addUser(text);
+  const newReqs={...reqs};
+  const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
+  if(step<keys.length) newReqs[keys[step]]=text;
+  setReqs(newReqs);
+  history.push({role:"user",content:text});
+
+  const prompts=[
+    `User selected: "${text}". Ask for a brief description of what the part does and its purpose.`,
+    `Description: "${text}". Ask one relevant functional requirements question (optical transparency, ESD, flame retardant standard, fluid sealing, RF transparency, biocompatibility, autoclave sterilization).`,
+    `Answer: "${text}". Ask one mechanical requirements question (tensile strength, stiffness, impact resistance, elongation).`,
+    `Answer: "${text}". Ask one environmental requirements question (service temperature, chemical resistance, UV/outdoor exposure).`,
+    `Answer: "${text}". Ask one geometry question (max part size, accuracy/tolerance, surface finish).`,
+    `Answer: "${text}". Ask one manufacturing question (quantity, cost vs performance priority, available printers).`,
+    `Answer: "${text}". Respond with exactly: "Thank you! Running Ashby analysis now..." and nothing else.`,
+  ];
+
+  if(step<=6){
+    setLoading(true);
+    try{
+      const resp=await callClaude([...history,{role:"user",content:prompts[step]}]);
+      history.push({role:"assistant",content:resp});
+      setLoading(false); addAgent(resp);
+      const ns=step+1; step=ns; renderSteps();
+      if(ns===7){ await runAnalysis(); return; }
+    } catch(e){ setLoading(false); addAgent("Error: "+e.message); }
+  }
+}
+
+function setReqs(r){ reqs=r; }
+function handleKey(e){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();} }
+</script>
+</body>
+</html>
