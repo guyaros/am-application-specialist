@@ -58,6 +58,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .step-lbl{font-size:11.5px;color:var(--text3);transition:color .15s}
 .step.active .step-lbl{color:var(--blue);font-weight:600}
 .step.done .step-lbl{color:var(--green);font-weight:500}
+.step.editable{cursor:pointer}
+.step.editable:hover{background:rgba(37,99,235,.07)!important}
+.step.editable:hover .step-lbl{color:var(--blue)!important}
+.step.editable:hover .step-num{background:var(--blue)!important;border-color:var(--blue)!important;box-shadow:0 0 0 3px rgba(37,99,235,.15)!important}
+.step-edit-icon{font-size:9px;color:var(--blue);margin-left:auto;opacity:0;transition:opacity .15s;flex-shrink:0}
+.step.editable:hover .step-edit-icon{opacity:1}
 
 .iter-chip{
   margin:0 10px 10px;padding:8px 10px;
@@ -544,7 +550,17 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat";
-let msgId=0;
+let msgId=0, stepHistory=[];
+
+const STEP_Q=[
+  {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
+  {q:"Please describe the part — what does it do and what is its purpose?"},
+  {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility)"},
+  {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance, flexibility)"},
+  {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)"},
+  {q:"Geometry and accuracy requirements? (e.g. max part dimensions, tolerance, surface finish)"},
+  {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)"},
+];
 
 // ── API KEY ────────────────────────────────────────────────────────────────
 function startWithKey() {
@@ -639,11 +655,33 @@ function renderSteps() {
   c.innerHTML=STEPS_CFG.map(s=>{
     const active=step===s.id||(s.id===8&&phase==="feedback");
     const done=(s.id<step)||(s.id===7&&["feedback","approved","done"].includes(phase))||(s.id===8&&["approved","done"].includes(phase));
-    return`<div class="step${active?" active":done?" done":""}">
+    const editable=done&&s.id<=6;
+    return`<div class="step${active?" active":""}${done?" done":""}${editable?" editable":""}"
+      ${editable?`onclick="jumpToStep(${s.id})" title="Click to edit"`:""}>
       <div class="step-num">${done?"✓":s.id+1}</div>
       <span class="step-lbl">${s.lbl}</span>
+      ${editable?`<span class="step-edit-icon">✎</span>`:""}
     </div>`;
   }).join("");
+}
+
+function jumpToStep(n){
+  if(n>6||n>=step) return;
+  // trim Claude history back to before this step was answered
+  if(stepHistory[n]!=null) history=history.slice(0,stepHistory[n]);
+  // clear reqs from step n onwards
+  const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
+  keys.slice(n).forEach(k=>delete reqs[k]);
+  // remove report and feedback from DOM
+  document.getElementById("reportEl")?.remove();
+  document.getElementById("fbPanel")?.remove();
+  document.getElementById("loadingEl")?.remove();
+  // reset state
+  phase="chat"; step=n; report=null; iteration=0;
+  renderSteps(); updateIterChip();
+  // re-ask step question
+  const sq=STEP_Q[n];
+  addAgent(`↩ Editing: ${STEPS_CFG[n].lbl}\n\n${sq.q}`, sq.opts||null);
 }
 
 function updateIterChip() {
@@ -944,7 +982,7 @@ async function sendMsg(override) {
   addUser(text);
   const newReqs={...reqs};
   const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
-  if(step<keys.length) newReqs[keys[step]]=text;
+  if(step<keys.length){ stepHistory[step]=history.length; newReqs[keys[step]]=text; }
   setReqs(newReqs);
   history.push({role:"user",content:text});
 
