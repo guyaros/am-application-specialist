@@ -21,8 +21,8 @@ the optimal material and printing technology based on the **Ashby methodology**
 ```
 AM Application Specialist Chatbot/
   index.html              ← entire app lives here
-  AM-Materials-DB.xlsx    ← source data (not loaded at runtime, embedded in JS)
-  AM-Printers-DB.xlsx     ← source data (not loaded at runtime, embedded in JS)
+  AM-Materials-DB.csv     ← source of truth for materials (51 materials)
+  AM-Printers-DB.csv      ← source of truth for printers (13 printers)
   CONTEXT.md              ← this file
 ```
 
@@ -30,7 +30,7 @@ AM Application Specialist Chatbot/
 
 ## Databases (embedded in index.html as JS arrays)
 
-### Materials — `MAT` array (27 materials)
+### Materials — `MAT` array (51 materials)
 Each object has these fields:
 ```js
 {
@@ -54,7 +54,7 @@ Each object has these fields:
 }
 ```
 
-### Printers — `PRN` array (11 printers)
+### Printers — `PRN` array (13 printers)
 ```js
 {
   n:    "printer name",
@@ -82,7 +82,7 @@ Agent asks one question at a time across these categories:
 - **Functional:** optical transparency, ESD, flame retardant (UL94/FAR), fluid sealing, RF transparency, biocompatibility, autoclave sterilization
 - **Mechanical:** tensile strength, elastic modulus, elongation, impact strength, Shore hardness
 - **Environmental:** service temperature (HDT), chemical resistance, UV/outdoor
-- **Geometry:** max part size, accuracy/tolerance, surface finish (Ra)
+- **Geometry:** max part size, **smallest feature / min wall thickness**, accuracy/tolerance, surface finish (Ra)
 - **Manufacturing:** quantity, cost vs performance priority, available printers
 
 ### Stage 2 — Screening
@@ -93,6 +93,58 @@ Score remaining materials by fit. Return top 3 with compatible printers.
 
 ### Stage 4 — Supporting information
 Rationale, risks, expert note.
+
+---
+
+---
+
+## Agent domain knowledge rules
+
+These rules are injected into the Claude system prompt on every API call (`buildSystem()` in `index.html`).
+To add or modify a rule, update the `=== DOMAIN KNOWLEDGE ===` section inside `buildSystem()` **and** update this file.
+
+---
+
+### Rule 1 — Medical / Biocompatibility → BioMed materials
+
+**Trigger:** user mentions medical devices, surgical tools, patient contact, dental, implants, sterile environments, or biocompatibility.
+
+**Agent behavior:**
+- Prioritize Formlabs BioMed materials: BioMed Clear, BioMed White, BioMed Black, BioMed Amber, BioMed Durable, BioMed Elastic, BioMed Flex 80A
+- These are certified to ISO 10993 / USP Class VI
+- Require **Form 4B** or **Form 4BL** printer
+- Always ask whether autoclave sterilization is needed (all BioMed materials support it)
+
+---
+
+### Rule 2 — High toughness / impact resistance → probe rigid vs. flexible
+
+**Trigger:** user mentions high toughness, impact resistance, drop tests, shock loads, or durable flexible parts.
+
+**Agent behavior:**
+- Ask whether **rigid high-strength** or **flexible energy-absorbing** behavior is preferred — these lead to very different material families
+- **Rigid high-toughness candidates:** Markforged Onyx, continuous fiber composites, HP PA 11, Formlabs Tough 2000, Tough 1500
+- **Flexible energy-absorbing candidates:** Formlabs TPU 90A (SLS), Formlabs Flexible 80A, Formlabs Elastic 50A, Formlabs Silicone 40A, HP TPU, Markforged TPU
+- If flexible is acceptable: probe elastic modulus range and Shore hardness to select the right grade
+
+---
+
+### Rule 3 — Smallest feature size → technology gate
+
+**Trigger:** always — asked during the geometry step alongside max part size.
+
+**Agent behavior:**
+- Always ask for the smallest feature or minimum wall thickness in the design
+- Apply this technology gate in screening:
+
+| Smallest feature | Allowed technologies |
+|---|---|
+| < 0.5 mm | SLA/LFD only (Formlabs Form 4 family) |
+| 0.5 – 1 mm | SLA/LFD preferred; SLS (Fuse1+) acceptable |
+| 1 – 2 mm | SLA, SLS, or MJF all suitable |
+| > 2 mm | Any technology; FDM/FFF (Markforged, Snapemaker) viable |
+
+- **FDM/FFF must not be recommended when smallest feature < 1 mm**
 
 ---
 
@@ -110,7 +162,7 @@ On approval → offer PDF export via `window.print()`.
 ---
 
 ## UI structure
-- **Left sidebar:** Ashby step tracker (10 steps), iteration badge, Export PDF button, Change API Key button
+- **Left sidebar:** Ashby step tracker (10 steps, completed steps 0–6 are clickable to jump back and edit), iteration badge, Export PDF button, New Run button, Settings button
 - **Top bar:** title, tech pills (SLA/DLP · SLS · MJF · FFF+CFR)
 - **Message area:** chat bubbles (agent + user), report panel, feedback panel
 - **Input area:** textarea + send button
@@ -124,9 +176,9 @@ On approval → offer PDF export via `window.print()`.
 ---
 
 ## Design system
-- Dark theme: navy `#0a1628` background
+- Light grey theme: background `#eef0f4`, surface `#ffffff`
 - Font: DM Sans (body) + DM Mono (numbers/code)
-- Accent colors: blue `#1a56db`, cyan `#06b6d4`, green `#10b981`, amber `#f59e0b`
+- Accent colors: blue `#2563eb`, cyan `#0891b2`, green `#059669`, amber `#d97706`, red `#dc2626`
 - Rank colors: green (1st), blue (2nd), purple (3rd)
 - Technology colors: purple=SLA, amber=SLS, cyan=MJF, green=CFR, slate=FDM
 
