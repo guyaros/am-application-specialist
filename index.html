@@ -455,7 +455,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.6";
+const VERSION="v1.7";
 const REL_DATE="May 2026";
 
 // ── DATABASES ──────────────────────────────────────────────────────────────
@@ -555,10 +555,10 @@ let msgId=0, stepHistory=[];
 const STEP_Q=[
   {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
   {q:"Please describe the part — what does it do and what is its purpose?"},
-  {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility)"},
-  {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance, flexibility)"},
+  {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)"},
+  {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)"},
   {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)"},
-  {q:"Geometry and accuracy requirements? (e.g. max part dimensions, tolerance, surface finish)"},
+  {q:"Geometry requirements: what is the maximum part size (X×Y×Z mm), and what is the smallest feature or minimum wall thickness in the design? (features < 1 mm rule out FDM technologies)"},
   {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)"},
 ];
 
@@ -741,6 +741,27 @@ function selOpt(btn,opt,id){
 function buildSystem() {
   return `You are AM Application Specialist — an expert advisor for 3D printing material and technology selection using the Ashby methodology (Materials Selection in Mechanical Design).
 Ask one focused question at a time. Use only data from the databases. Be concise and engineering-focused.
+
+=== DOMAIN KNOWLEDGE — APPLY THESE RULES IN EVERY ANALYSIS ===
+
+RULE 1 — MEDICAL / BIOCOMPATIBILITY:
+When the user mentions medical devices, surgical tools, patient contact, dental, implants, sterile environments, or biocompatibility — always prioritize Formlabs BioMed materials (BioMed Clear, BioMed White, BioMed Black, BioMed Amber, BioMed Durable, BioMed Elastic, BioMed Flex 80A). These are ISO 10993 / USP Class VI certified. They require the Form 4B or Form 4BL printer. Always ask whether autoclave sterilization is needed (BioMed materials support it).
+
+RULE 2 — HIGH TOUGHNESS / IMPACT RESISTANCE:
+When the user mentions high toughness, impact resistance, drop tests, shock loads, or durable flexible parts — ask whether rigid stiffness or flexible energy-absorption is preferred, because these are fundamentally different solutions:
+- RIGID high-toughness: Markforged Onyx, Markforged continuous fiber, HP PA 11, Formlabs Tough 2000, Tough 1500
+- FLEXIBLE energy-absorbing: Formlabs TPU 90A (SLS), Formlabs Flexible 80A, Formlabs Elastic 50A, Formlabs Silicone 40A, HP TPU, Markforged TPU
+If the user says flexible is acceptable, always probe the elastic modulus range and Shore hardness to select the right flexible material.
+
+RULE 3 — SMALLEST FEATURE SIZE & TECHNOLOGY SELECTION:
+Always ask about the smallest feature or minimum wall thickness in the design. This is critical for technology selection:
+- Features < 0.5 mm → SLA/LFD only (Formlabs Form 4 family)
+- Features 0.5–1 mm → SLA/LFD preferred; SLS (Fuse1+) acceptable with reduced detail
+- Features 1–2 mm → SLA, SLS, or MJF all suitable
+- Features > 2 mm → Any technology viable; FDM/FFF (Markforged, Snapemaker) also acceptable
+NEVER recommend FDM/FFF when the smallest feature is < 1 mm.
+Ask this during the geometry step alongside max part size.
+
 === MATERIALS DB ===\n${JSON.stringify(MAT)}
 === PRINTERS DB ===\n${JSON.stringify(PRN)}
 === Collected requirements ===\n${JSON.stringify(reqs,null,2)}`;
@@ -989,9 +1010,9 @@ async function sendMsg(override) {
   const prompts=[
     `User selected: "${text}". Ask for a brief description of what the part does and its purpose.`,
     `Description: "${text}". Ask one relevant functional requirements question (optical transparency, ESD, flame retardant standard, fluid sealing, RF transparency, biocompatibility, autoclave sterilization).`,
-    `Answer: "${text}". Ask one mechanical requirements question (tensile strength, stiffness, impact resistance, elongation).`,
+    `Answer: "${text}". Ask one mechanical requirements question (tensile strength, stiffness, impact resistance, elongation). If the answer implies high toughness or impact resistance, follow RULE 2 and ask whether rigid or flexible energy-absorbing behavior is preferred.`,
     `Answer: "${text}". Ask one environmental requirements question (service temperature, chemical resistance, UV/outdoor exposure).`,
-    `Answer: "${text}". Ask one geometry question (max part size, accuracy/tolerance, surface finish).`,
+    `Answer: "${text}". Ask about geometry: ask for both the maximum part size (X×Y×Z mm) AND the smallest feature or minimum wall thickness in the design. Explain briefly why smallest feature matters for technology selection.`,
     `Answer: "${text}". Ask one manufacturing question (quantity, cost vs performance priority, available printers).`,
     `Answer: "${text}". Respond with exactly: "Thank you! Running Ashby analysis now..." and nothing else.`,
   ];
