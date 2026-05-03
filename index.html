@@ -314,6 +314,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 #sendBtn:hover{opacity:.9;box-shadow:0 4px 14px rgba(37,99,235,.35)}
 #sendBtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 
+/* BRANDING */
+.branding{padding:10px 10px 2px;text-align:center;}
+.branding-company{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.3px;}
+.branding-by{font-size:10px;color:var(--text3);margin-top:1px;}
+.branding-ver{font-size:9px;color:var(--text3);margin-top:2px;font-family:var(--mono);}
+
 /* ANIMATIONS */
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -342,6 +348,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       🔒 Your key is only held in memory for this session.<br/>
       Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
     </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+      <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.3px;">Systematics</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px;">Made by Guy Yaros</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:1px;font-family:var(--mono)" id="verLabelKey"></div>
+    </div>
   </div>
 </div>
 
@@ -364,8 +375,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div style="font-size:10px;color:var(--text3);margin-top:1px" id="iterStatus">Processing...</div>
     </div>
     <div class="sidebar-bottom">
-      <button class="sidebar-btn" onclick="window.print()">⬇ Export PDF</button>
+      <button class="sidebar-btn" onclick="exportPDF()">⬇ Export PDF</button>
+      <button class="sidebar-btn" onclick="clearSession()" style="border-color:rgba(220,38,38,.3);color:#dc2626;" onmouseover="this.style.background='rgba(220,38,38,.06)'" onmouseout="this.style.background='transparent'">↺ New Run</button>
       <button class="sidebar-btn" onclick="clearKey()">🔑 Change API Key</button>
+    </div>
+    <div class="branding">
+      <div class="branding-company">Systematics</div>
+      <div class="branding-by">Made by Guy Yaros</div>
+      <div class="branding-ver" id="verLabel"></div>
     </div>
   </div>
 
@@ -392,6 +409,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 </div>
 
 <script>
+// ── VERSION ────────────────────────────────────────────────────────────────
+const VERSION="v1.0";
+const REL_DATE="May 2026";
+
 // ── DATABASES ──────────────────────────────────────────────────────────────
 const MAT = [
   {n:"Black V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:69,ts:61,em:2.7,el:10,imp:29,cost:383},
@@ -485,10 +506,23 @@ function startWithKey() {
 
 function clearKey(){ apiKey=""; document.getElementById("keyScreen").style.display="flex"; document.getElementById("app").style.display="none"; document.getElementById("keyInput").value=""; }
 
+function clearSession(){
+  if(!confirm("Start a new run? This will clear the current session.")) return;
+  step=0; reqs={}; history=[]; report=null; iteration=0; phase="chat"; msgId=0;
+  document.getElementById("messages").innerHTML="";
+  document.getElementById("iterChip").classList.remove("visible");
+  renderSteps();
+  initAgent();
+}
+
 document.getElementById("keyInput").addEventListener("keydown", e=>{ if(e.key==="Enter") startWithKey(); });
+document.getElementById("verLabelKey").textContent=VERSION+" · "+REL_DATE;
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 function initAgent() {
+  const verStr=VERSION+" · "+REL_DATE;
+  document.getElementById("verLabel").textContent=verStr;
+  document.getElementById("verLabelKey").textContent=verStr;
   renderSteps();
   addAgent("Hello! I'm your AM Application Specialist.\nI'll guide you through selecting the optimal 3D printing material and technology using the Ashby methodology.\n\nLet's start — what is the application type?",
     ["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]);
@@ -581,7 +615,7 @@ async function callClaude(messages) {
 // ── ANALYSIS ───────────────────────────────────────────────────────────────
 async function runAnalysis(feedbackNote="") {
   setLoading(true,"Running Ashby screening & ranking...");
-  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string"}`;
+  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
   const prompt = feedbackNote
     ? `User feedback: "${feedbackNote}". Refine analysis accordingly. Return JSON only:\n${spec}`
     : `Analyze all collected requirements using Ashby screening and ranking. Return JSON only:\n${spec}`;
@@ -706,6 +740,46 @@ function buildRisks() {
   </div>`;
 }
 
+// ── PDF EXPORT ─────────────────────────────────────────────────────────────
+function exportPDF() {
+  if(!report){ addAgent("No analysis to export yet. Complete the requirements first."); return; }
+  const win=window.open('','_blank');
+  if(!win){ addAgent("Popup blocked. Please allow popups for this site and try again."); return; }
+  const date=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'long',day:'numeric'});
+  const mats=report.materials||[], printers=report.printers||[], risks=report.risks||[], nextSteps=report.next_steps||[];
+  const mc=[
+    {color:'#059669',light:'#f0fdf4',border:'#a7f3d0',label:'#1 — Recommended'},
+    {color:'#2563eb',light:'#eff6ff',border:'#bfdbfe',label:'#2 — Alternative A'},
+    {color:'#7c3aed',light:'#faf5ff',border:'#e9d5ff',label:'#3 — Alternative B'},
+  ];
+  const rc2={high:{bg:'#fef2f2',border:'#dc2626',label:'HIGH RISK',icon:'⚠'},medium:{bg:'#fffbeb',border:'#d97706',label:'NOTE',icon:'ℹ'},low:{bg:'#f0fdf4',border:'#059669',label:'ADVANTAGE',icon:'✓'}};
+  const propRows=[['Tensile Strength','tensile','MPa'],['Elastic Modulus','modulus','GPa'],['Heat Deflection Temp.','hdt','°C'],['Elongation at Break','elongation','%'],['Impact Strength','impact','J/m'],['Cost','cost','₪/kg']];
+  const reqRows=[['Application Type',reqs.application_type],['Part Description',reqs.part_description],['Functional Requirements',reqs.functional_req],['Mechanical Requirements',reqs.mechanical_req],['Environmental Requirements',reqs.environmental_req],['Geometry & Accuracy',reqs.geometry_req],['Manufacturing & Production',reqs.production_req]].filter(r=>r[1]);
+  const e=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const sh=(num,title)=>`<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #e2e6ed;"><div style="background:#2563eb;color:#fff;font-size:11px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${num}</div><h2 style="font-size:16px;font-weight:700;color:#1e2a3b;">${title}</h2></div>`;
+
+  const s01=`${sh('01','Executive Summary')}<div style="background:#f8f9fb;border:1px solid #e2e6ed;border-radius:10px;padding:18px 20px;line-height:1.75;color:#1e2a3b;font-size:13px;margin-bottom:16px;">${e(report.summary||'')}</div>${mats[0]?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"><div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Top Material</div><div style="font-size:14px;font-weight:700;color:#1e2a3b;">${e(mats[0].name)}</div><div style="font-size:10px;color:#5a6b82;font-family:monospace;">${e(mats[0].vendor||'')}</div></div><div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#059669;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Technology</div><div style="font-size:14px;font-weight:700;color:#1e2a3b;">${e(mats[0].technology||'')}</div></div><div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Analysis Cycles</div><div style="font-size:14px;font-weight:700;color:#1e2a3b;">${iteration}</div></div></div>`:''}`;
+
+  const s02=`${sh('02','Requirements Summary')}<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e6ed;border-radius:8px;overflow:hidden;"><thead><tr style="background:#f1f3f6;"><th style="padding:10px 14px;text-align:left;font-weight:700;color:#5a6b82;font-size:10px;text-transform:uppercase;letter-spacing:.5px;width:32%;border-bottom:1px solid #e2e6ed;">Requirement</th><th style="padding:10px 14px;text-align:left;font-weight:700;color:#5a6b82;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e2e6ed;">Value</th></tr></thead><tbody>${reqRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};"><td style="padding:10px 14px;font-weight:600;color:#5a6b82;border-bottom:1px solid #e2e6ed;">${e(r[0])}</td><td style="padding:10px 14px;color:#1e2a3b;border-bottom:1px solid #e2e6ed;">${e(r[1])}</td></tr>`).join('')}</tbody></table>`;
+
+  const s03=`${sh('03','Material Comparison')}<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e6ed;border-radius:8px;overflow:hidden;"><thead><tr style="background:#f1f3f6;"><th style="padding:10px 14px;text-align:left;font-weight:700;color:#5a6b82;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e2e6ed;">Property</th>${mats.map((m,i)=>`<th style="padding:10px 14px;text-align:center;border-bottom:2px solid #e2e6ed;"><div style="background:${mc[i].light};color:${mc[i].color};font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:4px;border:1px solid ${mc[i].border};">${mc[i].label}</div><br/><span style="font-size:12px;font-weight:700;color:#1e2a3b;">${e(m.name)}</span><br/><span style="font-size:10px;color:#5a6b82;font-family:monospace;">${e(m.vendor||'')}</span></th>`).join('')}</tr></thead><tbody>${propRows.map((pr,ri)=>{const vals=mats.map(m=>m[pr[1]]!=null?Number(m[pr[1]]):null);if(!vals.some(v=>v!=null))return'';return`<tr style="background:${ri%2===0?'#fff':'#f8f9fb'};"><td style="padding:10px 14px;font-weight:500;color:#5a6b82;border-bottom:1px solid #e2e6ed;">${pr[0]} <span style="color:#94a3b8;font-size:10px;">(${pr[2]})</span></td>${vals.map((v,vi)=>v!=null?`<td style="padding:10px 14px;text-align:center;font-weight:700;font-family:monospace;font-size:13px;color:${mc[vi].color};border-bottom:1px solid #e2e6ed;">${v}</td>`:`<td style="padding:10px 14px;text-align:center;color:#94a3b8;border-bottom:1px solid #e2e6ed;">—</td>`).join('')}</tr>`;}).join('')}</tbody></table>`;
+
+  const top=mats[0];
+  const s04=top?`${sh('04','Top Recommendation')}<div style="border:2px solid #059669;border-radius:12px;overflow:hidden;"><div style="background:linear-gradient(135deg,#059669,#10b981);padding:18px 22px;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">#1 RECOMMENDED MATERIAL</div><div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:3px;">${e(top.name)}</div><div style="font-size:12px;color:rgba(255,255,255,.8);font-family:monospace;">${e(top.vendor||'')} · ${e(top.technology||'')}</div></div><div style="padding:20px 22px;background:#fff;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">${[['Tensile Strength',top.tensile,'MPa'],['Elastic Modulus',top.modulus,'GPa'],['HDT',top.hdt,'°C'],['Elongation',top.elongation,'%'],['Impact',top.impact,'J/m'],['Cost',top.cost,'₪/kg']].filter(r=>r[1]!=null).map(r=>`<div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:8px;padding:10px 12px;"><div style="font-size:9px;font-weight:700;color:#059669;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;">${r[0]}</div><div style="font-size:16px;font-weight:700;color:#1e2a3b;font-family:monospace;">${r[1]}<span style="font-size:10px;color:#5a6b82;font-weight:400;margin-left:2px;">${r[2]}</span></div></div>`).join('')}</div>${top.rationale?`<div style="background:#f8f9fb;border-left:3px solid #059669;border-radius:0 8px 8px 0;padding:13px 15px;font-size:12.5px;color:#1e2a3b;line-height:1.7;font-style:italic;">${e(top.rationale)}</div>`:''}</div></div>`:'';
+
+  const s05=printers.length?`${sh('05','Compatible Printers')}<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">${printers.map(p=>{const db=PRN.find(x=>x.n===p.name);return`<div style="border:1px solid #e2e6ed;border-radius:10px;overflow:hidden;background:#fff;"><div style="background:linear-gradient(135deg,#1e3a6e,#2563eb);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;"><span style="color:#fff;font-weight:700;font-size:13px;">${e(p.name)}</span><span style="background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;">${e(p.technology)}</span></div>${db?`<div style="padding:12px 14px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;"><div style="background:#f8f9fb;border:1px solid #e2e6ed;border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;">Build Vol.</div><div style="font-size:9px;font-weight:700;color:#1e2a3b;font-family:monospace;">${db.bx}×${db.by}×${db.bz}</div></div><div style="background:#f8f9fb;border:1px solid #e2e6ed;border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;">XY Res.</div><div style="font-size:9px;font-weight:700;color:#1e2a3b;font-family:monospace;">${db.res}µm</div></div><div style="background:#f8f9fb;border:1px solid #e2e6ed;border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;">Accuracy</div><div style="font-size:9px;font-weight:700;color:#1e2a3b;font-family:monospace;">${db.acc}</div></div></div>${p.note?`<div style="font-size:11px;color:#5a6b82;font-style:italic;border-top:1px solid #e2e6ed;padding-top:7px;">${e(p.note)}</div>`:''}</div>`:''}</div>`;}).join('')}</div>`:'';
+
+  const s06=risks.length?`${sh('06','Risks & Considerations')}<div style="display:flex;flex-direction:column;gap:8px;">${risks.map(rk=>{const c=rc2[rk.level||'medium'];return`<div style="background:${c.bg};border-left:3px solid ${c.border};border-radius:0 8px 8px 0;padding:12px 15px;display:flex;gap:10px;"><span style="font-size:15px;flex-shrink:0;">${c.icon}</span><div><div style="font-size:9px;font-weight:700;color:${c.border};text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">${c.label}</div><div style="font-size:12.5px;color:#1e2a3b;line-height:1.6;">${e(rk.text)}</div></div></div>`;}).join('')}</div>`:'';
+
+  const s07=report.professional_note?`${sh('07','Expert Professional Note')}<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:20px 22px;"><div style="font-size:9px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-family:monospace;">SPECIALIST ASSESSMENT</div><div style="font-size:13px;color:#1e2a3b;line-height:1.75;">${e(report.professional_note)}</div></div>`:'';
+
+  const s08=nextSteps.length?`${sh('08','Recommended Next Steps')}<ol style="padding-left:0;list-style:none;display:flex;flex-direction:column;gap:8px;">${nextSteps.map((ns,i)=>`<li style="display:flex;gap:12px;align-items:flex-start;padding:12px 15px;background:#f8f9fb;border:1px solid #e2e6ed;border-radius:8px;"><span style="background:#2563eb;color:#fff;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">${i+1}</span><span style="font-size:13px;color:#1e2a3b;line-height:1.65;">${e(ns)}</span></li>`).join('')}</ol>`:'';
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>AM Material Selection Report</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',system-ui,sans-serif;font-size:13px;color:#1e2a3b;background:#f1f3f6;}.page{max-width:900px;margin:0 auto;padding:32px;}.cover{background:linear-gradient(135deg,#1e3a6e,#2563eb);border-radius:14px;padding:42px;margin-bottom:28px;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;}.card{background:#fff;border:1px solid #e2e6ed;border-radius:12px;padding:26px 28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}@media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.page{padding:18px;}.cover{border-radius:8px;page-break-after:avoid;}.card{page-break-inside:avoid;box-shadow:none;}}</style></head><body><div class="page"><div class="cover"><div><div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 13px;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);display:inline-block;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px;">AM Application Specialist · Ashby Methodology</div><div style="font-size:30px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px;">Material Selection<br/>Report</div><div style="font-size:13px;color:rgba(255,255,255,.75);">${e(reqs.application_type||'3D Printing Advisory')}${reqs.part_description?' · '+e(reqs.part_description):''}</div></div><div style="text-align:right;flex-shrink:0;"><div style="font-size:13px;color:rgba(255,255,255,.8);margin-bottom:4px;">${date}</div><div style="font-size:11px;color:rgba(255,255,255,.55);">Analysis iteration #${iteration}</div></div></div><div class="card">${s01}</div><div class="card">${s02}</div><div class="card">${s03}</div>${s04?`<div class="card">${s04}</div>`:''} ${s05?`<div class="card">${s05}</div>`:''} ${s06?`<div class="card">${s06}</div>`:''} ${s07?`<div class="card">${s07}</div>`:''} ${s08?`<div class="card">${s08}</div>`:''}<div style="text-align:center;padding:20px 0;border-top:1px solid #e2e6ed;margin-top:8px;"><div style="font-size:11px;color:#94a3b8;">Generated by <strong>AM Application Specialist</strong> · Ashby Materials Selection Methodology · ${date}</div><div style="font-size:10px;color:#b0bec5;margin-top:3px;">Systematics · Made by Guy Yaros · ${VERSION} · ${REL_DATE} · Powered by Anthropic Claude</div></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+  win.document.write(html);
+  win.document.close();
+}
+
 // ── FEEDBACK PANEL ─────────────────────────────────────────────────────────
 function renderFeedback() {
   document.getElementById("fbPanel")?.remove();
@@ -742,7 +816,7 @@ async function doCustomFb() {
 
 function doApprove() {
   document.getElementById("fbPanel")?.remove(); phase="approved"; step=9; renderSteps(); updateIterChip();
-  addAgent("Great! Would you like to export this as a PDF report?",["Yes, export PDF","No thanks"]);
+  addAgent("Analysis approved ✓\n\nWould you like to export the professional PDF report?",["Export PDF Report","Not now"]);
 }
 
 // ── SEND ───────────────────────────────────────────────────────────────────
@@ -754,10 +828,9 @@ async function sendMsg(override) {
 
   if(phase==="approved"){
     addUser(text);
-    if(text.toLowerCase().includes("yes")||text.toLowerCase().includes("pdf")){
-      phase="done"; addAgent("Ready to print ✅\n\nPress Ctrl+P (or Cmd+P) → select 'Save as PDF'");
-      setTimeout(()=>window.print(),500);
-    } else { phase="done"; addAgent("Done! Thank you for using AM Application Specialist."); }
+    if(text.toLowerCase().includes("export")||text.toLowerCase().includes("yes")||text.toLowerCase().includes("pdf")){
+      phase="done"; addAgent("Opening PDF report... ✅"); setTimeout(()=>exportPDF(),400);
+    } else { phase="done"; addAgent("Done! You can export anytime using the Export PDF button in the sidebar."); }
     return;
   }
 
