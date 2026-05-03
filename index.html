@@ -430,7 +430,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div id="topbar">
       <div>
         <div class="topbar-title">Systematics AM Application Specialist</div>
-        <div class="topbar-sub">Ashby Methodology · 27 materials · 11 printers</div>
+        <div class="topbar-sub">Ashby Methodology · 48 materials · 11 printers</div>
       </div>
       <div class="tech-pills">
         <span class="tech-pill">SLA/DLP</span>
@@ -449,38 +449,63 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.3";
+const VERSION="v1.4";
 const REL_DATE="May 2026";
 
 // ── DATABASES ──────────────────────────────────────────────────────────────
 const MAT = [
+  // ── Formlabs SLA/DLP ──
   {n:"Black V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:69,ts:61,em:2.7,el:10,imp:29,cost:383},
   {n:"Grey V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.6,el:13,imp:32,cost:383},
   {n:"White V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.675,el:13,imp:32,cost:383},
   {n:"Clear V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"no",hdt:69,ts:60,em:2.75,el:8,imp:29,cost:383},
+  {n:"Fast Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:76,ts:62,em:2.7,el:11,imp:37,cost:383},
+  {n:"Precision Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:53.5,ts:50,em:2.2,el:8.6,imp:32,cost:630},
   {n:"Tough 2000 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:70,ts:43,em:1.8,el:79,imp:25,cost:685},
   {n:"Tough 1500 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:66,ts:34,em:1.46,el:155,imp:42,cost:685},
   {n:"Tough 1000",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:55.3,ts:26.3,em:0.93,el:180,imp:72,cost:685},
   {n:"Rigid 10K V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:163,ts:65,em:10,el:1,imp:16,cost:1340},
   {n:"Rigid 10K + Heat Treatment",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:218,ts:53,em:10,el:1,imp:18,cost:1340},
+  {n:"Rigid 4000 V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:77,ts:69,em:4.1,el:5.3,imp:23,cost:1050},
   {n:"High Temp V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:120,ts:51,em:2.8,el:3.3,imp:18,cost:938},
   {n:"High Temp V2 + HT",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:238,ts:49,em:2.8,el:2.3,imp:17,cost:938},
   {n:"Flame Retardant",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:111,ts:41,em:3.1,el:7.1,imp:22,cost:1135,std:"UL94 V0"},
   {n:"ESD Resin",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:62.2,ts:44,em:1.9,el:12,imp:26,cost:1050},
+  {n:"Silicone 40A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:5,el:230,imp:12,cost:1550,shore:"40A"},
+  {n:"Elastic 50A V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:3.4,el:160,imp:14,cost:1000,shore:"55A"},
+  {n:"Flexible 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:8.9,el:120,imp:28,cost:930,shore:"80A"},
+  {n:"Clear Cast V1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:73,ts:65,em:2.8,el:6,imp:25,cost:720},
   {n:"BioMed Clear",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"yes",autoclave:"yes",hdt:67,ts:52,em:2.08,el:12,imp:35,cost:1550,std:"ISO 10993 / USP VI"},
+  {n:"BioMed White",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67,ts:46,em:2.0,el:10,imp:15,cost:1260,std:"ISO 10993"},
+  {n:"BioMed Black",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67.9,ts:36,em:1.5,el:14,imp:25,cost:1134,std:"ISO 10993"},
   {n:"BioMed Amber",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:78,ts:73,em:2.9,el:12,imp:28,cost:1135,std:"ISO 10993"},
   {n:"BioMed Durable",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:46,ts:29,em:0.994,el:33,imp:98,cost:1890,std:"ISO 10993 / USP VI"},
+  {n:"BioMed Elastic",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",ts:2.3,el:150,imp:12,cost:1550,std:"ISO 10993",shore:"50A"},
+  {n:"BioMed Flex 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",ts:7.2,el:135,imp:24,cost:1134,std:"ISO 10993",shore:"80A"},
+  // ── Formlabs SLS ──
   {n:"Nylon 12",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:171,ts:50,em:1.85,el:6,imp:32,cost:430,std:"UL94 HB"},
   {n:"Nylon 12 Tough",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:161,ts:42,em:1.45,el:15,imp:60,cost:430,std:"UL94 HB"},
+  {n:"Nylon 12 White",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:177,ts:47,em:1.95,el:6,imp:28,cost:480,std:"UL94 HB"},
+  {n:"Nylon 12 GF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:170,ts:38,em:2.8,el:3,imp:36,cost:480},
   {n:"Nylon 11",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:182,ts:49,em:1.6,el:40,imp:71,cost:515,std:"UL94 HB"},
   {n:"Nylon 11 CF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",hdt:188,ts:38,em:5.3,el:5,imp:74,cost:708},
-  {n:"Nylon 12 GF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:170,ts:38,em:2.8,el:3,imp:36,cost:480},
-  {n:"Nylon 12 (HP MJF)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:172,ts:54,em:null,el:9,imp:null,cost:null},
-  {n:"Nylon 12 FR (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:172,ts:46,em:2.5,el:4,imp:null,cost:null,std:"UL94 V0"},
+  {n:"TPU 90A",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:7.2,el:110,cost:616,std:"ISO 10993",shore:"90A"},
+  // ── HP MJF ──
+  {n:"Nylon 12 (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:172,ts:54,el:9,cost:null},
+  {n:"Nylon 12 S (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:175,ts:43,em:1.7,el:5,cost:null},
+  {n:"Nylon 12 GB (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:170,ts:30,em:2.9,el:5,cost:null},
+  {n:"Nylon 12 W (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:170,ts:45,em:1.9,el:9,cost:null},
+  {n:"Nylon 12 FR (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:172,ts:46,em:2.5,el:4,cost:null,std:"UL94 V0"},
+  {n:"Nylon 11 (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:185,ts:54,em:1.7,el:25,cost:null},
+  {n:"TPU (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",cost:200,shore:"unknown"},
+  // ── Markforged FFF+CFR ──
   {n:"Onyx",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:145,ts:37,em:2.4,el:25,imp:330,cost:1000},
-  {n:"Onyx FR",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:40,em:3.0,el:18,imp:null,cost:1170,std:"UL94 V0"},
-  {n:"Onyx ESD",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:138,ts:50,em:4.2,el:null,imp:44,cost:1150},
+  {n:"Onyx FR",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:40,em:3.0,el:18,cost:1170,std:"UL94 V0"},
+  {n:"Onyx FR-A",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:16.2,em:3.27,el:3.9,cost:1225,std:"UL94 V0"},
+  {n:"Onyx ESD",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:138,ts:50,em:4.2,imp:44,cost:1150},
+  {n:"TPU (Markforged)",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:26,el:550,cost:null,shore:"95A"},
   {n:"Ultem 9085",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:175,ts:48,em:2.52,el:2.1,imp:70,cost:2100,std:"FAR 25.853"},
+  {n:"Vega",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:164,ts:48,em:5.2,el:2.5,imp:48,cost:4700,std:"FAR 25.853"},
 ];
 
 const PRN = [
