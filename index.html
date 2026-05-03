@@ -458,7 +458,7 @@ function startWithKey() {
 
   fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01"},
+    headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
     body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:10,messages:[{role:"user",content:"hi"}]})
   }).then(r=>r.json()).then(d=>{
     if(d.error){ errEl.textContent="Invalid key: "+d.error.message; btn.disabled=false; btnText.textContent="Launch Agent →"; return; }
@@ -556,7 +556,7 @@ Ask one focused question at a time. Use only data from the databases. Be concise
 async function callClaude(messages) {
   const res = await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
+    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
     body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2500,system:buildSystem(),messages}),
   });
   const d = await res.json();
