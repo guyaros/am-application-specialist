@@ -477,7 +477,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.10";
+const VERSION="v1.11";
 const REL_DATE="May 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -1157,7 +1157,7 @@ async function sendMsg(override) {
     `Answer: "${text}". Ask one environmental requirements question (service temperature, chemical resistance, UV/outdoor exposure).`,
     `Answer: "${text}". Ask about geometry: ask for both the maximum part size (X×Y×Z mm) AND the smallest feature or minimum wall thickness in the design. Explain briefly why smallest feature matters for technology selection.`,
     `Answer: "${text}". Ask one manufacturing question (quantity, cost vs performance priority, available printers).`,
-    `Answer: "${text}". Respond with exactly: "${t("thankMsg")}" and nothing else.`,
+    `Answer: "${text}". Acknowledge briefly.`,
   ];
 
   if(step<=6){
@@ -1165,9 +1165,10 @@ async function sendMsg(override) {
     try{
       const resp=await callClaude([...history,{role:"user",content:prompts[step]}]);
       history.push({role:"assistant",content:resp});
-      setLoading(false); addAgent(resp, getStepQ()[step+1]?.opts);
       const ns=step+1; step=ns; renderSteps();
+      setLoading(false);
       if(ns===7){ await runAnalysis(); return; }
+      addAgent(resp, getStepQ()[step+1]?.opts);
     } catch(e){ setLoading(false); addAgent("Error: "+e.message); }
   }
 }
