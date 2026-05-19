@@ -6,6 +6,9 @@ The agent guides engineers through a structured requirements-gathering process a
 the optimal material and printing technology based on the **Ashby methodology**
 (Materials Selection in Mechanical Design — Prof. Michael F. Ashby).
 
+**Current version:** v1.18  
+**Repository:** GitHub → hosted on GitHub Pages (static, single file)
+
 ---
 
 ## Tech stack
@@ -13,7 +16,7 @@ the optimal material and printing technology based on the **Ashby methodology**
 - Vanilla JS + CSS
 - Calls Anthropic API directly from the browser (`claude-sonnet-4-20250514`)
 - Hosted on GitHub Pages (static)
-- User enters their own Anthropic API key on first load (stored in memory only)
+- User enters their own Anthropic API key on first load (stored in localStorage)
 
 ---
 
@@ -21,7 +24,7 @@ the optimal material and printing technology based on the **Ashby methodology**
 ```
 AM Application Specialist Chatbot/
   index.html              ← entire app lives here
-  AM-Materials-DB.csv     ← source of truth for materials (51 materials)
+  AM-Materials-DB.csv     ← source of truth for materials (53 materials)
   AM-Printers-DB.csv      ← source of truth for printers (13 printers)
   CONTEXT.md              ← this file
 ```
@@ -30,7 +33,7 @@ AM Application Specialist Chatbot/
 
 ## Databases (embedded in index.html as JS arrays)
 
-### Materials — `MAT` array (51 materials)
+### Materials — `MAT` array (53 materials)
 Each object has these fields:
 ```js
 {
@@ -50,7 +53,9 @@ Each object has these fields:
   el:   number,             // elongation at break %
   imp:  number,             // impact strength J/m
   cost: number,             // ILS per kg
-  std:  "standard"          // e.g. "UL94 V0", "ISO 10993 / USP VI", "FAR 25.853"
+  std:  "standard",         // e.g. "UL94 V0", "ISO 10993 / USP VI", "FAR 25.853"
+  gn:   "general notes",    // critical notes, warnings, substitutes (from CSV column general_notes)
+  link: "url"               // shop.systematics.co.il link (27 Formlabs materials have this)
 }
 ```
 
@@ -72,139 +77,182 @@ Each object has these fields:
 
 ---
 
-## Agent workflow (Ashby 4-stage process)
+## Agent workflow (10 steps)
 
-### Stage 0 — Application type
-User selects: Visual prototype / Functional prototype / Manufacturing aid / End-use part
+### Steps 0–6 — Requirements gathering
+Each step shows clickable multi-select option buttons (text appends to input box).
+User can go back and edit any completed step by clicking it in the sidebar.
 
-### Stage 1 — Requirements translation
-Agent asks one question at a time across these categories:
-- **Functional:** optical transparency, ESD, flame retardant (UL94/FAR), fluid sealing, RF transparency, biocompatibility, autoclave sterilization
-- **Mechanical:** tensile strength, elastic modulus, elongation, impact strength, Shore hardness
-- **Environmental:** service temperature (HDT), chemical resistance, UV/outdoor
-- **Geometry:** max part size, **smallest feature / min wall thickness**, accuracy/tolerance, surface finish (Ra)
-- **Manufacturing:** quantity, cost vs performance priority, available printers
+| Step | Topic | Option buttons |
+|---|---|---|
+| 0 | Application type | Visual prototype / Functional prototype / Manufacturing aid / End-use part |
+| 1 | Part description | Free text |
+| 2 | Functional requirements | None / Optical transparency / ESD / Biocompatibility |
+| 3 | Mechanical requirements | None / High tensile / Impact rigid / Flexible elastic |
+| 4 | Environmental requirements | None / High temp / Chemical resistance / UV outdoor |
+| 5 | Geometry & size | 6 size categories (see below) |
+| 6 | Manufacturing context | 1–5 prototypes / Small batch / Cost priority / Performance priority |
 
-### Stage 2 — Screening
-Filter out materials that fail hard constraints (functional flags, HDT, build volume).
+**Geometry step size categories (step 5):**
 
-### Stage 3 — Ranking
-Score remaining materials by fit. Return top 3 with compatible printers.
+| Label | Max dimension | Engineering analogy |
+|---|---|---|
+| Miniature | ≤10 mm | Drill bit |
+| Small | ≤50 mm | Socket |
+| Medium | ≤100 mm | Hammer head |
+| Large | ≤200 mm | C-clamp |
+| Very Large | ≤300 mm | Screwdriver |
+| Huge | ≤500 mm | Welding torch |
 
-### Stage 4 — Supporting information
-Rationale, risks, expert note.
+### Step 7 — Analysis (Ashby screening & ranking)
+- After step 6, goes directly to formatted report (no intermediate text bubble)
+- Claude returns JSON → parsed → rendered as styled report with 4 tabs
+- `sanitizeJSONString()` escapes literal newlines before `JSON.parse` (fixes Hebrew mode errors)
+
+### Step 8 — Feedback loop
+- Quick refinement buttons (6 presets) + custom textarea
+- Thread-style: refined reports appear below, old reports stay visible
+- Each report iteration has a unique DOM id `report-iter-N`
+- Tab switching scoped to `btn.closest(".report-box")` to avoid cross-report interference
+
+### Step 9 — Approved / Final report
+- On approval: `doApprove()` → shows export options + triggers `sendEmailReport()`
 
 ---
 
+## Report panel tabs
+1. **Overview** — 3 material cards with key properties + shop link button if available
+2. **Comparison** — full property table with visual bar charts
+3. **Equipment** — printer cards with build volume, resolution, accuracy
+4. **Risks** — risk items (high/medium/low) + expert note + next steps
+
+Shop links: 27 Formlabs materials have `link` field → shows `🛒 Buy at Systematics` button on material card.
+
 ---
 
-## Agent domain knowledge rules
-
-These rules are injected into the Claude system prompt on every API call (`buildSystem()` in `index.html`).
-To add or modify a rule, update the `=== DOMAIN KNOWLEDGE ===` section inside `buildSystem()` **and** update this file.
-
----
+## Agent domain knowledge rules (in `buildSystem()`)
 
 ### Rule 1 — Medical / Biocompatibility → BioMed materials
-
-**Trigger:** user mentions medical devices, surgical tools, patient contact, dental, implants, sterile environments, or biocompatibility.
-
-**Agent behavior:**
-- Prioritize Formlabs BioMed materials: BioMed Clear, BioMed White, BioMed Black, BioMed Amber, BioMed Durable, BioMed Elastic, BioMed Flex 80A
-- These are certified to ISO 10993 / USP Class VI
-- Require **Form 4B** or **Form 4BL** printer
-- Always ask whether autoclave sterilization is needed (all BioMed materials support it)
-
----
+**Trigger:** medical devices, surgical tools, patient contact, dental, implants, biocompatibility.
+- Prioritize: BioMed Clear, White, Black, Amber, Durable, Elastic, Flex 80A
+- Certified: ISO 10993 / USP Class VI
+- Require: Form 4B or Form 4BL printer
+- Always ask about autoclave sterilization
 
 ### Rule 2 — High toughness / impact resistance → probe rigid vs. flexible
-
-**Trigger:** user mentions high toughness, impact resistance, drop tests, shock loads, or durable flexible parts.
-
-**Agent behavior:**
-- Ask whether **rigid high-strength** or **flexible energy-absorbing** behavior is preferred — these lead to very different material families
-- **Rigid high-toughness candidates:** Markforged Onyx, continuous fiber composites, HP PA 11, Formlabs Tough 2000, Tough 1500
-- **Flexible energy-absorbing candidates:** Formlabs TPU 90A (SLS), Formlabs Flexible 80A, Formlabs Elastic 50A, Formlabs Silicone 40A, HP TPU, Markforged TPU
-- If flexible is acceptable: probe elastic modulus range and Shore hardness to select the right grade
-
----
+**Trigger:** high toughness, impact resistance, drop tests, shock loads.
+- Ask: rigid stiffness OR flexible energy-absorption?
+- Rigid: Markforged Onyx/fiber, HP PA 11, Tough 2000, Tough 1500
+- Flexible: TPU 90A (SLS), Flexible 80A, Elastic 50A, Silicone 40A, HP TPU, Markforged TPU
 
 ### Rule 3 — Smallest feature size → technology gate
-
-**Trigger:** always — asked during the geometry step alongside max part size.
-
-**Agent behavior:**
-- Always ask for the smallest feature or minimum wall thickness in the design
-- Apply this technology gate in screening:
+**Trigger:** always — asked during geometry step.
 
 | Smallest feature | Allowed technologies |
 |---|---|
-| < 0.5 mm | SLA/LFD only (Formlabs Form 4 family) |
-| 0.5 – 1 mm | SLA/LFD preferred; SLS (Fuse1+) acceptable |
-| 1 – 2 mm | SLA, SLS, or MJF all suitable |
-| > 2 mm | Any technology; FDM/FFF (Markforged, Snapemaker) viable |
+| < 0.5 mm | SLA/LFD only (Form 4 family) |
+| 0.5–1 mm | SLA/LFD preferred; SLS acceptable |
+| 1–2 mm | SLA, SLS, or MJF |
+| > 2 mm | Any; FDM/FFF also viable |
 
-- **FDM/FFF must not be recommended when smallest feature < 1 mm**
+FDM/FFF must not be recommended when smallest feature < 1 mm.
+
+### Rule 4 — General notes (`gn` field)
+- Always read the `gn` field for each candidate material
+- Reference relevant notes explicitly in rationale and summary
+- Treat warnings (e.g. "NOT suitable for impact") as hard constraints
 
 ---
 
-## Feedback loop
-After initial analysis, user can:
-- Click a quick refinement button (6 preset options)
-- Type a custom refinement
-- Approve the result
+## Bilingual support (Hebrew / English)
 
-On refinement → re-run full Ashby analysis with updated requirements.
-Iteration counter increments each time. Report shows "Updated" badge on revised analyses.
+- Language toggle in ⚙ Settings modal (was top-bar button, moved to Settings in v1.16)
+- Stored in `localStorage("am_lang")`; default: `"en"`
+- Full `LANG` object with `en` and `he` keys; `t(key)` helper for all UI strings
+- RTL layout via `[dir=rtl]` CSS selectors on `document.documentElement`
+- Hebrew mode: Claude responds in Hebrew for conversation, returns JSON with Hebrew string values
+- `sanitizeJSONString()` prevents Hebrew unescaped-newline JSON parse errors
 
-On approval → offer PDF export via `window.print()`.
+---
+
+## Email report feature
+
+Sends a summary email automatically when the user approves a run.
+
+**Service:** EmailJS (free tier — 200 emails/month)  
+**Trigger:** `doApprove()` → calls `sendEmailReport()`  
+**Silent skip** if email not configured.
+
+**Configuration** (in ⚙ Settings → "Email Report" section):
+- Recipient email
+- EmailJS Service ID
+- EmailJS Template ID
+- EmailJS Public Key
+
+**EmailJS template** must have `{{subject}}` as subject and `{{body}}` in the body.
+
+**Email content:**
+- Run date, iteration count
+- All collected requirements
+- Top 3 recommended materials + rationale
+- Professional note + next steps
+- Token counts (input / output / total) + estimated USD cost
+
+---
+
+## Token tracking & cost
+
+Variables: `totalInputTokens`, `totalOutputTokens` — accumulated in `callClaude()` from `d.usage`.  
+Reset in `clearSession()`.
+
+`calcRunCost()` — estimates at claude-sonnet-4 rates: $3/1M input, $15/1M output.
+
+**Current cost per run: ~$0.20**  
+Root cause: `buildSystem()` includes the full MAT+PRN DB (~7,000 tokens) and is sent on every API call (×8 calls = ~56,000 input tokens just from system prompts).
+
+**Planned fix (not yet implemented):** split `buildSystem()` into:
+- `buildSystemChat()` — no DB, for steps 0–6 conversational questions
+- `buildSystemFull()` — with DB, for `runAnalysis()` only  
+Expected saving: ~50% (~$0.10/run).
 
 ---
 
 ## UI structure
-- **Left sidebar:** Ashby step tracker (10 steps, completed steps 0–6 are clickable to jump back and edit), iteration badge, Export PDF button, New Run button, Settings button
-- **Top bar:** title, tech pills (SLA/DLP · SLS · MJF · FFF+CFR)
-- **Message area:** chat bubbles (agent + user), report panel, feedback panel
-- **Input area:** textarea + send button
 
-### Report panel tabs
-1. **Overview** — 3 material cards with key properties
-2. **Comparison** — full property table with visual bar charts
-3. **Equipment** — printer cards with build volume, resolution, accuracy
-4. **Risks** — risk items (high/medium/low) + expert note
+- **Left sidebar:** "Process Steps" label (EN) / "שלבי התהליך" (HE), step tracker (10 steps), iteration badge, Export PDF, New Run, Settings
+- **Top bar:** title, tech pills (SLA/DLP · SLS · MJF · FFF+CFR)
+- **Message area:** chat bubbles, report panels (thread-style — accumulated), feedback panel
+- **Input area:** textarea + send button + multi-select option buttons
+
+### Settings modal sections
+1. Interface Language (EN / HE toggle)
+2. API Key (current masked + change field)
+3. Email Report (recipient + EmailJS credentials + Save/Test buttons)
 
 ---
 
 ## Design system
-- Light grey theme: background `#eef0f4`, surface `#ffffff`
+- Light theme: background `#eef0f4`, surface `#ffffff`
 - Font: DM Sans (body) + DM Mono (numbers/code)
-- Accent colors: blue `#2563eb`, cyan `#0891b2`, green `#059669`, amber `#d97706`, red `#dc2626`
+- Accent: blue `#2563eb`, cyan `#0891b2`, green `#059669`, amber `#d97706`, red `#dc2626`
 - Rank colors: green (1st), blue (2nd), purple (3rd)
 - Technology colors: purple=SLA, amber=SLS, cyan=MJF, green=CFR, slate=FDM
 
 ---
 
-## Known issues / things to improve
-- Materials DB is hardcoded in JS — updating requires editing the array manually
-- PDF export uses browser print (basic) — could be improved with a proper PDF library
-- No user authentication — anyone with an API key can use it
-- No session persistence — refreshing the page resets everything
+## How to update materials from CSV
 
----
+The `MAT` array is hardcoded in `index.html`. When the CSV is updated:
+1. Edit `AM-Materials-DB.csv`
+2. Run a Node.js sync script to update the relevant fields in the `MAT` array
+3. For shop links specifically: match `Shop_Link` column (col 28) to `MAT[].n` by material name
 
-## How to add/update materials
-Find the `MAT` array in `index.html` and add a new object following the schema above.
-Example — adding a new Formlabs resin:
-```js
-{n:"New Material V1", v:"Formlabs", f:"resin", p:"SLA/DLP",
- transp:"no", esd:"no", fr:"yes", fs:"no", bio:"no",
- hdt:85, ts:55, em:3.2, el:8, imp:20, cost:750, std:"UL94 V0"}
-```
+Fields in MAT that come from CSV: all properties + `gn` (general_notes col 19) + `link` (Shop_Link col 28).
 
 ---
 
 ## Git / deployment
-- Repository: GitHub
+- Repository: `github.com/guyaros/am-application-specialist`
 - Hosting: GitHub Pages (static, single file)
-- Branch: main
-- No build step — push `index.html` and it's live
+- Branch: `main`
+- No build step — push `index.html` and it's live within ~1 minute
