@@ -435,7 +435,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div id="main">
     <div id="topbar">
       <div>
-        <div class="topbar-title">Systematics AM Application Specialist</div>
+        <div class="topbar-title">Systematics Additive Manufacturing Application Specialist</div>
         <div class="topbar-sub">Ashby Methodology · 51 materials · 13 printers</div>
       </div>
       <div class="tech-pills">
@@ -455,7 +455,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.7";
+const VERSION="v1.8";
 const REL_DATE="May 2026";
 
 // ── DATABASES ──────────────────────────────────────────────────────────────
@@ -555,11 +555,11 @@ let msgId=0, stepHistory=[];
 const STEP_Q=[
   {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
   {q:"Please describe the part — what does it do and what is its purpose?"},
-  {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)"},
-  {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)"},
-  {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)"},
+  {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)",opts:["None / general use","Optical transparency","ESD / electrical","Biocompatibility (medical)"]},
+  {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
+  {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
   {q:"Geometry requirements: what is the maximum part size (X×Y×Z mm), and what is the smallest feature or minimum wall thickness in the design? (features < 1 mm rule out FDM technologies)"},
-  {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)"},
+  {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:["1–5 prototypes","Small batch (10–50 units)","Cost priority","Performance priority"]},
 ];
 
 // ── API KEY ────────────────────────────────────────────────────────────────
@@ -673,7 +673,7 @@ function jumpToStep(n){
   const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
   keys.slice(n).forEach(k=>delete reqs[k]);
   // remove report and feedback from DOM
-  document.getElementById("reportEl")?.remove();
+  document.querySelectorAll(".report-wrap").forEach(el=>el.remove());
   document.getElementById("fbPanel")?.remove();
   document.getElementById("loadingEl")?.remove();
   // reset state
@@ -797,9 +797,8 @@ async function runAnalysis(feedbackNote="") {
 let activeTab="overview";
 
 function renderReport() {
-  document.getElementById("reportEl")?.remove();
   const wrap=document.createElement("div");
-  wrap.className="report-wrap"; wrap.id="reportEl";
+  wrap.className="report-wrap"; wrap.id="report-iter-"+iteration;
   wrap.innerHTML=`<div class="report-box">
     <div class="report-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -1022,7 +1021,7 @@ async function sendMsg(override) {
     try{
       const resp=await callClaude([...history,{role:"user",content:prompts[step]}]);
       history.push({role:"assistant",content:resp});
-      setLoading(false); addAgent(resp);
+      setLoading(false); addAgent(resp, STEP_Q[step+1]?.opts);
       const ns=step+1; step=ns; renderSteps();
       if(ns===7){ await runAnalysis(); return; }
     } catch(e){ setLoading(false); addAgent("Error: "+e.message); }
