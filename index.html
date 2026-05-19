@@ -945,9 +945,10 @@ function renderReport() {
 
 function switchTab(id,btn) {
   activeTab=id;
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  const box=btn.closest(".report-box");
+  box.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
   btn.classList.add("active");
-  document.getElementById("tabBody").innerHTML=buildTab(id);
+  box.querySelector(".tab-body").innerHTML=buildTab(id);
 }
 
 function buildTab(id) {
