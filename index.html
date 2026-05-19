@@ -860,7 +860,7 @@ function selOpt(btn,opt,id){
 function buildSystem() {
   return `You are AM Application Specialist — an expert advisor for 3D printing material and technology selection using the Ashby methodology (Materials Selection in Mechanical Design).
 Ask one focused question at a time. Use only data from the databases. Be concise and engineering-focused.
-${lang==="he"?"IMPORTANT: You must respond ONLY in Hebrew (עברית). All your responses, questions, and analysis must be in Hebrew.\n":""}
+${lang==="he"?"IMPORTANT: Respond in Hebrew (עברית) for all conversational messages and questions. When asked to return JSON, return ONLY valid JSON with no text before or after it — write all string values (summary, rationale, professional_note, next_steps, risks text) in Hebrew inside the JSON.\n":""}
 
 === DOMAIN KNOWLEDGE — APPLY THESE RULES IN EVERY ANALYSIS ===
 
