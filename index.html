@@ -358,8 +358,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 [dir=rtl] .bubble.user{border-radius:3px 12px 12px 12px}
 [dir=rtl] .report-wrap,[dir=rtl] .fb-panel{margin-left:0;margin-right:37px}
 [dir=rtl] .step-edit-icon{margin-left:0;margin-right:auto}
-#langBtn{font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--surface3);color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s}
-#langBtn:hover{border-color:var(--blue);color:var(--blue)}
 
 @media print{#sidebar,#topbar,#inputArea,.fb-panel{display:none!important}#main{height:auto}#messages{overflow:visible}}
 </style>
@@ -396,12 +394,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 <!-- SETTINGS MODAL -->
 <div id="settingsModal" onclick="if(event.target===this)closeSettings()">
   <div class="settings-card">
-    <div class="settings-title">Settings</div>
-    <div class="settings-sub">Manage your API key and preferences.</div>
+    <div id="settingsTitle" class="settings-title">Settings</div>
+    <div id="settingsSub" class="settings-sub">Manage your API key and preferences.</div>
     <div class="settings-section">
-      <label class="settings-label">Current API Key</label>
+      <label class="settings-label" id="settingsLangLabel">Interface Language</label>
+      <div class="settings-row">
+        <button class="sidebar-btn" id="langEnBtn" onclick="setLang('en')" style="flex:1">🇺🇸 English</button>
+        <button class="sidebar-btn" id="langHeBtn" onclick="setLang('he')" style="flex:1">🇮🇱 עברית</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <label class="settings-label" id="settingsCurKeyLabel">Current API Key</label>
       <div class="settings-current" id="settingsCurrentKey">—</div>
-      <label class="settings-label">Change API Key</label>
+      <label class="settings-label" id="settingsChgKeyLabel">Change API Key</label>
       <div class="settings-row">
         <input class="key-input" type="password" id="settingsKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" style="flex:1"/>
         <button class="key-btn" id="settingsSaveBtn" onclick="saveSettingsKey()" style="width:auto;margin-top:0;padding:11px 16px;font-size:13px;">Save</button>
@@ -409,8 +414,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div class="key-err" id="settingsErr" style="margin-top:6px;"></div>
     </div>
     <div class="settings-footer">
-      <button class="btn-danger" onclick="removeKey()">Remove saved key</button>
-      <button class="btn-close-settings" onclick="closeSettings()">Close</button>
+      <button class="btn-danger" id="settingsRemoveKeyBtn" onclick="removeKey()">Remove saved key</button>
+      <button class="btn-close-settings" id="settingsCloseBtn" onclick="closeSettings()">Close</button>
     </div>
   </div>
 </div>
@@ -453,7 +458,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 51 materials · 13 printers</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <button id="langBtn" onclick="setLang(document.documentElement.lang==='en'?'he':'en')">עברית</button>
         <div class="tech-pills">
           <span class="tech-pill">SLA/DLP</span>
           <span class="tech-pill">SLS</span>
@@ -484,7 +488,9 @@ en:{
   topbarSub:"Ashby Methodology · 51 materials · 13 printers",
   inputPlaceholder:"Type your answer...",sendBtn:"Send",
   exportBtn:"⬇ Export PDF",newRunBtn:"↺ New Run",settingsBtn:"⚙ Settings",
-  langBtnLabel:"עברית",
+  settingsTitle:"Settings",settingsSub:"Manage your API key and preferences.",
+  settingsLangLabel:"Interface Language",settingsCurKeyLabel:"Current API Key",settingsChgKeyLabel:"Change API Key",
+  settingsRemoveKeyBtn:"Remove saved key",settingsCloseBtn:"Close",
   stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report"],
   processing:"Processing...",awaitingFeedback:"Awaiting feedback",approvedStatus:"Approved ✓",completeStatus:"Complete ✅",iterLabel:"Iteration #",
   greeting:"Hello! I'm your AM Application Specialist.\nI'll guide you through selecting the optimal 3D printing material and technology using the Ashby methodology.\n\nLet's start — what is the application type?",
@@ -523,7 +529,9 @@ he:{
   topbarSub:"מתודולוגיית אשבי · 51 חומרים · 13 מדפסות",
   inputPlaceholder:"הקלד את תשובתך...",sendBtn:"שלח",
   exportBtn:"⬇ ייצוא PDF",newRunBtn:"↺ הפעלה חדשה",settingsBtn:"⚙ הגדרות",
-  langBtnLabel:"English",
+  settingsTitle:"הגדרות",settingsSub:"ניהול מפתח API והעדפות.",
+  settingsLangLabel:"שפת ממשק",settingsCurKeyLabel:"מפתח API נוכחי",settingsChgKeyLabel:"שינוי מפתח API",
+  settingsRemoveKeyBtn:"הסר מפתח",settingsCloseBtn:"סגור",
   stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","סביבה","גאומטריה","ייצור","ניתוח","לולאת שיפור","דוח סופי"],
   processing:"מעבד...",awaitingFeedback:"ממתין למשוב",approvedStatus:"מאושר ✓",completeStatus:"הושלם ✅",iterLabel:"איטרציה #",
   greeting:"שלום! אני יועץ הדפסה תלת-ממדית של Systematics.\nאדריך אותך בבחירת החומר והטכנולוגיה המיטביים לפי מתודולוגיית אשבי.\n\nנתחיל — מהו סוג היישום?",
@@ -571,7 +579,19 @@ function applyLang(){
   document.getElementById("exportBtn").textContent=L.exportBtn;
   document.getElementById("newRunBtn").textContent=L.newRunBtn;
   document.getElementById("settingsBtn").textContent=L.settingsBtn;
-  document.getElementById("langBtn").textContent=L.langBtnLabel;
+  document.getElementById("settingsTitle").textContent=L.settingsTitle;
+  document.getElementById("settingsSub").textContent=L.settingsSub;
+  document.getElementById("settingsLangLabel").textContent=L.settingsLangLabel;
+  document.getElementById("settingsCurKeyLabel").textContent=L.settingsCurKeyLabel;
+  document.getElementById("settingsChgKeyLabel").textContent=L.settingsChgKeyLabel;
+  document.getElementById("settingsRemoveKeyBtn").textContent=L.settingsRemoveKeyBtn;
+  document.getElementById("settingsCloseBtn").textContent=L.settingsCloseBtn;
+  document.getElementById("langEnBtn").style.background=lang==="en"?"var(--blue)":"";
+  document.getElementById("langEnBtn").style.color=lang==="en"?"#fff":"";
+  document.getElementById("langEnBtn").style.borderColor=lang==="en"?"var(--blue)":"";
+  document.getElementById("langHeBtn").style.background=lang==="he"?"var(--blue)":"";
+  document.getElementById("langHeBtn").style.color=lang==="he"?"#fff":"";
+  document.getElementById("langHeBtn").style.borderColor=lang==="he"?"var(--blue)":"";
 }
 function setLang(l){
   if(l===lang) return;
