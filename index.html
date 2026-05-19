@@ -347,6 +347,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── RTL (Hebrew) ── */
+[dir=rtl] #app{flex-direction:row-reverse}
+[dir=rtl] #sidebar{border-right:none;border-left:1px solid var(--border);box-shadow:-2px 0 8px rgba(0,0,0,.04)}
+[dir=rtl] .msg.agent{align-self:flex-end}
+[dir=rtl] .msg.user{align-self:flex-start;flex-direction:row}
+[dir=rtl] .bubble{border-radius:12px 3px 12px 12px}
+[dir=rtl] .bubble.user{border-radius:3px 12px 12px 12px}
+[dir=rtl] .report-wrap,[dir=rtl] .fb-panel{margin-left:0;margin-right:37px}
+[dir=rtl] .step-edit-icon{margin-left:0;margin-right:auto}
+#langBtn{font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--surface3);color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s}
+#langBtn:hover{border-color:var(--blue);color:var(--blue)}
+
 @media print{#sidebar,#topbar,#inputArea,.fb-panel{display:none!important}#main{height:auto}#messages{overflow:visible}}
 </style>
 </head>
@@ -408,11 +420,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div class="sidebar-top">
       <div class="logo">
         <div class="logo-mark">AM</div>
-        <div><div class="logo-text">Application<br/>Specialist</div></div>
+        <div><div class="logo-text" id="logoTextEl">Application<br/>Specialist</div></div>
       </div>
     </div>
     <div class="steps-wrap">
-      <div class="steps-label">Ashby Steps</div>
+      <div class="steps-label" id="stepsLabelEl">Ashby Steps</div>
       <div id="stepsContainer"></div>
     </div>
     <div class="iter-chip" id="iterChip">
@@ -420,9 +432,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div style="font-size:10px;color:var(--text3);margin-top:1px" id="iterStatus">Processing...</div>
     </div>
     <div class="sidebar-bottom">
-      <button class="sidebar-btn" onclick="exportPDF()">⬇ Export PDF</button>
-      <button class="sidebar-btn" onclick="clearSession()" style="border-color:rgba(220,38,38,.3);color:#dc2626;" onmouseover="this.style.background='rgba(220,38,38,.06)'" onmouseout="this.style.background='transparent'">↺ New Run</button>
-      <button class="sidebar-btn" onclick="openSettings()">⚙ Settings</button>
+      <button class="sidebar-btn" id="exportBtn" onclick="exportPDF()">⬇ Export PDF</button>
+      <button class="sidebar-btn" id="newRunBtn" onclick="clearSession()" style="border-color:rgba(220,38,38,.3);color:#dc2626;" onmouseover="this.style.background='rgba(220,38,38,.06)'" onmouseout="this.style.background='transparent'">↺ New Run</button>
+      <button class="sidebar-btn" id="settingsBtn" onclick="openSettings()">⚙ Settings</button>
     </div>
     <div class="branding">
       <div class="branding-company">Systematics</div>
@@ -435,20 +447,24 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div id="main">
     <div id="topbar">
       <div>
-        <div class="topbar-title">Systematics Additive Manufacturing Application Specialist</div>
-        <div class="topbar-sub">Ashby Methodology · 51 materials · 13 printers</div>
+        <div class="topbar-title" id="topbarTitleEl">Systematics Additive Manufacturing Application Specialist</div>
+        <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 51 materials · 13 printers</div>
       </div>
-      <div class="tech-pills">
-        <span class="tech-pill">SLA/DLP</span>
-        <span class="tech-pill">SLS</span>
-        <span class="tech-pill">MJF</span>
-        <span class="tech-pill">FFF+CFR</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="langBtn" onclick="setLang(lang==='en'?'he':'en')">עברית</button>
+        <div class="tech-pills">
+          <span class="tech-pill">SLA/DLP</span>
+          <span class="tech-pill">SLS</span>
+          <span class="tech-pill">MJF</span>
+          <span class="tech-pill">FFF+CFR</span>
+        </div>
       </div>
     </div>
     <div id="messages"></div>
     <div id="inputArea">
       <textarea id="inputBox" placeholder="Type your answer..." rows="1" onkeydown="handleKey(event)"></textarea>
       <button id="sendBtn" onclick="sendMsg()">Send</button>
+
     </div>
   </div>
 </div>
@@ -457,6 +473,114 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 // ── VERSION ────────────────────────────────────────────────────────────────
 const VERSION="v1.8";
 const REL_DATE="May 2026";
+
+// ── LANGUAGE ───────────────────────────────────────────────────────────────
+const LANG={
+en:{
+  logoText:"Application<br/>Specialist",stepsLabel:"Ashby Steps",
+  topbarTitle:"Systematics Additive Manufacturing Application Specialist",
+  topbarSub:"Ashby Methodology · 51 materials · 13 printers",
+  inputPlaceholder:"Type your answer...",sendBtn:"Send",
+  exportBtn:"⬇ Export PDF",newRunBtn:"↺ New Run",settingsBtn:"⚙ Settings",
+  langBtnLabel:"עברית",
+  stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report"],
+  processing:"Processing...",awaitingFeedback:"Awaiting feedback",approvedStatus:"Approved ✓",completeStatus:"Complete ✅",iterLabel:"Iteration #",
+  greeting:"Hello! I'm your AM Application Specialist.\nI'll guide you through selecting the optimal 3D printing material and technology using the Ashby methodology.\n\nLet's start — what is the application type?",
+  stepQ:[
+    {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
+    {q:"Please describe the part — what does it do and what is its purpose?"},
+    {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)",opts:["None / general use","Optical transparency","ESD / electrical","Biocompatibility (medical)"]},
+    {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
+    {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
+    {q:"Geometry requirements: what is the maximum part size (X×Y×Z mm), and what is the smallest feature or minimum wall thickness in the design? (features < 1 mm rule out FDM technologies)"},
+    {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:["1–5 prototypes","Small batch (10–50 units)","Cost priority","Performance priority"]},
+  ],
+  thankMsg:"Thank you! Running Ashby analysis now...",
+  fbTitle:"Refinement Loop — Ashby Step 4",fbSub:"Does this meet your requirements? Refine or approve for final report.",
+  quickFeedback:["Higher mechanical requirements","Better temperature resistance","Cost is priority","Medical/biocompatibility needed","Outdoor UV resistance","Higher accuracy needed"],
+  fbPlaceholder:"Custom refinement...",refineBtn:"Refine ↻",approveBtn:"✓ Approve",
+  refiningMsg:"Refining analysis... ⟳",loadingMsg:"Running Ashby screening & ranking...",
+  approvedMsg:"Analysis approved ✓\n\nWould you like to export the professional PDF report?",
+  exportOpts:["Export PDF Report","Not now"],
+  exportingMsg:"Opening PDF report... ✅",
+  exportDoneMsg:"Done! You can export anytime using the Export PDF button in the sidebar.",
+  editingLabel:"↩ Editing:",
+  initialAnalysis:"Initial Analysis",revised:"Revised #",amSpec:"AM Application Specialist",updatedTag:"Updated",
+  tabs:["Overview","Comparison","Equipment","Risks"],
+  rcLabels:["#1 Recommended","#2 Alternative A","#3 Alternative B"],
+  volLbl:"Volume",resLbl:"XY Res.",accLbl:"Accuracy",
+  riskHigh:"HIGH RISK",riskMed:"NOTE",riskLow:"ADVANTAGE",proNoteLbl:"Expert Note",
+  confirmNewRun:"Start a new run? This will clear the current session.",
+  confirmRemoveKey:"Remove saved API key? You will need to enter it again on next visit.",
+  keyUpdated:"API key updated successfully ✓",
+  langSwitch:"Switch to Hebrew? A new session will start.",
+},
+he:{
+  logoText:"יועץ<br/>יישומים",stepsLabel:"שלבי אשבי",
+  topbarTitle:"יועץ הדפסה תלת-ממדית — Systematics",
+  topbarSub:"מתודולוגיית אשבי · 51 חומרים · 13 מדפסות",
+  inputPlaceholder:"הקלד את תשובתך...",sendBtn:"שלח",
+  exportBtn:"⬇ ייצוא PDF",newRunBtn:"↺ הפעלה חדשה",settingsBtn:"⚙ הגדרות",
+  langBtnLabel:"English",
+  stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","סביבה","גאומטריה","ייצור","ניתוח","לולאת שיפור","דוח סופי"],
+  processing:"מעבד...",awaitingFeedback:"ממתין למשוב",approvedStatus:"מאושר ✓",completeStatus:"הושלם ✅",iterLabel:"איטרציה #",
+  greeting:"שלום! אני יועץ הדפסה תלת-ממדית של Systematics.\nאדריך אותך בבחירת החומר והטכנולוגיה המיטביים לפי מתודולוגיית אשבי.\n\nנתחיל — מהו סוג היישום?",
+  stepQ:[
+    {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי","אב-טיפוס פונקציונלי","עזר ייצור (jig/fixture)","חלק לשימוש סופי"]},
+    {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
+    {q:"האם יש דרישות פונקציונליות? (שקיפות אופטית, ESD, עמידות אש, איטום נוזלים, ביו-תאימות — לשימושים רפואיים זמינים חומרי BioMed)",opts:["ללא / שימוש כללי","שקיפות אופטית","ESD / חשמלי","ביו-תאימות (רפואי)"]},
+    {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה / קשיחות גבוהה","עמידות בפגיעה (קשיח)","גמיש / אלסטי (בולם אנרגיה)"]},
+    {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:["ללא דרישות מיוחדות","טמפרטורה גבוהה (>80°C)","עמידות בכימיקלים","חשיפת UV / שימוש חיצוני"]},
+    {q:"גאומטריה: גודל החלק המרבי (X×Y×Z מ\"מ), ופיצ'ר קטן ביותר / עובי דופן מינימלי? (פיצ'רים < 1 מ\"מ שוללים FDM)"},
+    {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:["1–5 אב-טיפוסים","אצווה קטנה (10–50 יחידות)","עדיפות לעלות","עדיפות לביצועים"]},
+  ],
+  thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
+  fbTitle:"לולאת שיפור — שלב 4 אשבי",fbSub:"האם זה עונה על דרישותיך? שפר או אשר לדוח הסופי.",
+  quickFeedback:["דרישות מכניות גבוהות יותר","עמידות טמפרטורה גבוהה יותר","עלות היא עדיפות","נדרשת ביו-תאימות רפואית","עמידות UV חיצונית","דיוק גבוה יותר"],
+  fbPlaceholder:"שיפור מותאם אישית...",refineBtn:"שפר ↻",approveBtn:"✓ אשר",
+  refiningMsg:"מעדכן ניתוח... ⟳",loadingMsg:"מריץ סינון ודירוג אשבי...",
+  approvedMsg:"הניתוח אושר ✓\n\nהאם תרצה לייצא את הדוח המקצועי?",
+  exportOpts:["ייצוא דוח PDF","לא עכשיו"],
+  exportingMsg:"פותח דוח PDF... ✅",
+  exportDoneMsg:"סיים! ניתן לייצא בכל עת דרך כפתור ייצוא PDF.",
+  editingLabel:"↩ עריכה:",
+  initialAnalysis:"ניתוח ראשוני",revised:"מתוקן #",amSpec:"יועץ הדפסה תלת-ממדית",updatedTag:"מעודכן",
+  tabs:["סקירה","השוואה","ציוד","סיכונים"],
+  rcLabels:["#1 מומלץ","#2 חלופה א","#3 חלופה ב"],
+  volLbl:"נפח",resLbl:"רזולוציה",accLbl:"דיוק",
+  riskHigh:"סיכון גבוה",riskMed:"הערה",riskLow:"יתרון",proNoteLbl:"הערה מקצועית",
+  confirmNewRun:"להתחיל הפעלה חדשה? הסשן הנוכחי יימחק.",
+  confirmRemoveKey:"להסיר את מפתח ה-API השמור? תצטרך להזינו מחדש.",
+  keyUpdated:"מפתח API עודכן בהצלחה ✓",
+  langSwitch:"Switch to English? A new session will start.",
+},};
+function t(k){return LANG[lang][k]??LANG.en[k]??k;}
+function getStepQ(){return LANG[lang].stepQ;}
+function applyLang(){
+  const L=LANG[lang];
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==="he"?"rtl":"ltr";
+  document.getElementById("logoTextEl").innerHTML=L.logoText;
+  document.getElementById("stepsLabelEl").textContent=L.stepsLabel;
+  document.getElementById("topbarTitleEl").textContent=L.topbarTitle;
+  document.getElementById("topbarSubEl").textContent=L.topbarSub;
+  document.getElementById("inputBox").placeholder=L.inputPlaceholder;
+  document.getElementById("sendBtn").textContent=L.sendBtn;
+  document.getElementById("exportBtn").textContent=L.exportBtn;
+  document.getElementById("newRunBtn").textContent=L.newRunBtn;
+  document.getElementById("settingsBtn").textContent=L.settingsBtn;
+  document.getElementById("langBtn").textContent=L.langBtnLabel;
+}
+function setLang(l){
+  if(l===lang) return;
+  if(!confirm(LANG[l].langSwitch)) return;
+  lang=l; localStorage.setItem("am_lang",l);
+  applyLang();
+  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];
+  document.getElementById("messages").innerHTML="";
+  document.getElementById("iterChip").classList.remove("visible");
+  renderSteps(); initAgent();
+}
 
 // ── DATABASES ──────────────────────────────────────────────────────────────
 const MAT = [
@@ -550,17 +674,7 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat";
-let msgId=0, stepHistory=[];
-
-const STEP_Q=[
-  {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
-  {q:"Please describe the part — what does it do and what is its purpose?"},
-  {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)",opts:["None / general use","Optical transparency","ESD / electrical","Biocompatibility (medical)"]},
-  {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
-  {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
-  {q:"Geometry requirements: what is the maximum part size (X×Y×Z mm), and what is the smallest feature or minimum wall thickness in the design? (features < 1 mm rule out FDM technologies)"},
-  {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:["1–5 prototypes","Small batch (10–50 units)","Cost priority","Performance priority"]},
-];
+let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"en";
 
 // ── API KEY ────────────────────────────────────────────────────────────────
 function startWithKey() {
@@ -586,7 +700,7 @@ function startWithKey() {
     localStorage.setItem("am_api_key",k);
     document.getElementById("keyScreen").style.display="none";
     document.getElementById("app").style.display="flex";
-    initAgent();
+    applyLang(); initAgent();
   }).catch(e=>{ errEl.textContent="Network error. Try again."; btn.disabled=false; btnText.textContent="Launch Agent →"; });
 }
 
@@ -602,7 +716,7 @@ function openSettings(){
 function closeSettings(){ document.getElementById("settingsModal").classList.remove("open"); }
 
 function removeKey(){
-  if(!confirm("Remove saved API key? You will need to enter it again on next visit.")) return;
+  if(!confirm(t("confirmRemoveKey"))) return;
   closeSettings();
   clearKey();
 }
@@ -623,12 +737,12 @@ function saveSettingsKey(){
     if(d.error){errEl.textContent="Invalid key: "+d.error.message; return;}
     apiKey=k; localStorage.setItem("am_api_key",k);
     closeSettings();
-    addAgent("API key updated successfully ✓");
+    addAgent(t("keyUpdated"));
   }).catch(()=>{btn.disabled=false; btn.textContent="Save"; errEl.textContent="Network error. Try again.";});
 }
 
 function clearSession(){
-  if(!confirm("Start a new run? This will clear the current session.")) return;
+  if(!confirm(t("confirmNewRun"))) return;
   step=0; reqs={}; history=[]; report=null; iteration=0; phase="chat"; msgId=0;
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
@@ -645,12 +759,12 @@ function initAgent() {
   document.getElementById("verLabel").textContent=verStr;
   document.getElementById("verLabelKey").textContent=verStr;
   renderSteps();
-  addAgent("Hello! I'm your AM Application Specialist.\nI'll guide you through selecting the optimal 3D printing material and technology using the Ashby methodology.\n\nLet's start — what is the application type?",
-    ["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]);
+  addAgent(t("greeting"), getStepQ()[0].opts);
 }
 
 // ── STEPS ──────────────────────────────────────────────────────────────────
 function renderSteps() {
+  const labels=LANG[lang].stepLabels;
   const c=document.getElementById("stepsContainer");
   c.innerHTML=STEPS_CFG.map(s=>{
     const active=step===s.id||(s.id===8&&phase==="feedback");
@@ -659,7 +773,7 @@ function renderSteps() {
     return`<div class="step${active?" active":""}${done?" done":""}${editable?" editable":""}"
       ${editable?`onclick="jumpToStep(${s.id})" title="Click to edit"`:""}>
       <div class="step-num">${done?"✓":s.id+1}</div>
-      <span class="step-lbl">${s.lbl}</span>
+      <span class="step-lbl">${labels[s.id]}</span>
       ${editable?`<span class="step-edit-icon">✎</span>`:""}
     </div>`;
   }).join("");
@@ -680,16 +794,16 @@ function jumpToStep(n){
   phase="chat"; step=n; report=null; iteration=0;
   renderSteps(); updateIterChip();
   // re-ask step question
-  const sq=STEP_Q[n];
-  addAgent(`↩ Editing: ${STEPS_CFG[n].lbl}\n\n${sq.q}`, sq.opts||null);
+  const sq=getStepQ()[n];
+  addAgent(`${t("editingLabel")} ${LANG[lang].stepLabels[n]}\n\n${sq.q}`, sq.opts||null);
 }
 
 function updateIterChip() {
   if(iteration<1) return;
   const c=document.getElementById("iterChip"); c.classList.add("visible");
-  document.getElementById("iterNum").textContent="Iteration #"+iteration;
+  document.getElementById("iterNum").textContent=t("iterLabel")+iteration;
   document.getElementById("iterStatus").textContent=
-    phase==="feedback"?"Awaiting feedback":phase==="approved"?"Approved ✓":phase==="done"?"Complete ✅":"Processing...";
+    phase==="feedback"?t("awaitingFeedback"):phase==="approved"?t("approvedStatus"):phase==="done"?t("completeStatus"):t("processing");
 }
 
 // ── MESSAGES ───────────────────────────────────────────────────────────────
@@ -732,15 +846,22 @@ function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 function esc2(s){ return String(s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
 
 function selOpt(btn,opt,id){
-  document.querySelectorAll(`#msg-${id} .opt`).forEach(b=>b.classList.remove("sel"));
-  btn.classList.add("sel");
-  sendMsg(opt);
+  btn.classList.toggle("sel");
+  const box=document.getElementById("inputBox");
+  if(btn.classList.contains("sel")){
+    const cur=box.value.trim();
+    box.value=cur?cur+", "+opt:opt;
+  } else {
+    box.value=box.value.split(", ").filter(p=>p!==opt).join(", ");
+  }
+  box.focus();
 }
 
 // ── CLAUDE API ─────────────────────────────────────────────────────────────
 function buildSystem() {
   return `You are AM Application Specialist — an expert advisor for 3D printing material and technology selection using the Ashby methodology (Materials Selection in Mechanical Design).
 Ask one focused question at a time. Use only data from the databases. Be concise and engineering-focused.
+${lang==="he"?"IMPORTANT: You must respond ONLY in Hebrew (עברית). All your responses, questions, and analysis must be in Hebrew.\n":""}
 
 === DOMAIN KNOWLEDGE — APPLY THESE RULES IN EVERY ANALYSIS ===
 
@@ -780,7 +901,7 @@ async function callClaude(messages) {
 
 // ── ANALYSIS ───────────────────────────────────────────────────────────────
 async function runAnalysis(feedbackNote="") {
-  setLoading(true,"Running Ashby screening & ranking...");
+  setLoading(true,t("loadingMsg"));
   const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
   const prompt = feedbackNote
     ? `User feedback: "${feedbackNote}". Refine analysis accordingly. Return JSON only:\n${spec}`
@@ -803,17 +924,14 @@ function renderReport() {
     <div class="report-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <div class="report-meta">${iteration>1?`✦ Revised #${iteration}`:"Initial Analysis"} · AM Application Specialist</div>
+          <div class="report-meta">${iteration>1?`✦ ${t("revised")}${iteration}`:t("initialAnalysis")} · ${t("amSpec")}</div>
           <div class="report-summary">${esc(report.summary||"")}</div>
         </div>
-        ${iteration>1?`<span class="updated-tag">Updated</span>`:""}
+        ${iteration>1?`<span class="updated-tag">${t("updatedTag")}</span>`:""}
       </div>
     </div>
     <div class="tabs">
-      <button class="tab ${activeTab==="overview"?"active":""}" onclick="switchTab('overview',this)">Overview</button>
-      <button class="tab ${activeTab==="compare"?"active":""}" onclick="switchTab('compare',this)">Comparison</button>
-      <button class="tab ${activeTab==="printers"?"active":""}" onclick="switchTab('printers',this)">Equipment</button>
-      <button class="tab ${activeTab==="risks"?"active":""}" onclick="switchTab('risks',this)">Risks</button>
+      ${t("tabs").map((lbl,i)=>{const ids=["overview","compare","printers","risks"];return`<button class="tab ${activeTab===ids[i]?"active":""}" onclick="switchTab('${ids[i]}',this)">${lbl}</button>`;}).join("")}
     </div>
     <div class="tab-body" id="tabBody">${buildTab(activeTab)}</div>
   </div>`;
@@ -842,7 +960,7 @@ function buildOverview() {
     return `<div class="mat-card" style="border:1.5px solid ${rc.border};">
       <div class="mat-card-top" style="background:${rc.border}20;border-bottom:1px solid ${rc.border}40;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span class="mat-card-rank" style="color:${rc.acc}">${rc.lbl}</span>
+          <span class="mat-card-rank" style="color:${rc.acc}">${t("rcLabels")[i]}</span>
           <span style="font-size:9px;color:var(--text3);font-family:var(--mono)">${m.vendor||""}</span>
         </div>
       </div>
@@ -887,9 +1005,9 @@ function buildPrinters() {
       </div>
       ${db?`<div class="printer-body">
         <div class="printer-stats">
-          <div class="printer-stat"><div class="printer-stat-lbl">Volume</div><div class="printer-stat-val">${db.bx}×${db.by}×${db.bz}</div></div>
-          <div class="printer-stat"><div class="printer-stat-lbl">XY Res.</div><div class="printer-stat-val">${db.res}µm</div></div>
-          <div class="printer-stat"><div class="printer-stat-lbl">Accuracy</div><div class="printer-stat-val">${db.acc}</div></div>
+          <div class="printer-stat"><div class="printer-stat-lbl">${t("volLbl")}</div><div class="printer-stat-val">${db.bx}×${db.by}×${db.bz}</div></div>
+          <div class="printer-stat"><div class="printer-stat-lbl">${t("resLbl")}</div><div class="printer-stat-val">${db.res}µm</div></div>
+          <div class="printer-stat"><div class="printer-stat-lbl">${t("accLbl")}</div><div class="printer-stat-val">${db.acc}</div></div>
         </div>
         ${p.note?`<div class="printer-note">${esc(p.note)}</div>`:""}
       </div>`:""}
@@ -898,10 +1016,10 @@ function buildPrinters() {
 }
 
 function buildRisks() {
-  const cfg={high:["rgba(239,68,68,.08)","#ef4444","⚠","HIGH RISK"],medium:["rgba(245,158,11,.08)","#f59e0b","ℹ","NOTE"],low:["rgba(16,185,129,.08)","#10b981","✓","ADVANTAGE"]};
+  const cfg={high:["rgba(239,68,68,.08)","#ef4444","⚠",t("riskHigh")],medium:["rgba(245,158,11,.08)","#f59e0b","ℹ",t("riskMed")],low:["rgba(16,185,129,.08)","#10b981","✓",t("riskLow")]};
   return `<div class="risks-list">
     ${(report.risks||[]).map(rk=>{const c=cfg[rk.level||"medium"];return`<div class="risk-item" style="background:${c[0]};border-left-color:${c[1]};"><span class="risk-icon">${c[2]}</span><div><div class="risk-level" style="color:${c[1]}">${c[3]}</div><div class="risk-text">${esc(rk.text)}</div></div></div>`;}).join("")}
-    ${report.professional_note?`<div class="pro-note"><div class="pro-note-lbl">Expert Note</div><div style="font-size:12.5px;color:var(--text);line-height:1.6">${esc(report.professional_note)}</div></div>`:""}
+    ${report.professional_note?`<div class="pro-note"><div class="pro-note-lbl">${t("proNoteLbl")}</div><div style="font-size:12.5px;color:var(--text);line-height:1.6">${esc(report.professional_note)}</div></div>`:""}
   </div>`;
 }
 
@@ -949,18 +1067,18 @@ function exportPDF() {
 function renderFeedback() {
   document.getElementById("fbPanel")?.remove();
   const panel=document.createElement("div"); panel.className="fb-panel"; panel.id="fbPanel";
-  const quick=["Higher mechanical requirements","Better temperature resistance","Cost is priority","Medical/biocompatibility needed","Outdoor UV resistance","Higher accuracy needed"];
+  const quick=t("quickFeedback");
   panel.innerHTML=`
     <div class="fb-header"><span class="fb-icon">🔄</span>
-      <div><div class="fb-title">Refinement Loop — Ashby Step 4</div>
-      <div class="fb-sub">Does this meet your requirements? Refine or approve for final report.</div></div>
+      <div><div class="fb-title">${t("fbTitle")}</div>
+      <div class="fb-sub">${t("fbSub")}</div></div>
     </div>
     <div class="quick-btns">${quick.map(q=>`<button class="quick-btn" onclick="doFeedback('${q}')">${q}</button>`).join("")}</div>
     <div class="fb-row">
-      <textarea class="fb-ta" id="customFb" rows="2" placeholder="Custom refinement..."></textarea>
+      <textarea class="fb-ta" id="customFb" rows="2" placeholder="${t("fbPlaceholder")}"></textarea>
       <div class="fb-actions">
-        <button class="btn-refine" id="refineBtn" onclick="doCustomFb()">Refine ↻</button>
-        <button class="btn-approve" onclick="doApprove()">✓ Approve</button>
+        <button class="btn-refine" id="refineBtn" onclick="doCustomFb()">${t("refineBtn")}</button>
+        <button class="btn-approve" onclick="doApprove()">${t("approveBtn")}</button>
       </div>
     </div>`;
   document.getElementById("messages").appendChild(panel);
@@ -970,7 +1088,7 @@ function renderFeedback() {
 async function doFeedback(text) {
   addUser(text); document.getElementById("fbPanel")?.remove(); phase="chat";
   reqs.latest_feedback=text; history.push({role:"user",content:"Feedback: "+text});
-  addAgent("Refining analysis... ⟳");
+  addAgent(t("refiningMsg"));
   await runAnalysis(text);
 }
 
@@ -981,7 +1099,7 @@ async function doCustomFb() {
 
 function doApprove() {
   document.getElementById("fbPanel")?.remove(); phase="approved"; step=9; renderSteps(); updateIterChip();
-  addAgent("Analysis approved ✓\n\nWould you like to export the professional PDF report?",["Export PDF Report","Not now"]);
+  addAgent(t("approvedMsg"), t("exportOpts"));
 }
 
 // ── SEND ───────────────────────────────────────────────────────────────────
@@ -993,9 +1111,9 @@ async function sendMsg(override) {
 
   if(phase==="approved"){
     addUser(text);
-    if(text.toLowerCase().includes("export")||text.toLowerCase().includes("yes")||text.toLowerCase().includes("pdf")){
-      phase="done"; addAgent("Opening PDF report... ✅"); setTimeout(()=>exportPDF(),400);
-    } else { phase="done"; addAgent("Done! You can export anytime using the Export PDF button in the sidebar."); }
+    if(text.toLowerCase().includes("export")||text.toLowerCase().includes("yes")||text.toLowerCase().includes("pdf")||text.includes("ייצוא")){
+      phase="done"; addAgent(t("exportingMsg")); setTimeout(()=>exportPDF(),400);
+    } else { phase="done"; addAgent(t("exportDoneMsg")); }
     return;
   }
 
@@ -1013,7 +1131,7 @@ async function sendMsg(override) {
     `Answer: "${text}". Ask one environmental requirements question (service temperature, chemical resistance, UV/outdoor exposure).`,
     `Answer: "${text}". Ask about geometry: ask for both the maximum part size (X×Y×Z mm) AND the smallest feature or minimum wall thickness in the design. Explain briefly why smallest feature matters for technology selection.`,
     `Answer: "${text}". Ask one manufacturing question (quantity, cost vs performance priority, available printers).`,
-    `Answer: "${text}". Respond with exactly: "Thank you! Running Ashby analysis now..." and nothing else.`,
+    `Answer: "${text}". Respond with exactly: "${t("thankMsg")}" and nothing else.`,
   ];
 
   if(step<=6){
@@ -1021,7 +1139,7 @@ async function sendMsg(override) {
     try{
       const resp=await callClaude([...history,{role:"user",content:prompts[step]}]);
       history.push({role:"assistant",content:resp});
-      setLoading(false); addAgent(resp, STEP_Q[step+1]?.opts);
+      setLoading(false); addAgent(resp, getStepQ()[step+1]?.opts);
       const ns=step+1; step=ns; renderSteps();
       if(ns===7){ await runAnalysis(); return; }
     } catch(e){ setLoading(false); addAgent("Error: "+e.message); }
@@ -1033,6 +1151,7 @@ function handleKey(e){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendM
 
 // ── AUTO-LOAD SAVED KEY ────────────────────────────────────────────────────
 (function(){
+  applyLang();
   const saved=localStorage.getItem("am_api_key");
   if(saved){ apiKey=saved; document.getElementById("keyScreen").style.display="none"; document.getElementById("app").style.display="flex"; initAgent(); }
 })();
