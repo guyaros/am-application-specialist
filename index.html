@@ -413,6 +413,21 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </div>
       <div class="key-err" id="settingsErr" style="margin-top:6px;"></div>
     </div>
+    <div class="settings-section" style="border-top:1px solid var(--border);padding-top:14px;">
+      <label class="settings-label" id="settingsEmailLabel"></label>
+      <p id="settingsEmailDesc" style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5"></p>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;">
+        <input class="key-input" type="email" id="emailToInput" placeholder="you@company.com" autocomplete="off" style="margin-top:0"/>
+        <input class="key-input" type="text" id="emailServiceInput" placeholder="EmailJS Service ID" autocomplete="off" style="margin-top:0"/>
+        <input class="key-input" type="text" id="emailTemplateInput" placeholder="EmailJS Template ID" autocomplete="off" style="margin-top:0"/>
+        <input class="key-input" type="password" id="emailPubkeyInput" placeholder="EmailJS Public Key" autocomplete="off" style="margin-top:0"/>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="key-btn" id="emailSaveBtn" onclick="saveEmailSettings()" style="flex:1;margin-top:0;padding:9px 12px;font-size:12px;"></button>
+        <button class="sidebar-btn" id="emailTestBtn" onclick="sendTestEmail()" style="flex:1;padding:9px 12px;font-size:12px;"></button>
+      </div>
+      <div id="emailSettingsMsg" style="margin-top:6px;font-size:11px;min-height:14px;"></div>
+    </div>
     <div class="settings-footer">
       <button class="btn-danger" id="settingsRemoveKeyBtn" onclick="removeKey()">Remove saved key</button>
       <button class="btn-close-settings" id="settingsCloseBtn" onclick="closeSettings()">Close</button>
@@ -477,7 +492,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.16";
+const VERSION="v1.17";
 const REL_DATE="May 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -513,6 +528,10 @@ en:{
   exportingMsg:"Opening PDF report... ✅",
   exportDoneMsg:"Done! You can export anytime using the Export PDF button in the sidebar.",
   editingLabel:"↩ Editing:",
+  emailSection:"Email Report",emailDesc:"Auto-send a summary email after each approved run.",
+  emailToPlaceholder:"you@company.com",
+  emailSaveBtn:"Save",emailTestBtn:"Test",emailSaved:"Email settings saved ✓",
+  emailSending:"Sending report email...",emailSent:"Report email sent ✓",emailFail:"Email error: ",
   initialAnalysis:"Initial Analysis",revised:"Revised #",amSpec:"AM Application Specialist",updatedTag:"Updated",
   tabs:["Overview","Comparison","Equipment","Risks"],
   rcLabels:["#1 Recommended","#2 Alternative A","#3 Alternative B"],
@@ -554,6 +573,10 @@ he:{
   exportingMsg:"פותח דוח PDF... ✅",
   exportDoneMsg:"סיים! ניתן לייצא בכל עת דרך כפתור ייצוא PDF.",
   editingLabel:"↩ עריכה:",
+  emailSection:"שליחת דוח במייל",emailDesc:"שליחה אוטומטית של סיכום לאחר כל הרצה מאושרת.",
+  emailToPlaceholder:"you@company.com",
+  emailSaveBtn:"שמור",emailTestBtn:"בדיקה",emailSaved:"הגדרות מייל נשמרו ✓",
+  emailSending:"שולח דוח במייל...",emailSent:"דוח נשלח במייל ✓",emailFail:"שגיאת מייל: ",
   initialAnalysis:"ניתוח ראשוני",revised:"מתוקן #",amSpec:"יועץ הדפסה תלת-ממדית",updatedTag:"מעודכן",
   tabs:["סקירה","השוואה","ציוד","סיכונים"],
   rcLabels:["#1 מומלץ","#2 חלופה א","#3 חלופה ב"],
@@ -592,6 +615,10 @@ function applyLang(){
   document.getElementById("langHeBtn").style.background=lang==="he"?"var(--blue)":"";
   document.getElementById("langHeBtn").style.color=lang==="he"?"#fff":"";
   document.getElementById("langHeBtn").style.borderColor=lang==="he"?"var(--blue)":"";
+  document.getElementById("settingsEmailLabel").textContent=L.emailSection;
+  document.getElementById("settingsEmailDesc").textContent=L.emailDesc;
+  document.getElementById("emailSaveBtn").textContent=L.emailSaveBtn;
+  document.getElementById("emailTestBtn").textContent=L.emailTestBtn;
 }
 function setLang(l){
   if(l===lang) return;
@@ -696,6 +723,7 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 // ── STATE ──────────────────────────────────────────────────────────────────
 let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat";
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"en";
+let totalInputTokens=0, totalOutputTokens=0;
 
 // ── API KEY ────────────────────────────────────────────────────────────────
 function startWithKey() {
@@ -732,9 +760,87 @@ function openSettings(){
   document.getElementById("settingsCurrentKey").textContent=masked;
   document.getElementById("settingsKeyInput").value="";
   document.getElementById("settingsErr").textContent="";
+  document.getElementById("emailToInput").value=localStorage.getItem("email_to")||"";
+  document.getElementById("emailServiceInput").value=localStorage.getItem("email_service")||"";
+  document.getElementById("emailTemplateInput").value=localStorage.getItem("email_template")||"";
+  document.getElementById("emailPubkeyInput").value=localStorage.getItem("email_pubkey")||"";
+  document.getElementById("emailSettingsMsg").textContent="";
   document.getElementById("settingsModal").classList.add("open");
 }
 function closeSettings(){ document.getElementById("settingsModal").classList.remove("open"); }
+
+function saveEmailSettings(){
+  localStorage.setItem("email_to",document.getElementById("emailToInput").value.trim());
+  localStorage.setItem("email_service",document.getElementById("emailServiceInput").value.trim());
+  localStorage.setItem("email_template",document.getElementById("emailTemplateInput").value.trim());
+  localStorage.setItem("email_pubkey",document.getElementById("emailPubkeyInput").value.trim());
+  const msg=document.getElementById("emailSettingsMsg");
+  msg.textContent=t("emailSaved"); msg.style.color="var(--green)";
+}
+
+async function _ejsSend(to,svc,tpl,pub,subject,body){
+  const r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({service_id:svc,template_id:tpl,user_id:pub,
+      template_params:{to_email:to,subject,body,reply_to:to}}),
+  });
+  if(!r.ok) throw new Error(await r.text());
+}
+
+async function sendTestEmail(){
+  const msg=document.getElementById("emailSettingsMsg");
+  const to=document.getElementById("emailToInput").value.trim();
+  const svc=document.getElementById("emailServiceInput").value.trim();
+  const tpl=document.getElementById("emailTemplateInput").value.trim();
+  const pub=document.getElementById("emailPubkeyInput").value.trim();
+  if(!to||!svc||!tpl||!pub){msg.textContent="Fill all fields first";msg.style.color="var(--red)";return;}
+  msg.textContent=t("emailSending");msg.style.color="var(--text2)";
+  try{
+    await _ejsSend(to,svc,tpl,pub,"AM Specialist — Test Email","This is a test email from AM Application Specialist.");
+    msg.textContent=t("emailSent");msg.style.color="var(--green)";
+  }catch(e){msg.textContent=t("emailFail")+e.message;msg.style.color="var(--red)";}
+}
+
+function calcRunCost(){
+  const usd=totalInputTokens*3/1e6+totalOutputTokens*15/1e6;
+  return {inp:totalInputTokens,out:totalOutputTokens,tot:totalInputTokens+totalOutputTokens,usd:usd.toFixed(4)};
+}
+
+async function sendEmailReport(){
+  const to=localStorage.getItem("email_to")||"";
+  const svc=localStorage.getItem("email_service")||"";
+  const tpl=localStorage.getItem("email_template")||"";
+  const pub=localStorage.getItem("email_pubkey")||"";
+  if(!to||!svc||!tpl||!pub||!report) return;
+  const cost=calcRunCost();
+  const mats=(report.materials||[]).map((m,i)=>(i+1)+". "+m.name+" ("+m.vendor+" / "+m.technology+")\n   "+m.rationale).join("\n\n");
+  const body=[
+    "AM Application Specialist — Run Report","=".repeat(50),
+    "Date: "+new Date().toLocaleString(),"Iterations: "+iteration,"",
+    "REQUIREMENTS","─".repeat(30),
+    "Application:   "+(reqs.application_type||"—"),
+    "Description:   "+(reqs.part_description||"—"),
+    "Functional:    "+(reqs.functional_req||"—"),
+    "Mechanical:    "+(reqs.mechanical_req||"—"),
+    "Environmental: "+(reqs.environmental_req||"—"),
+    "Geometry:      "+(reqs.geometry_req||"—"),
+    "Manufacturing: "+(reqs.production_req||"—"),"",
+    "SUMMARY","─".repeat(30),report.summary||"","",
+    "RECOMMENDED MATERIALS","─".repeat(30),mats,"",
+    "PROFESSIONAL NOTE","─".repeat(30),report.professional_note||"","",
+    "NEXT STEPS","─".repeat(30),(report.next_steps||[]).map((s,i)=>(i+1)+". "+s).join("\n"),"",
+    "RUN STATISTICS","─".repeat(30),
+    "Input tokens:   "+cost.inp,
+    "Output tokens:  "+cost.out,
+    "Total tokens:   "+cost.tot,
+    "Estimated cost: $"+cost.usd+" USD (claude-sonnet-4)",
+  ].join("\n");
+  const subject="AM Specialist — "+(reqs.application_type||"Run")+" — "+new Date().toLocaleDateString();
+  try{
+    await _ejsSend(to,svc,tpl,pub,subject,body);
+    addAgent("📧 "+t("emailSent")+" → "+to);
+  }catch(e){ console.warn("Email report failed:",e.message); }
+}
 
 function removeKey(){
   if(!confirm(t("confirmRemoveKey"))) return;
@@ -763,6 +869,7 @@ function saveSettingsKey(){
 }
 
 function clearSession(){
+  totalInputTokens=0; totalOutputTokens=0;
   if(!confirm(t("confirmNewRun"))) return;
   step=0; reqs={}; history=[]; report=null; iteration=0; phase="chat"; msgId=0;
   document.getElementById("messages").innerHTML="";
@@ -920,6 +1027,7 @@ async function callClaude(messages) {
   });
   const d = await res.json();
   if(d.error) throw new Error(d.error.message);
+  if(d.usage){totalInputTokens+=d.usage.input_tokens||0;totalOutputTokens+=d.usage.output_tokens||0;}
   return d.content?.[0]?.text||"";
 }
 
@@ -1148,6 +1256,7 @@ async function doCustomFb() {
 function doApprove() {
   document.getElementById("fbPanel")?.remove(); phase="approved"; step=9; renderSteps(); updateIterChip();
   addAgent(t("approvedMsg"), t("exportOpts"));
+  sendEmailReport();
 }
 
 // ── SEND ───────────────────────────────────────────────────────────────────
