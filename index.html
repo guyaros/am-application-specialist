@@ -451,7 +451,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 51 materials · 13 printers</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <button id="langBtn" onclick="setLang(lang==='en'?'he':'en')">עברית</button>
+        <button id="langBtn" onclick="setLang(document.documentElement.lang==='en'?'he':'en')">עברית</button>
         <div class="tech-pills">
           <span class="tech-pill">SLA/DLP</span>
           <span class="tech-pill">SLS</span>
