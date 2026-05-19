@@ -189,6 +189,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .mat-prop-val{font-weight:700;font-size:12px;color:var(--text);font-family:var(--mono)}
 .mat-prop-unit{font-size:9px;color:var(--text3);margin-left:2px;font-weight:400}
 .mat-rationale{font-size:11px;color:var(--text2);line-height:1.55;border-radius:6px;padding:7px 9px;border:1px solid var(--border);background:var(--surface3);font-style:italic}
+.shop-link{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:5px 11px;border-radius:7px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);color:var(--blue);font-size:11px;font-weight:600;text-decoration:none;transition:all .15s}
+.shop-link:hover{background:rgba(37,99,235,.13);border-color:var(--blue)}
 
 /* COMPARISON TABLE */
 .cmp-wrap{overflow-x:auto}
@@ -584,60 +586,60 @@ function setLang(l){
 // ── DATABASES ──────────────────────────────────────────────────────────────
 const MAT = [
   // ── Formlabs SLA/DLP ──
-  {n:"Black V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:69,ts:61,em:2.7,el:10,imp:29,cost:383},
-  {n:"Grey V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.6,el:13,imp:32,cost:383},
-  {n:"White V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.675,el:13,imp:32,cost:383},
-  {n:"Clear V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"no",hdt:69,ts:60,em:2.75,el:8,imp:29,cost:383},
-  {n:"Fast Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:76,ts:62,em:2.7,el:11,imp:37,cost:383},
-  {n:"Precision Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:53.5,ts:50,em:2.2,el:8.6,imp:32,cost:630},
-  {n:"Tough 2000 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:70,ts:43,em:1.8,el:79,imp:25,cost:685},
-  {n:"Tough 1500 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:66,ts:34,em:1.46,el:155,imp:42,cost:685},
-  {n:"Tough 1000",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:55.3,ts:26.3,em:0.93,el:180,imp:72,cost:685},
-  {n:"Rigid 10K V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:163,ts:65,em:10,el:1,imp:16,cost:1340},
-  {n:"Rigid 10K + Heat Treatment",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:218,ts:53,em:10,el:1,imp:18,cost:1340},
-  {n:"Rigid 4000 V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:77,ts:69,em:4.1,el:5.3,imp:23,cost:1050},
-  {n:"High Temp V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:120,ts:51,em:2.8,el:3.3,imp:18,cost:938},
-  {n:"High Temp V2 + HT",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:238,ts:49,em:2.8,el:2.3,imp:17,cost:938},
-  {n:"Flame Retardant",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:111,ts:41,em:3.1,el:7.1,imp:22,cost:1135,std:"UL94 V0"},
-  {n:"ESD Resin",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:62.2,ts:44,em:1.9,el:12,imp:26,cost:1050},
-  {n:"Silicone 40A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:5,el:230,imp:12,cost:1550,shore:"40A"},
-  {n:"Elastic 50A V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:3.4,el:160,imp:14,cost:1000,shore:"55A"},
-  {n:"Flexible 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:8.9,el:120,imp:28,cost:930,shore:"80A"},
-  {n:"Clear Cast V1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:73,ts:65,em:2.8,el:6,imp:25,cost:720},
-  {n:"BioMed Clear",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"yes",autoclave:"yes",hdt:67,ts:52,em:2.08,el:12,imp:35,cost:1550,std:"ISO 10993 / USP VI"},
-  {n:"BioMed White",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67,ts:46,em:2.0,el:10,imp:15,cost:1260,std:"ISO 10993"},
-  {n:"BioMed Black",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67.9,ts:36,em:1.5,el:14,imp:25,cost:1134,std:"ISO 10993"},
-  {n:"BioMed Amber",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:78,ts:73,em:2.9,el:12,imp:28,cost:1135,std:"ISO 10993"},
-  {n:"BioMed Durable",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:46,ts:29,em:0.994,el:33,imp:98,cost:1890,std:"ISO 10993 / USP VI"},
-  {n:"BioMed Elastic",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",ts:2.3,el:150,imp:12,cost:1550,std:"ISO 10993",shore:"50A"},
-  {n:"BioMed Flex 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",ts:7.2,el:135,imp:24,cost:1134,std:"ISO 10993",shore:"80A"},
+  {n:"Black V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:69,ts:61,em:2.7,el:10,imp:29,cost:383,gn:"Rich, deep black general purpose resin; optimal balance of speed, accuracy and strong mechanical properties.",link:"https://shop.systematics.co.il/page_24724"},
+  {n:"Grey V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.6,el:13,imp:32,cost:383,gn:"Versatile general purpose resin; stiff and strong with injection-molding surface finish."},
+  {n:"White V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:71,ts:62,em:2.675,el:13,imp:32,cost:383,gn:"Bright white general purpose resin; captures fine features accurately."},
+  {n:"Clear V5",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"no",hdt:69,ts:60,em:2.75,el:8,imp:29,cost:383,gn:"Clear general purpose resin; high dimensional accuracy and presentation-ready transparency."},
+  {n:"Fast Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:76,ts:62,em:2.7,el:11,imp:37,cost:383,gn:"Fastest print speed resin — up to 110 mm/h."},
+  {n:"Precision Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:53.5,ts:50,em:2.2,el:8.6,imp:32,cost:630,gn:"High-accuracy material with crisp margin lines; beige color, smooth matte finish."},
+  {n:"Tough 2000 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:70,ts:43,em:1.8,el:79,imp:25,cost:685,gn:"Simulates molded ABS; good balance of stiffness and toughness."},
+  {n:"Tough 1500 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:66,ts:34,em:1.46,el:155,imp:42,cost:685,gn:"Simulates Polypropylene (PP); flexible and resilient."},
+  {n:"Tough 1000",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:55.3,ts:26.3,em:0.93,el:180,imp:72,cost:685,gn:"Simulates High Density Polyethylene (HDPE); high elongation, snap joints."},
+  {n:"Rigid 10K V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:163,ts:65,em:10,el:1,imp:16,cost:1340,gn:"Excellent thermal properties; NOT suitable for impact/shock absorption."},
+  {n:"Rigid 10K + Heat Treatment",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:218,ts:53,em:10,el:1,imp:18,cost:1340,gn:"Post-cured Rigid 10K; highest HDT (218°C); NOT suitable for impact/shock absorption."},
+  {n:"Rigid 4000 V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:77,ts:69,em:4.1,el:5.3,imp:23,cost:1050,gn:"Consider Rigid 10K for more rigidity and superior thermal resistance."},
+  {n:"High Temp V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:120,ts:51,em:2.8,el:3.3,imp:18,cost:938,gn:"Excellent thermal properties for high-temperature applications."},
+  {n:"High Temp V2 + HT",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:238,ts:49,em:2.8,el:2.3,imp:17,cost:938,gn:"Post-cured High Temp V2; highest thermal resistance (238°C HDT)."},
+  {n:"Flame Retardant",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:111,ts:41,em:3.1,el:7.1,imp:22,cost:1135,std:"UL94 V0",gn:"Meets UL94 V0 flame retardancy standard."},
+  {n:"ESD Resin",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:62.2,ts:44,em:1.9,el:12,imp:26,cost:1050,gn:"Protects critical electronics components from electrostatic discharge."},
+  {n:"Silicone 40A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:5,el:230,imp:12,cost:1550,shore:"40A",gn:"Challenging to print; not suitable for thin-walled parts."},
+  {n:"Elastic 50A V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:3.4,el:160,imp:14,cost:1000,shore:"55A",gn:"Soft parts that bend, stretch, compress, and hold up to repeated cycles."},
+  {n:"Flexible 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:8.9,el:120,imp:28,cost:930,shore:"80A",gn:"Hard elastomer; firm flexible material."},
+  {n:"Clear Cast V1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:73,ts:65,em:2.8,el:6,imp:25,cost:720,gn:"Intended for investment casting applications; minimum 2mm wall thickness."},
+  {n:"BioMed Clear",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"yes",autoclave:"yes",hdt:67,ts:52,em:2.08,el:12,imp:35,cost:1550,std:"ISO 10993 / USP VI",gn:"Rigid biocompatible material for long-term skin or mucosal membrane contact; parts containing breathing gas pathways."},
+  {n:"BioMed White",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67,ts:46,em:2.0,el:10,imp:15,cost:1260,std:"ISO 10993",gn:"Opaque white biocompatible material for long-term skin contact or short-term mucosal contact."},
+  {n:"BioMed Black",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67.9,ts:36,em:1.5,el:14,imp:25,cost:1134,std:"ISO 10993",gn:"Matte opaque biocompatible material for end-use parts requiring long-term patient contact."},
+  {n:"BioMed Amber",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:78,ts:73,em:2.9,el:12,imp:28,cost:1135,std:"ISO 10993",gn:"Rigid biocompatible material for short-term patient contact applications."},
+  {n:"BioMed Durable",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:46,ts:29,em:0.994,el:33,imp:98,cost:1890,std:"ISO 10993 / USP VI",gn:"Clear biocompatible material requiring impact, shatter, and abrasion resistance."},
+  {n:"BioMed Elastic",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",ts:2.3,el:150,imp:12,cost:1550,std:"ISO 10993",shore:"50A",gn:"Soft, elastic medical-grade material for applications requiring comfort, biocompatibility, and transparency."},
+  {n:"BioMed Flex 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"yes",ts:7.2,el:135,imp:24,cost:1134,std:"ISO 10993",shore:"80A",gn:"Firm, flexible medical-grade material for applications requiring durability, biocompatibility, and transparency."},
   // ── Formlabs SLS ──
-  {n:"Nylon 12",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:171,ts:50,em:1.85,el:6,imp:32,cost:430,std:"UL94 HB"},
-  {n:"Nylon 12 Tough",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:161,ts:42,em:1.45,el:15,imp:60,cost:430,std:"UL94 HB"},
-  {n:"Nylon 12 White",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:177,ts:47,em:1.95,el:6,imp:28,cost:480,std:"UL94 HB"},
-  {n:"Nylon 12 GF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:170,ts:38,em:2.8,el:3,imp:36,cost:480},
-  {n:"Nylon 11",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:182,ts:49,em:1.6,el:40,imp:71,cost:515,std:"UL94 HB"},
-  {n:"Nylon 11 CF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",hdt:188,ts:38,em:5.3,el:5,imp:74,cost:708},
-  {n:"TPU 90A",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:7.2,el:110,cost:616,std:"ISO 10993",shore:"90A"},
+  {n:"Nylon 12",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:171,ts:50,em:1.85,el:6,imp:32,cost:430,std:"UL94 HB",gn:"Most common SLS material; high tensile strength, ductility, and environmental stability."},
+  {n:"Nylon 12 Tough",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:161,ts:42,em:1.45,el:15,imp:60,cost:430,std:"UL94 HB",gn:"Best-in-class refresh rate; high ductility, great dimensional accuracy, reduced warpage."},
+  {n:"Nylon 12 White",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:177,ts:47,em:1.95,el:6,imp:28,cost:480,std:"UL94 HB",gn:"Requires Nitrogen generator; print performance is lower than standard Nylon 12."},
+  {n:"Nylon 12 GF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:170,ts:38,em:2.8,el:3,imp:36,cost:480,gn:"Stiffer than Nylon 12; glass-fiber reinforced for higher rigidity."},
+  {n:"Nylon 11",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:182,ts:49,em:1.6,el:40,imp:71,cost:515,std:"UL94 HB",gn:"High-performance bio-based nylon; for ductile, robust functional parts and small batch production."},
+  {n:"Nylon 11 CF",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",hdt:188,ts:38,em:5.3,el:5,imp:74,cost:708,gn:"Carbon fiber reinforced; requires Nitrogen generator."},
+  {n:"TPU 90A",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:7.2,el:110,cost:616,std:"ISO 10993",shore:"90A",gn:"Flexible, skin-safe SLS material; high elongation at break and superior tear strength."},
   // ── HP MJF ──
-  {n:"Nylon 12 (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:172,ts:54,el:9,cost:null},
-  {n:"Nylon 12 S (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:175,ts:43,em:1.7,el:5,cost:null},
+  {n:"Nylon 12 (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:172,ts:54,el:9,cost:null,gn:"Most common MJF material; isotropic properties, excellent detail."},
+  {n:"Nylon 12 S (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:175,ts:43,em:1.7,el:5,cost:null,gn:"Very good weathering resistance."},
   {n:"Nylon 12 GB (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:170,ts:30,em:2.9,el:5,cost:null},
   {n:"Nylon 12 W (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:170,ts:45,em:1.9,el:9,cost:null},
   {n:"Nylon 12 FR (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:172,ts:46,em:2.5,el:4,cost:null,std:"UL94 V0"},
-  {n:"Nylon 11 (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:185,ts:54,em:1.7,el:25,cost:null},
+  {n:"Nylon 11 (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"yes",hdt:185,ts:54,em:1.7,el:25,cost:null,gn:"Availability limited."},
   {n:"TPU (HP)",v:"HP",f:"powder",p:"MJF",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",cost:200,shore:"unknown"},
   // ── Markforged FFF+CFR ──
-  {n:"Onyx",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:145,ts:37,em:2.4,el:25,imp:330,cost:1000},
-  {n:"Onyx FR",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:40,em:3.0,el:18,cost:1170,std:"UL94 V0"},
-  {n:"Onyx FR-A",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:16.2,em:3.27,el:3.9,cost:1225,std:"UL94 V0"},
-  {n:"Onyx ESD",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:138,ts:50,em:4.2,imp:44,cost:1150},
+  {n:"Onyx",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:145,ts:37,em:2.4,el:25,imp:330,cost:1000,gn:"Engineering-grade matrix optimized for Continuous Fiber Reinforcement; superior UV resistance and durability."},
+  {n:"Onyx FR",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:40,em:3.0,el:18,cost:1170,std:"UL94 V0",gn:"Flame-retardant Onyx; optimized for Continuous Fiber Reinforcement."},
+  {n:"Onyx FR-A",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:145,ts:16.2,em:3.27,el:3.9,cost:1225,std:"UL94 V0",gn:"Flame-retardant Onyx with LOT traceability for aerospace/defense applications."},
+  {n:"Onyx ESD",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:138,ts:50,em:4.2,imp:44,cost:1150,gn:"Suitable for continuous fiber reinforcement with anti-static properties; NOT recommended for extended UV exposure."},
   {n:"Nylon White",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:36,em:1.7,el:150,imp:110,cost:923},
-  {n:"Nylon White FS",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"no",ts:47,em:1.8,el:23,imp:110,cost:null,std:"NSF/ANSI 51"},
-  {n:"PLA",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:52,ts:18,em:2.3,el:27,imp:62,cost:100},
+  {n:"Nylon White FS",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"yes",bio:"no",ts:47,em:1.8,el:23,imp:110,cost:null,std:"NSF/ANSI 51",gn:"Unfilled non-abrasive nylon; NSF/ANSI 51 certified for food contact applications."},
+  {n:"PLA",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:52,ts:18,em:2.3,el:27,imp:62,cost:100,gn:"Cost-effective option for non-functional prototyping and fit checks."},
   {n:"TPU (Markforged)",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:26,em:0.013,el:550,cost:820,shore:"95A"},
   {n:"Ultem 9085",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:175,ts:76.5,em:2.52,el:5.7,imp:70,cost:2100,std:"FAR 25.853"},
-  {n:"Vega",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:165.1,ts:87.6,em:5.2,el:3,imp:48,cost:4700,std:"FAR 25.853"},
+  {n:"Vega",v:"Markforged",f:"filament",p:"FFF+CFR",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:165.1,ts:87.6,em:5.2,el:3,imp:48,cost:4700,std:"FAR 25.853",gn:"Ultra high-performance carbon fiber PEKK for critical aerospace parts; can be reinforced with continuous fiber for aluminum-strength components."},
 ];
 
 const PRN = [
@@ -873,6 +875,9 @@ When the user mentions high toughness, impact resistance, drop tests, shock load
 - FLEXIBLE energy-absorbing: Formlabs TPU 90A (SLS), Formlabs Flexible 80A, Formlabs Elastic 50A, Formlabs Silicone 40A, HP TPU, Markforged TPU
 If the user says flexible is acceptable, always probe the elastic modulus range and Shore hardness to select the right flexible material.
 
+RULE 4 — GENERAL NOTES (gn field):
+Always read the 'gn' field for each candidate material in the database. It contains critical notes about special properties, limitations, known substitutes, and use-case fit. Reference relevant gn notes explicitly in the rationale and summary. If a note warns against a use case (e.g. "NOT suitable for impact"), treat it as a hard constraint.
+
 RULE 3 — SMALLEST FEATURE SIZE & TECHNOLOGY SELECTION:
 Always ask about the smallest feature or minimum wall thickness in the design. This is critical for technology selection:
 - Features < 0.5 mm → SLA/LFD only (Formlabs Form 4 family)
@@ -970,6 +975,7 @@ function buildOverview() {
           ${[["TS",m.tensile,"MPa"],["E",m.modulus,"GPa"],["HDT",m.hdt,"°C"],["Cost",m.cost,"₪/kg"]].map(([l,v,u])=>v!=null?`<div class="mat-prop" style="background:var(--surface3);border-color:var(--border2)"><div class="mat-prop-lbl">${l}</div><div class="mat-prop-val">${v}<span class="mat-prop-unit">${u}</span></div></div>`:"").join("")}
         </div>
         ${m.rationale?`<div class="mat-rationale">${esc(m.rationale)}</div>`:""}
+        ${(()=>{const db=MAT.find(x=>x.n===m.name);return db?.link?`<a href="${db.link}" target="_blank" class="shop-link">🛒 Buy at Systematics</a>`:""})()}
       </div>
     </div>`;
   }).join("")}</div>`;
