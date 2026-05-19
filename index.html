@@ -477,7 +477,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.12";
+const VERSION="v1.13";
 const REL_DATE="May 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -500,7 +500,7 @@ en:{
     {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)",opts:["None / general use","Optical transparency","ESD / electrical","Biocompatibility (medical)"]},
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
     {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
-    {q:"Geometry requirements: what is the maximum part size (X×Y×Z mm), and what is the smallest feature or minimum wall thickness in the design? (features < 1 mm rule out FDM technologies)"},
+    {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:["Miniature (≤10 mm) — e.g. drill bit","Small (≤50 mm) — e.g. socket","Medium (≤100 mm) — e.g. open-end wrench","Large (≤200 mm) — e.g. C-clamp","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. welding torch"]},
     {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:["1–5 prototypes","Small batch (10–50 units)","Cost priority","Performance priority"]},
   ],
   thankMsg:"Thank you! Running Ashby analysis now...",
@@ -541,7 +541,7 @@ he:{
     {q:"האם יש דרישות פונקציונליות? (שקיפות אופטית, ESD, עמידות אש, איטום נוזלים, ביו-תאימות — לשימושים רפואיים זמינים חומרי BioMed)",opts:["ללא / שימוש כללי","שקיפות אופטית","ESD / חשמלי","ביו-תאימות (רפואי)"]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה / קשיחות גבוהה","עמידות בפגיעה (קשיח)","גמיש / אלסטי (בולם אנרגיה)"]},
     {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:["ללא דרישות מיוחדות","טמפרטורה גבוהה (>80°C)","עמידות בכימיקלים","חשיפת UV / שימוש חיצוני"]},
-    {q:"גאומטריה: גודל החלק המרבי (X×Y×Z מ\"מ), ופיצ'ר קטן ביותר / עובי דופן מינימלי? (פיצ'רים < 1 מ\"מ שוללים FDM)"},
+    {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:["מזערי (≤10 מ\"מ) — למשל: ביט","קטן (≤50 מ\"מ) — למשל: בוקסה","בינוני (≤100 מ\"מ) — למשל: מפתח פתוח","גדול (≤200 מ\"מ) — למשל: ג'פקה","גדול מאוד (≤300 מ\"מ) — למשל: מברגה","ענק (≤500 מ\"מ) — למשל: רתכת"]},
     {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:["1–5 אב-טיפוסים","אצווה קטנה (10–50 יחידות)","עדיפות לעלות","עדיפות לביצועים"]},
   ],
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
