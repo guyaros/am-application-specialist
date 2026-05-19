@@ -477,7 +477,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.11";
+const VERSION="v1.12";
 const REL_DATE="May 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -924,17 +924,39 @@ async function callClaude(messages) {
 }
 
 // ── ANALYSIS ───────────────────────────────────────────────────────────────
+
+// Escape literal newlines/carriage-returns inside JSON string values
+// (Claude sometimes emits real \n inside Hebrew strings, which breaks JSON.parse)
+function sanitizeJSONString(raw) {
+  let out="", inStr=false, esc=false;
+  for(let i=0;i<raw.length;i++){
+    const c=raw[i];
+    if(esc){out+=c;esc=false;}
+    else if(c==="\\"){out+=c;esc=true;}
+    else if(c==='"'){out+=c;inStr=!inStr;}
+    else if(inStr&&c==="\n"){out+="\\n";}
+    else if(inStr&&c==="\r"){/* skip */}
+    else{out+=c;}
+  }
+  return out;
+}
+
 async function runAnalysis(feedbackNote="") {
   setLoading(true,t("loadingMsg"));
   const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
+  const jsonRule="CRITICAL: output raw JSON only — no markdown, no code fences, no text before or after. All string values must be single-line (use \\n for line breaks, never a literal newline inside a string).";
   const prompt = feedbackNote
-    ? `User feedback: "${feedbackNote}". Refine analysis accordingly. Return JSON only:\n${spec}`
-    : `Analyze all collected requirements using Ashby screening and ranking. Return JSON only:\n${spec}`;
+    ? `User feedback: "${feedbackNote}". Refine analysis accordingly. ${jsonRule}\n${spec}`
+    : `Analyze all collected requirements using Ashby screening and ranking. ${jsonRule}\n${spec}`;
   try {
     const resp = await callClaude([...history,{role:"user",content:prompt}]);
     const m = resp.match(/\{[\s\S]*\}/);
-    if(m){ report=JSON.parse(m[0]); iteration++; phase="feedback"; history.push({role:"assistant",content:resp}); setLoading(false); renderReport(); renderFeedback(); step=8; renderSteps(); updateIterChip(); }
-    else { setLoading(false); addAgent(resp); }
+    if(m){
+      const clean=sanitizeJSONString(m[0]);
+      report=JSON.parse(clean);
+      iteration++; phase="feedback"; history.push({role:"assistant",content:resp});
+      setLoading(false); renderReport(); renderFeedback(); step=8; renderSteps(); updateIterChip();
+    } else { setLoading(false); addAgent(resp); }
   } catch(e) { setLoading(false); addAgent("Error: "+e.message); }
 }
 
