@@ -573,7 +573,6 @@ function applyLang(){
 }
 function setLang(l){
   if(l===lang) return;
-  if(!confirm(LANG[l].langSwitch)) return;
   lang=l; localStorage.setItem("am_lang",l);
   applyLang();
   step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];
