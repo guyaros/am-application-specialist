@@ -6,7 +6,7 @@ The agent guides engineers through a structured requirements-gathering process a
 the optimal material and printing technology based on the **Ashby methodology**
 (Materials Selection in Mechanical Design — Prof. Michael F. Ashby).
 
-**Current version:** v1.18  
+**Current version:** v1.19  
 **Repository:** GitHub → hosted on GitHub Pages (static, single file)
 
 ---
@@ -205,15 +205,24 @@ Sends a summary email automatically when the user approves a run.
 Variables: `totalInputTokens`, `totalOutputTokens` — accumulated in `callClaude()` from `d.usage`.  
 Reset in `clearSession()`.
 
-`calcRunCost()` — estimates at claude-sonnet-4 rates: $3/1M input, $15/1M output.
+`calcRunCost()` — estimates cost using each model's actual rates.
 
-**Current cost per run: ~$0.20**  
-Root cause: `buildSystem()` includes the full MAT+PRN DB (~7,000 tokens) and is sent on every API call (×8 calls = ~56,000 input tokens just from system prompts).
+**Current cost per run: ~$0.08** (down from ~$0.20 before v1.19)
 
-**Planned fix (not yet implemented):** split `buildSystem()` into:
-- `buildSystemChat()` — no DB, for steps 0–6 conversational questions
-- `buildSystemFull()` — with DB, for `runAnalysis()` only  
-Expected saving: ~50% (~$0.10/run).
+### Cost architecture (v1.19)
+
+`callClaude(messages, fullCtx=false)` selects model and system prompt based on context:
+
+| Call type | Model | System prompt | Cost driver |
+|---|---|---|---|
+| Chat steps 0–6 | `claude-haiku-4-5-20251001` | `buildSystem()` — no DB | ~$0.003 for 7 calls |
+| Analysis + refinements | `claude-sonnet-4-20250514` | `buildSystemFull()` — with MAT+PRN DB | ~$0.05–0.07 per call |
+
+- `buildSystem()` — domain rules + requirements, **no DB** (~1,500 tokens)
+- `buildSystemFull()` — `buildSystem()` + full MAT+PRN JSON (~8,000 tokens), used only in `runAnalysis()`
+- Rates: Haiku $0.80/1M input + $4/1M output; Sonnet $3/1M input + $15/1M output
+
+**Rollback:** `git checkout v1.18` (tagged) restores the pre-optimization state.
 
 ---
 
