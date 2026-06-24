@@ -366,7 +366,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── RTL (Hebrew) ── */
-[dir=rtl] #app{flex-direction:row-reverse}
 [dir=rtl] #sidebar{border-right:none;border-left:1px solid var(--border);box-shadow:-2px 0 8px rgba(0,0,0,.04);text-align:right}
 [dir=rtl] .logo{flex-direction:row-reverse}
 [dir=rtl] .step{flex-direction:row-reverse}
@@ -1019,6 +1018,7 @@ function selOpt(btn,opt,id){
     box.value=box.value.split(", ").filter(p=>p!==opt).join(", ");
   }
   box.focus();
+  if(step===0) setTimeout(sendMsg,120);
 }
 
 // ── CLAUDE API ─────────────────────────────────────────────────────────────
