@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8"/>
@@ -1028,9 +1028,13 @@ async function callClaude(messages,fullCtx=false) {
 
 // ── ANALYSIS ───────────────────────────────────────────────────────────────
 
-// Escape raw control characters inside JSON string values
-// (Claude sometimes emits literal \n, \t, or other C0 chars that break JSON.parse)
+// Sanitize Claude's JSON response before parsing.
+// Handles: raw C0 control chars inside strings, invisible Unicode directional
+// markers between tokens (U+200B–U+200F, U+202x, U+FEFF) that break JSON.parse.
 function sanitizeJSONString(raw) {
+  // Strip invisible Unicode formatting/directional chars (RTL marks, zero-width
+  // spaces, BOM) that appear between JSON tokens in Hebrew output and break JSON.parse
+  raw = raw.replace(/[\u200B-\u200F\u202A-\u202E\uFEFF]/g, "");
   let out="", inStr=false, esc=false;
   for(let i=0;i<raw.length;i++){
     const c=raw[i], code=c.charCodeAt(0);
