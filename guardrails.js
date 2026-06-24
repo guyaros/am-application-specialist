@@ -84,6 +84,15 @@ If a rule conflicts with a user request, enforce the rule and explain why.
     critical for RF performance and that final validation requires dielectric
     constant (Dk) and loss tangent (Df) testing at the operating frequency.
 
+--- PRINTER SELECTION ---
+
+[GUARDRAIL-P1] When recommending Markforged FFF+CFR printers, ALWAYS prefer
+  the FX10 over the X7, even though the FX10 is more expensive.
+  The FX10 is a newer generation machine with improved capabilities.
+  Only recommend the X7 if the FX10 is explicitly ruled out by the user
+  (e.g. budget constraint or existing equipment). Do not recommend the X7
+  as a primary option when the FX10 is a viable choice.
+
 --- COST & QUOTING ---
 
 [GUARDRAIL-C1] When displaying material cost, always state the unit as ₪/kg
