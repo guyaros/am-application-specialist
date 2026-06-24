@@ -514,7 +514,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.27";
+const VERSION="v1.28";
 const REL_DATE="Jun 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -538,7 +538,7 @@ en:{
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
     {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
     {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. computer mouse","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. C-clamp","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"]},
-    {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:["1–5 prototypes","Small batch (10–50 units)","Cost priority","Performance priority"]},
+    {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:[["1","10","100","1,000","10,000","100,000"],["Cost priority","Performance priority"]]},
   ],
   thankMsg:"Thank you! Running Ashby analysis now...",
   fbTitle:"Refinement Loop — Ashby Step 4",fbSub:"Does this meet your requirements? Refine or approve for final report.",
@@ -583,7 +583,7 @@ he:{
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה / קשיחות גבוהה","עמידות בפגיעה (קשיח)","גמיש / אלסטי (בולם אנרגיה)"]},
     {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:["ללא דרישות מיוחדות","טמפרטורה גבוהה (>80°C)","עמידות בכימיקלים","חשיפת UV / שימוש חיצוני"]},
     {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: עכבר מחשב","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: ג'פקה","גדול מאוד (≤300 מ\"מ) — למשל: מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"]},
-    {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:["1–5 אב-טיפוסים","אצווה קטנה (10–50 יחידות)","עדיפות לעלות","עדיפות לביצועים"]},
+    {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:[["1","10","100","1,000","10,000","100,000"],["עדיפות לעלות","עדיפות לביצועים"]]},
   ],
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
   fbTitle:"לולאת שיפור — שלב 4 אשבי",fbSub:"האם זה עונה על דרישותיך? שפר או אשר לדוח הסופי.",
@@ -979,7 +979,8 @@ function addAgent(text, options) {
   wrap.className="msg agent"; wrap.id="msg-"+id;
   wrap.innerHTML=`<div class="avatar agent">${avatarLabel}</div><div>
     <div class="bubble" dir="auto">${esc(text)}</div>
-    ${options?`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`:""}
+    ${options?(Array.isArray(options[0])?options.map(row=>`<div class="opts">${row.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`):""}
+
   </div>`;
   document.getElementById("messages").appendChild(wrap);
   scrollBot();
@@ -1024,6 +1025,11 @@ function selOpt(btn,opt,id){
 function buildSystem() {
   return `You are AM Application Specialist — an expert advisor for 3D printing material and technology selection using the Ashby methodology (Materials Selection in Mechanical Design).
 Ask one focused question at a time. Use only data from the databases. Be concise and engineering-focused.
+STYLE RULES (strictly enforced):
+- Never open with greetings ("Hello", "Thanks", "שלום", "תודה", etc.)
+- Never add filler sentences about what you will do next ("Once I have this...", "ברגע שאקבל...", "אוכל להמליץ...")
+- Go straight to the question. One sentence of context at most, then the question.
+- No promotional or encouraging language.
 ${lang==="he"?"IMPORTANT: Respond in Hebrew (עברית) for all conversational messages and questions. When asked to return JSON, return ONLY valid JSON with no text before or after it — write all string values (summary, rationale, professional_note, next_steps, risks text) in Hebrew inside the JSON.\n":""}
 ${typeof GUARDRAILS !== "undefined" ? GUARDRAILS : ""}
 
@@ -1269,7 +1275,7 @@ function exportPDF() {
     coverIter:"מחזור ניתוח #",
     s01:"סיכום מנהלים",s02:"סיכום דרישות",s03:"השוואת חומרים",
     s04:"המלצה מובילה",s05:"מדפסות תואמות",s06:"סיכונים ושיקולים",
-    s07:"הערת מומחה",s08:"צעדים מומלצים הבאים",
+    s07:"הערת מומחה",s08:"צעדים להמשך",
     topMat:"חומר מוביל",tech:"טכנולוגיה",cycles:"מחזורי ניתוח",
     req:"דרישה",val:"ערך",
     topBadge:"#1 חומר מומלץ",
@@ -1277,10 +1283,11 @@ function exportPDF() {
     buildVol:"נפח הדפסה",xyRes:"רזולוציה",acc:"דיוק",
     riskHigh:"סיכון גבוה",riskMed:"הערה",riskAdv:"יתרון",
     specLabel:"הערכת מומחה",
-    propRows:[["חוזק מתיחה","tensile","MPa"],["מודולוס אלסטי","modulus","GPa"],["עמידות בחום","hdt","°C"],["אלונגציה בשבירה","elongation","%"],["חוזק בפגיעה","impact","J/m"],["עלות","cost","₪/kg"]],
+    propRows:[["חוזק מתיחה","tensile","MPa"],["מודול אלסטיות","modulus","GPa"],["מבחן עמידות בחום","hdt","°C"],["משיכות עד לשבר","elongation","%"],["מבחן נגיפה","impact","J/m"],["עלות","cost","₪/kg"]],
     reqLabels:["סוג יישום","תיאור החלק","דרישות פונקציונליות","דרישות מכניות","דרישות סביבה","גיאומטריה ודיוק","ייצור"],
     footer1:"הופק על ידי יועץ הדפסה תלת-ממדית של Systematics",
     footer2:`Systematics · ${VERSION} · ${REL_DATE} · מופעל על ידי Anthropic Claude`,
+    disclaimer:"דוח זה הופק באמצעות בינה מלאכותית ומיועד להמלצה בלבד. יש להפעיל שיקול דעת מקצועי לפני קבלת החלטות וייצור.",
   }:{
     coverBadge:"AM Application Specialist · Ashby Methodology",
     coverTitle:"Material Selection Report",
@@ -1299,6 +1306,7 @@ function exportPDF() {
     reqLabels:["Application Type","Part Description","Functional Requirements","Mechanical Requirements","Environmental Requirements","Geometry & Accuracy","Manufacturing & Production"],
     footer1:"Generated by AM Application Specialist · Ashby Materials Selection Methodology",
     footer2:`Systematics · Made by Guy Yaros · ${VERSION} · ${REL_DATE} · Powered by Anthropic Claude`,
+    disclaimer:"This report was generated by AI and is intended as a recommendation only. Exercise professional judgment before making production decisions.",
   };
   const mats=report.materials||[], printers=report.printers||[], risks=report.risks||[], nextSteps=report.next_steps||[];
   const mc=[
@@ -1331,7 +1339,7 @@ function exportPDF() {
 
   const s08=nextSteps.length?`${sh('08',PL.s08)}<ol style="padding-left:0;list-style:none;display:flex;flex-direction:column;gap:8px;">${nextSteps.map((ns,i)=>`<li style="display:flex;gap:12px;align-items:flex-start;padding:12px 15px;background:#f8f9fb;border:1px solid #e2e6ed;border-radius:8px;direction:${dir};"><span style="background:#2563eb;color:#fff;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">${i+1}</span><span style="font-size:13px;color:#1e2a3b;line-height:1.65;">${e(ns)}</span></li>`).join('')}</ol>`:'';
 
-  const html=`<!DOCTYPE html><html dir="${dir}"><head><meta charset="UTF-8"/><title>${PL.coverTitle}</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',system-ui,sans-serif;font-size:13px;color:#1e2a3b;background:#f1f3f6;direction:${dir};}.page{max-width:900px;margin:0 auto;padding:32px;}.cover{background:linear-gradient(135deg,#1e3a6e,#2563eb);border-radius:14px;padding:42px;margin-bottom:28px;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;}.card{background:#fff;border:1px solid #e2e6ed;border-radius:12px;padding:26px 28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}@media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.page{padding:18px;}.cover{border-radius:8px;page-break-after:avoid;}.card{page-break-inside:avoid;box-shadow:none;}}</style></head><body><div class="page"><div class="cover"><div><div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 13px;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);display:inline-block;margin-bottom:14px;">${PL.coverBadge}</div><div style="font-size:30px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px;">${PL.coverTitle}</div><div style="font-size:13px;color:rgba(255,255,255,.75);">${e(reqs.application_type||'')}${reqs.part_description?' · '+e(reqs.part_description):''}</div></div><div style="text-align:${isHe?'left':'right'};flex-shrink:0;"><div style="font-size:13px;color:rgba(255,255,255,.8);margin-bottom:4px;">${dateStr}</div><div style="font-size:11px;color:rgba(255,255,255,.55);">${PL.coverIter}${iteration}</div></div></div><div class="card">${s01}</div><div class="card">${s02}</div><div class="card">${s03}</div>${s04?`<div class="card">${s04}</div>`:''} ${s05?`<div class="card">${s05}</div>`:''} ${s06?`<div class="card">${s06}</div>`:''} ${s07?`<div class="card">${s07}</div>`:''} ${s08?`<div class="card">${s08}</div>`:''}<div style="text-align:center;padding:20px 0;border-top:1px solid #e2e6ed;margin-top:8px;"><div style="font-size:11px;color:#94a3b8;">${PL.footer1} · ${dateStr}</div><div style="font-size:10px;color:#b0bec5;margin-top:3px;">${PL.footer2}</div></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+  const html=`<!DOCTYPE html><html dir="${dir}"><head><meta charset="UTF-8"/><title>${PL.coverTitle}</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',system-ui,sans-serif;font-size:13px;color:#1e2a3b;background:#f1f3f6;direction:${dir};}.page{max-width:900px;margin:0 auto;padding:32px;}.cover{background:linear-gradient(135deg,#1e3a6e,#2563eb);border-radius:14px;padding:42px;margin-bottom:28px;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;}.card{background:#fff;border:1px solid #e2e6ed;border-radius:12px;padding:26px 28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}@media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.page{padding:18px;}.cover{border-radius:8px;page-break-after:avoid;}.card{page-break-inside:avoid;box-shadow:none;}}</style></head><body><div class="page"><div class="cover"><div><div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 13px;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);display:inline-block;margin-bottom:14px;">${PL.coverBadge}</div><div style="font-size:30px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px;">${PL.coverTitle}</div><div style="font-size:13px;color:rgba(255,255,255,.75);">${e(reqs.application_type||'')}${reqs.part_description?' · '+e(reqs.part_description):''}</div></div><div style="text-align:${isHe?'left':'right'};flex-shrink:0;"><div style="font-size:13px;color:rgba(255,255,255,.8);margin-bottom:4px;">${dateStr}</div><div style="font-size:11px;color:rgba(255,255,255,.55);">${PL.coverIter}${iteration}</div></div></div><div class="card">${s01}</div><div class="card">${s02}</div><div class="card">${s03}</div>${s04?`<div class="card">${s04}</div>`:''} ${s05?`<div class="card">${s05}</div>`:''} ${s06?`<div class="card">${s06}</div>`:''} ${s07?`<div class="card">${s07}</div>`:''} ${s08?`<div class="card">${s08}</div>`:''}<div style="text-align:center;padding:20px 0;border-top:1px solid #e2e6ed;margin-top:8px;"><div style="font-size:10px;color:#ef4444;font-weight:500;margin-bottom:8px;direction:${dir};">${PL.disclaimer}</div><div style="font-size:11px;color:#94a3b8;">${PL.footer1} · ${dateStr}</div><div style="font-size:10px;color:#b0bec5;margin-top:3px;">${PL.footer2}</div></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
   win.document.write(html);
   win.document.close();
 }
