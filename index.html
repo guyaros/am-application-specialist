@@ -270,6 +270,30 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   box-shadow:0 2px 8px rgba(5,150,105,.25);
 }
 
+/* RATING PANEL */
+.rating-panel{
+  background:#fff;border:1px solid rgba(99,102,241,.2);
+  border-radius:var(--r-lg);padding:16px;
+  align-self:flex-start;width:calc(100% - 37px);margin-left:37px;animation:fadeUp .3s ease;
+  box-shadow:var(--shadow);
+}
+.rating-title{font-weight:700;font-size:13px;color:#6366f1;margin-bottom:10px}
+.rating-opts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.rating-opt-btn{
+  padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;
+  border:1.5px solid rgba(99,102,241,.25);background:rgba(99,102,241,.06);
+  color:#6366f1;font-family:var(--font);transition:all .13s;
+}
+.rating-opt-btn:hover{background:rgba(99,102,241,.14);border-color:#6366f1}
+.rating-opt-btn.selected{background:#6366f1;color:#fff;border-color:#6366f1}
+.rating-q2{font-size:12px;color:var(--text2);margin:12px 0 6px;font-weight:600}
+.rating-submit{
+  margin-top:10px;padding:7px 18px;background:#6366f1;color:#fff;border:none;border-radius:7px;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .13s;
+}
+.rating-submit:hover{opacity:.85}
+.rating-thanks{font-size:13px;font-weight:700;color:#6366f1;text-align:center;padding:8px 0}
+
 /* API KEY SCREEN */
 #keyScreen{
   position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;
@@ -601,6 +625,12 @@ en:{
   confirmRemoveKey:"Remove saved API key? You will need to enter it again on next visit.",
   keyUpdated:"API key updated successfully ✓",
   langSwitch:"Switch to Hebrew? A new session will start.",
+  ratingTitle:"Rate the response quality",
+  ratingOpts:["Not useful","Reasonable","Excellent"],
+  ratingQ2:"What do you think should be improved in the agent?",
+  ratingPlaceholder:"Share your feedback...",
+  ratingSubmitBtn:"Send feedback",
+  ratingThanks:"Thank you for your feedback! 🙏",
 },
 he:{
   logoText:"יועץ<br/>יישומים",stepsLabel:"שלבי התהליך",
@@ -646,6 +676,12 @@ he:{
   confirmRemoveKey:"להסיר את מפתח ה-API השמור? תצטרך להזינו מחדש.",
   keyUpdated:"מפתח API עודכן בהצלחה ✓",
   langSwitch:"Switch to English? A new session will start.",
+  ratingTitle:"דרג את איכות התשובה",
+  ratingOpts:["לא סביר","סביר","מעולה"],
+  ratingQ2:"מה לדעתך כדאי לשפר בסוכן?",
+  ratingPlaceholder:"שתף אותנו...",
+  ratingSubmitBtn:"שלח משוב",
+  ratingThanks:"תודה על המשוב! 🙏",
 },};
 function t(k){return LANG[lang][k]??LANG.en[k]??k;}
 function getStepQ(){return LANG[lang].stepQ;}
@@ -1441,6 +1477,41 @@ function doApprove() {
   document.getElementById("fbPanel")?.remove(); phase="approved"; step=9; renderSteps(); updateIterChip();
   addAgent(t("approvedMsg"), t("exportOpts"));
   sendEmailReport();
+  setTimeout(showRatingPanel, 400);
+}
+
+function showRatingPanel() {
+  if(document.getElementById("ratingPanel")) return;
+  const panel = document.createElement("div");
+  panel.className = "rating-panel";
+  panel.id = "ratingPanel";
+  panel.innerHTML = `
+    <div class="rating-title">${t("ratingTitle")}</div>
+    <div class="rating-opts">
+      ${t("ratingOpts").map((o,i)=>`<button class="rating-opt-btn" onclick="selectRating(this,${i})">${o}</button>`).join("")}
+    </div>
+    <div class="rating-q2">${t("ratingQ2")}</div>
+    <textarea class="fb-ta" id="ratingTa" rows="3" placeholder="${t("ratingPlaceholder")}"></textarea>
+    <button class="rating-submit" onclick="submitRating()">${t("ratingSubmitBtn")}</button>
+  `;
+  document.getElementById("messages").appendChild(panel);
+  panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function selectRating(btn, idx) {
+  document.querySelectorAll(".rating-opt-btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");
+  window._selectedRatingIdx = idx;
+}
+
+function submitRating() {
+  const idx = window._selectedRatingIdx;
+  const text = (document.getElementById("ratingTa")?.value||"").trim();
+  const opts = t("ratingOpts");
+  const label = idx !== undefined ? opts[idx] : "—";
+  console.log("[Agent Rating]", label, text);
+  const panel = document.getElementById("ratingPanel");
+  if(panel) panel.innerHTML = `<div class="rating-thanks">${t("ratingThanks")}</div>`;
 }
 
 // ── SEND ───────────────────────────────────────────────────────────────────
