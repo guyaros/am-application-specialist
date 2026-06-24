@@ -513,7 +513,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.29";
+const VERSION="v1.30";
 const REL_DATE="Jun 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -581,7 +581,7 @@ he:{
     {q:"האם יש דרישות פונקציונליות? (שקיפות אופטית, ESD, עמידות אש, איטום נוזלים, ביו-תאימות — לשימושים רפואיים זמינים חומרי BioMed)",opts:["ללא / שימוש כללי","שקיפות אופטית","ESD / חשמלי","ביו-תאימות (רפואי)"]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה / קשיחות גבוהה","עמידות בפגיעה (קשיח)","גמיש / אלסטי (בולם אנרגיה)"]},
     {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:["ללא דרישות מיוחדות","טמפרטורה גבוהה (>80°C)","עמידות בכימיקלים","חשיפת UV / שימוש חיצוני"]},
-    {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: עכבר מחשב","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: ג'פקה","גדול מאוד (≤300 מ\"מ) — למשל: מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"]},
+    {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: עכבר מחשב","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: פלייר פטנט","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"]},
     {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:[["1","10","100","1,000","10,000","100,000"],["עדיפות לעלות","עדיפות לביצועים"]]},
   ],
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
@@ -978,7 +978,7 @@ function addAgent(text, options) {
   wrap.className="msg agent"; wrap.id="msg-"+id;
   wrap.innerHTML=`<div class="avatar agent">${avatarLabel}</div><div>
     <div class="bubble" dir="auto">${esc(text)}</div>
-    ${options?(Array.isArray(options[0])?options.map(row=>`<div class="opts">${row.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`):""}
+    ${options?(Array.isArray(options[0])?options.map(row=>`<div class="opts">${row.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`):""}
 
   </div>`;
   document.getElementById("messages").appendChild(wrap);
@@ -1271,7 +1271,7 @@ function exportPDF() {
   const dateStr=new Date().toLocaleDateString(isHe?'he-IL':'en-GB',{year:'numeric',month:'long',day:'numeric'});
   const PL=isHe?{
     coverBadge:"יועץ הדפסה תלת-ממדית · Systematics",
-    coverTitle:"דוח בחירת חומרים",
+    coverTitle:"דוח סיכום בחירת טכנולוגיית הדפסה וחומרים",
     coverIter:"מחזור ניתוח #",
     s01:"סיכום מנהלים",s02:"סיכום דרישות",s03:"השוואת חומרים",
     s04:"המלצה מובילה",s05:"מדפסות תואמות",s06:"סיכונים ושיקולים",
