@@ -394,14 +394,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 #sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150}
 #sidebar-overlay.visible{display:block}
 
-@media(max-width:767px){
-  #menu-btn{display:flex}
-  #sidebar{position:fixed;top:0;height:100vh;z-index:200;width:270px;transition:transform .25s ease;pointer-events:none}
+@media(max-width:900px){
+  #menu-btn{display:flex!important;position:fixed;top:10px;z-index:500}
+  [dir=rtl] #menu-btn{right:10px;left:auto}
+  [dir=ltr] #menu-btn{left:10px;right:auto}
+  #sidebar{position:fixed;top:0;height:100vh;z-index:400;width:270px;transition:transform .25s ease;pointer-events:none}
   [dir=rtl] #sidebar{right:0;left:auto;transform:translateX(110%)}
   [dir=ltr] #sidebar{left:0;right:auto;transform:translateX(-110%)}
   #sidebar.sidebar-open{transform:translateX(0)!important;pointer-events:auto}
   .topbar-title{font-size:13px}
   .topbar-sub{font-size:9px}
+  [dir=rtl] #topbar{padding-right:56px}
+  [dir=ltr] #topbar{padding-left:56px}
   #messages{padding:14px 10px;gap:10px}
   .msg.agent{max-width:96%}
   .msg.user{max-width:90%}
@@ -542,7 +546,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.36";
+const VERSION="v1.37";
 const REL_DATE="Jun 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
