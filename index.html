@@ -492,7 +492,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div id="topbar">
       <div>
         <div class="topbar-title" id="topbarTitleEl">Systematics Additive Manufacturing Application Specialist</div>
-        <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 52 materials · 13 printers</div>
+        <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 52 materials · 14 printers</div>
       </div>
     </div>
     <div id="messages"></div>
@@ -513,7 +513,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.30";
+const VERSION="v1.31";
 const REL_DATE="Jun 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -521,7 +521,7 @@ const LANG={
 en:{
   logoText:"Application<br/>Specialist",stepsLabel:"Process Steps",
   topbarTitle:"Systematics Additive Manufacturing Application Specialist",
-  topbarSub:"Ashby Methodology · 52 materials · 13 printers",
+  topbarSub:"Ashby Methodology · 52 materials · 14 printers",
   inputPlaceholder:"Type your answer...",sendBtn:"Send",
   exportBtn:"⬇ Export PDF",newRunBtn:"↺ New Run",settingsBtn:"⚙ Settings",
   settingsTitle:"Settings",settingsSub:"Manage your API key and preferences.",
@@ -536,7 +536,7 @@ en:{
     {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)",opts:["None / general use","Optical transparency","ESD / electrical","Biocompatibility (medical)"]},
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
     {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
-    {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. computer mouse","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. C-clamp","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"]},
+    {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:[["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. computer mouse","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. C-clamp","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]]},
     {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:[["1","10","100","1,000","10,000","100,000"],["Cost priority","Performance priority"]]},
   ],
   thankMsg:"Thank you! Running Ashby analysis now...",
@@ -566,7 +566,7 @@ en:{
 he:{
   logoText:"יועץ<br/>יישומים",stepsLabel:"שלבי התהליך",
   topbarTitle:"יועץ הדפסה תלת-ממדית — Systematics",
-  topbarSub:"52 חומרים · 13 מדפסות",
+  topbarSub:"52 חומרים · 14 מדפסות",
   inputPlaceholder:"הקלד את תשובתך...",sendBtn:"שלח",
   exportBtn:"⬇ ייצוא PDF",newRunBtn:"↺ הפעלה חדשה",settingsBtn:"⚙ הגדרות",
   settingsTitle:"הגדרות",settingsSub:"ניהול מפתח API והעדפות.",
@@ -581,7 +581,7 @@ he:{
     {q:"האם יש דרישות פונקציונליות? (שקיפות אופטית, ESD, עמידות אש, איטום נוזלים, ביו-תאימות — לשימושים רפואיים זמינים חומרי BioMed)",opts:["ללא / שימוש כללי","שקיפות אופטית","ESD / חשמלי","ביו-תאימות (רפואי)"]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה / קשיחות גבוהה","עמידות בפגיעה (קשיח)","גמיש / אלסטי (בולם אנרגיה)"]},
     {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:["ללא דרישות מיוחדות","טמפרטורה גבוהה (>80°C)","עמידות בכימיקלים","חשיפת UV / שימוש חיצוני"]},
-    {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: עכבר מחשב","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: פלייר פטנט","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"]},
+    {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:[["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: עכבר מחשב","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: פלייר פטנט","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"],["פיצ'ר מינימלי 0.5 מ\"מ","פיצ'ר מינימלי 1 מ\"מ","פיצ'ר מינימלי 2 מ\"מ"]]},
     {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:[["1","10","100","1,000","10,000","100,000"],["עדיפות לעלות","עדיפות לביצועים"]]},
   ],
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
@@ -717,6 +717,7 @@ const PRN = [
   {n:"Form 4L",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
   {n:"Form 4BL",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes"},
   {n:"Fuse1+",mfr:"Formlabs",tech:"SLS",bx:165,by:165,bz:300,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
+  {n:"Fuse X1",mfr:"Formlabs",tech:"SLS",bx:330,by:330,bz:565,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
   {n:"Mark Two",mfr:"Markforged",tech:"FFF+CFR",bx:320,by:152,bz:154,res:400,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
   {n:"X7",mfr:"Markforged",tech:"FFF+CFR",bx:330,by:270,bz:200,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
   {n:"FX10",mfr:"Markforged",tech:"FFF+CFR",bx:375,by:300,bz:300,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
@@ -1009,8 +1010,16 @@ function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 function esc2(s){ return String(s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
 
 function selOpt(btn,opt,id){
-  btn.classList.toggle("sel");
   const box=document.getElementById("inputBox");
+  if(step===0){
+    document.querySelectorAll(`#msg-${id} .opt`).forEach(b=>b.classList.remove("sel"));
+    btn.classList.add("sel");
+    box.value=opt;
+    box.focus();
+    setTimeout(sendMsg,120);
+    return;
+  }
+  btn.classList.toggle("sel");
   if(btn.classList.contains("sel")){
     const cur=box.value.trim();
     box.value=cur?cur+", "+opt:opt;
@@ -1018,7 +1027,6 @@ function selOpt(btn,opt,id){
     box.value=box.value.split(", ").filter(p=>p!==opt).join(", ");
   }
   box.focus();
-  if(step===0) setTimeout(sendMsg,120);
 }
 
 // ── CLAUDE API ─────────────────────────────────────────────────────────────
@@ -1424,7 +1432,15 @@ async function sendMsg(override) {
       const ns=step+1; step=ns; renderSteps();
       setLoading(false);
       if(ns===7){ await runAnalysis(); return; }
-      addAgent(resp, getStepQ()[step]?.opts);
+      let stepOpts=getStepQ()[step]?.opts;
+      if(step===3){
+        const isMedical=history.some(m=>m.role==='user'&&/ביו-תאימות|biocompatib/i.test(m.content));
+        if(isMedical){
+          const base=stepOpts?(Array.isArray(stepOpts[0])?stepOpts:[stepOpts]):[];
+          stepOpts=[...base,lang==="he"?["עיקור באוטוקלאב","עיקור בגז אתילן אוקסיד"]:["Autoclave sterilization","Ethylene oxide sterilization"]];
+        }
+      }
+      addAgent(resp, stepOpts);
     } catch(e){ setLoading(false); addAgent("Error: "+e.message); }
   }
 }
