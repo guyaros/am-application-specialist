@@ -367,7 +367,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ── RTL (Hebrew) ── */
 [dir=rtl] #app{flex-direction:row-reverse}
-[dir=rtl] #sidebar{border-right:none;border-left:1px solid var(--border);box-shadow:-2px 0 8px rgba(0,0,0,.04)}
+[dir=rtl] #sidebar{border-right:none;border-left:1px solid var(--border);box-shadow:-2px 0 8px rgba(0,0,0,.04);text-align:right}
+[dir=rtl] .logo{flex-direction:row-reverse}
+[dir=rtl] .step{flex-direction:row-reverse}
+[dir=rtl] .step-num{margin-left:0}
+[dir=rtl] .steps-label{flex-direction:row-reverse}
+[dir=rtl] .sidebar-btn{text-align:right}
+[dir=rtl] .branding{text-align:right}
+[dir=rtl] .pb-header{flex-direction:row-reverse}
 [dir=rtl] .msg.agent{align-self:flex-end}
 [dir=rtl] .msg.user{align-self:flex-start;flex-direction:row}
 [dir=rtl] .bubble{border-radius:12px 3px 12px 12px}
