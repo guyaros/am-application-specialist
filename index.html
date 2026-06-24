@@ -967,9 +967,10 @@ function focusInput(){ const b=document.getElementById("inputBox"); if(b&&!b.dis
 
 function addAgent(text, options) {
   const id=++msgId;
+  const avatarLabel=(phase==="chat"&&step<=6)?step+1:"A";
   const wrap=document.createElement("div");
   wrap.className="msg agent"; wrap.id="msg-"+id;
-  wrap.innerHTML=`<div class="avatar agent">A</div><div>
+  wrap.innerHTML=`<div class="avatar agent">${avatarLabel}</div><div>
     <div class="bubble" dir="auto">${esc(text)}</div>
     ${options?`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`:""}
   </div>`;
