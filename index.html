@@ -1090,6 +1090,12 @@ function sanitizeJSONString(raw) {
   return out;
 }
 
+// Fix missing commas between adjacent string values: "a" "b" -> "a", "b"
+// Safe to apply after sanitizeJSONString (all in-string newlines already escaped)
+function fixMissingCommas(raw) {
+  return raw.replace(/"\s+"/g, '", "');
+}
+
 // Extract the outermost balanced JSON object (avoids greedy-regex over-capture)
 function extractJSONObject(raw) {
   let depth=0, start=-1, inStr=false, esc=false;
@@ -1114,7 +1120,7 @@ async function runAnalysis(feedbackNote="") {
     : `Analyze all collected requirements using Ashby screening and ranking. ${jsonRule}\n${spec}`;
   try {
     const resp = await callClaude([...history,{role:"user",content:prompt}],true);
-    const m = extractJSONObject(sanitizeJSONString(resp));
+    const m = extractJSONObject(fixMissingCommas(sanitizeJSONString(resp)));
     if(m){
       let parsed;
       try { parsed=JSON.parse(m); }
