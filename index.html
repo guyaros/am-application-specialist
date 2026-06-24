@@ -932,7 +932,7 @@ function addAgent(text, options) {
   const wrap=document.createElement("div");
   wrap.className="msg agent"; wrap.id="msg-"+id;
   wrap.innerHTML=`<div class="avatar agent">A</div><div>
-    <div class="bubble">${esc(text)}</div>
+    <div class="bubble" dir="auto">${esc(text)}</div>
     ${options?`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o)}',${id})">${esc(o)}</button>`).join("")}</div>`:""}
   </div>`;
   document.getElementById("messages").appendChild(wrap);
@@ -943,7 +943,7 @@ function addAgent(text, options) {
 function addUser(text) {
   const wrap=document.createElement("div");
   wrap.className="msg user";
-  wrap.innerHTML=`<div class="avatar user">U</div><div><div class="bubble user">${esc(text)}</div></div>`;
+  wrap.innerHTML=`<div class="avatar user">U</div><div><div class="bubble user" dir="auto">${esc(text)}</div></div>`;
   document.getElementById("messages").appendChild(wrap);
   scrollBot();
 }
