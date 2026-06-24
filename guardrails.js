@@ -93,6 +93,16 @@ If a rule conflicts with a user request, enforce the rule and explain why.
   (e.g. budget constraint or existing equipment). Do not recommend the X7
   as a primary option when the FX10 is a viable choice.
 
+[GUARDRAIL-P2] When recommending Formlabs SLS printers, PREFER the Fuse X1
+  over the Fuse1+ in either of the following cases:
+  1. The part has any dimension exceeding 300 mm (build volume: 330×330×565 mm
+     vs. Fuse1+ 165×165×300 mm — the Fuse X1 is the only SLS option that fits).
+  2. The required quantity is 1,000 units or more — the Fuse X1's build volume
+     is ~7.5× larger, making it significantly more cost-effective at high volumes.
+  For quantities below 1,000 units and parts fitting within Fuse1+ build volume,
+  either printer is acceptable; default to Fuse1+ as the lower-cost entry point.
+  Never recommend Fuse1+ for a part that physically does not fit its build chamber.
+
 --- COST & QUOTING ---
 
 [GUARDRAIL-C1] When displaying material cost, always state the unit as ₪/kg
