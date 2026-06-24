@@ -71,6 +71,19 @@ If a rule conflicts with a user request, enforce the rule and explain why.
   (UL94 V0, UL94 HB, FAR 25.853). Do not claim FR properties for
   materials that do not list a standard.
 
+[GUARDRAIL-M6] RF transparency (radio-frequency transparency, radar dome,
+  antenna housing, wireless signal transmission, or any application where
+  electromagnetic waves must pass through the part):
+  → STRONGLY PREFER Ultem 9085 (PEKK-based, very low dielectric loss) as
+    the primary recommendation.
+  → PC (Polycarbonate) is the acceptable alternative if Ultem is not suitable.
+  → AVOID carbon-fiber-filled materials (Onyx, Nylon CF, Nylon 11 CF) —
+    carbon fiber is electrically conductive and will block or attenuate RF signals.
+  → AVOID metal-filled or ESD materials for the same reason.
+  → Always note in the rationale that material dielectric properties are
+    critical for RF performance and that final validation requires dielectric
+    constant (Dk) and loss tangent (Df) testing at the operating frequency.
+
 --- COST & QUOTING ---
 
 [GUARDRAIL-C1] When displaying material cost, always state the unit as ₪/kg

@@ -513,7 +513,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.31";
+const VERSION="v1.32";
 const REL_DATE="Jun 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -535,9 +535,9 @@ en:{
     {q:"Please describe the part — what does it do and what is its purpose?"},
     {q:"Any functional requirements? (e.g. optical transparency, ESD, flame retardancy, fluid sealing, biocompatibility — for medical/patient-contact applications BioMed materials are available)",opts:["None / general use","Optical transparency","ESD / electrical","Biocompatibility (medical)"]},
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
-    {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:["No special requirements","High temperature (>80°C)","Chemical resistance","UV / outdoor exposure"]},
+    {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:[["Freezing 0°C","Room temp 15–28°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],["Chemical resistance"],["Outdoor / moisture / UV exposure"]]},
     {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:[["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. computer mouse","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. C-clamp","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]]},
-    {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:[["1","10","100","1,000","10,000","100,000"],["Cost priority","Performance priority"]]},
+    {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:[["1","5","10","50","100","500","1,000","10,000","100,000"],["Cost priority","Performance priority"]]},
   ],
   thankMsg:"Thank you! Running Ashby analysis now...",
   fbTitle:"Refinement Loop — Ashby Step 4",fbSub:"Does this meet your requirements? Refine or approve for final report.",
@@ -580,9 +580,9 @@ he:{
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
     {q:"האם יש דרישות פונקציונליות? (שקיפות אופטית, ESD, עמידות אש, איטום נוזלים, ביו-תאימות — לשימושים רפואיים זמינים חומרי BioMed)",opts:["ללא / שימוש כללי","שקיפות אופטית","ESD / חשמלי","ביו-תאימות (רפואי)"]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה / קשיחות גבוהה","עמידות בפגיעה (קשיח)","גמיש / אלסטי (בולם אנרגיה)"]},
-    {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:["ללא דרישות מיוחדות","טמפרטורה גבוהה (>80°C)","עמידות בכימיקלים","חשיפת UV / שימוש חיצוני"]},
+    {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:[["טמפ קיפאון 0°C","טמפ חדר 15-28°C","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],["עמידות בכימיקלים"],["עמידות בתנאי חוץ — רטיבות וקרינת UV"]]},
     {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:[["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: עכבר מחשב","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: פלייר פטנט","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"],["פיצ'ר מינימלי 0.5 מ\"מ","פיצ'ר מינימלי 1 מ\"מ","פיצ'ר מינימלי 2 מ\"מ"]]},
-    {q:"הקשר ייצור? (כמות, עדיפות עלות מול ביצועים, מדפסות זמינות)",opts:[["1","10","100","1,000","10,000","100,000"],["עדיפות לעלות","עדיפות לביצועים"]]},
+    {q:"כמה יחידות צריך לייצר?",opts:[["1","5","10","50","100","500","1,000","10,000","100,000"],["עדיפות לעלות","עדיפות לביצועים"]]},
   ],
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
   fbTitle:"לולאת שיפור — שלב 4 אשבי",fbSub:"האם זה עונה על דרישותיך? שפר או אשר לדוח הסופי.",
@@ -745,7 +745,7 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat";
-let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"en";
+let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
 let totalInputTokens=0, totalOutputTokens=0;
 
 // ── API KEY ────────────────────────────────────────────────────────────────
