@@ -802,6 +802,7 @@ const PRN = [
 ];
 
 const STEPS_CFG = [
+  {id:-1,lbl:"Intro"},
   {id:0,lbl:"Application type"},{id:1,lbl:"Part description"},
   {id:2,lbl:"Functional req."},{id:3,lbl:"Mechanical req."},
   {id:4,lbl:"Environmental"},{id:5,lbl:"Geometry"},
@@ -1007,13 +1008,15 @@ function renderSteps() {
   if(lblEl) lblEl.textContent=lang==="he"?"התקדמות":"Progress";
   const c=document.getElementById("stepsContainer");
   c.innerHTML=STEPS_CFG.map(s=>{
-    const active=step===s.id||(s.id===8&&phase==="feedback");
-    const done=(s.id<step)||(s.id===7&&["feedback","approved","done"].includes(phase))||(s.id===8&&["approved","done"].includes(phase));
-    const editable=done&&s.id<=6;
+    const isIntro=s.id===-1;
+    const active=isIntro ? step===0 : (step===s.id||(s.id===8&&phase==="feedback"));
+    const done=isIntro ? step>0 : ((s.id<step)||(s.id===7&&["feedback","approved","done"].includes(phase))||(s.id===8&&["approved","done"].includes(phase)));
+    const editable=done&&s.id>=0&&s.id<=6;
+    const lbl=isIntro ? (lang==="he"?"הקדמה":"Introduction") : labels[s.id];
     return`<div class="step${active?" active":""}${done?" done":""}${editable?" editable":""}"
       ${editable?`onclick="jumpToStep(${s.id})" title="Click to edit"`:""}>
       <div class="step-num">${done?"✓":s.id+1}</div>
-      <span class="step-lbl">${labels[s.id]}</span>
+      <span class="step-lbl">${lbl}</span>
       ${editable?`<span class="step-edit-icon">✎</span>`:""}
     </div>`;
   }).join("");
