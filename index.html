@@ -139,6 +139,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .opt:hover{border-color:var(--blue);color:var(--blue);background:rgba(37,99,235,.05)}
 .opt.sel{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.opt.opt-alt{border-color:#7c3aed;color:#7c3aed}
+.opt.opt-alt:hover{border-color:#7c3aed;color:#7c3aed;background:rgba(124,58,237,.05)}
+.opt.opt-alt.sel{background:#7c3aed;color:#fff;border-color:#7c3aed;box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.opt.opt-alt2{border-color:#0891b2;color:#0891b2}
+.opt.opt-alt2:hover{border-color:#0891b2;color:#0891b2;background:rgba(8,145,178,.05)}
+.opt.opt-alt2.sel{background:#0891b2;color:#fff;border-color:#0891b2;box-shadow:0 2px 8px rgba(8,145,178,.25)}
 
 /* LOADING */
 .loading-bubble{
@@ -1024,7 +1030,7 @@ function addAgent(text, options) {
   wrap.className="msg agent"; wrap.id="msg-"+id;
   wrap.innerHTML=`<div class="avatar agent">${avatarLabel}</div><div>
     <div class="bubble" dir="auto">${esc(text)}</div>
-    ${options?(Array.isArray(options[0])?options.map(row=>`<div class="opts">${row.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`):""}
+    ${options?(Array.isArray(options[0])?options.map((row,ri)=>`<div class="opts">${row.map(o=>`<button class="opt${ri===1?' opt-alt':ri>=2?' opt-alt2':''}" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`):""}
 
   </div>`;
   document.getElementById("messages").appendChild(wrap);
