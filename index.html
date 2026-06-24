@@ -74,10 +74,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .iter-chip.visible{display:block}
 
-.progress-bar-wrap{padding:10px 16px 6px;border-top:1px solid var(--border)}
-.progress-bar-label{font-size:10px;color:var(--text3);margin-bottom:5px;display:flex;justify-content:space-between}
-.progress-bar-track{height:5px;background:var(--surface3);border-radius:99px;overflow:hidden}
-.progress-bar-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .4s ease}
 .sidebar-bottom{padding:8px 10px 12px;display:flex;flex-direction:column;gap:6px}
 .sidebar-btn{
   width:100%;padding:7px 10px;background:transparent;border:1px solid var(--border2);
@@ -304,9 +300,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .key-note a{color:var(--cyan)}
 
+/* PROGRESS BAR */
+#progressBarWrap{
+  flex-shrink:0;padding:10px 24px 8px;background:var(--surface);
+  border-top:1px solid var(--border);
+}
+#progressBarWrap.hidden{display:none}
+.pb-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.pb-label{font-size:11px;font-weight:600;color:var(--text2)}
+.pb-pct{font-size:11px;font-weight:700;color:var(--accent)}
+.pb-track{height:8px;background:var(--surface3);border-radius:99px;overflow:hidden;position:relative}
+.pb-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4);
+  background-size:200% 100%;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  animation:pb-shimmer 2s linear infinite;
+}
+@keyframes pb-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 /* INPUT AREA */
 #inputArea{
-  background:var(--surface);border-top:1px solid var(--border);
+  background:var(--surface);
   padding:12px 20px;display:flex;gap:8px;flex-shrink:0;
   box-shadow:0 -1px 6px rgba(0,0,0,.04);
 }
@@ -454,10 +469,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div style="font-size:10px;font-weight:700;color:var(--amber)" id="iterNum">Iteration #1</div>
       <div style="font-size:10px;color:var(--text3);margin-top:1px" id="iterStatus">Processing...</div>
     </div>
-    <div class="progress-bar-wrap" id="progressBarWrap">
-      <div class="progress-bar-label"><span id="progressBarLabel">Progress</span><span id="progressBarPct">0%</span></div>
-      <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div></div>
-    </div>
     <div class="sidebar-bottom">
       <button class="sidebar-btn" id="exportBtn" onclick="exportPDF()">⬇ Export PDF</button>
       <button class="sidebar-btn" id="newRunBtn" onclick="clearSession()" style="border-color:rgba(220,38,38,.3);color:#dc2626;" onmouseover="this.style.background='rgba(220,38,38,.06)'" onmouseout="this.style.background='transparent'">↺ New Run</button>
@@ -479,6 +490,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </div>
     </div>
     <div id="messages"></div>
+    <div id="progressBarWrap">
+      <div class="pb-header">
+        <span class="pb-label" id="progressBarLabel">Progress</span>
+        <span class="pb-pct" id="progressBarPct">0%</span>
+      </div>
+      <div class="pb-track"><div class="pb-fill" id="progressBarFill" style="width:0%"></div></div>
+    </div>
     <div id="inputArea">
       <textarea id="inputBox" placeholder="Type your answer..." rows="1" onkeydown="handleKey(event)"></textarea>
       <button id="sendBtn" onclick="sendMsg()">Send</button>
