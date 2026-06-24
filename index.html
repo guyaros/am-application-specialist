@@ -470,7 +470,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div id="topbar">
       <div>
         <div class="topbar-title" id="topbarTitleEl">Systematics Additive Manufacturing Application Specialist</div>
-        <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 51 materials · 13 printers</div>
+        <div class="topbar-sub" id="topbarSubEl">Ashby Methodology · 52 materials · 13 printers</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <div class="tech-pills">
@@ -500,7 +500,7 @@ const LANG={
 en:{
   logoText:"Application<br/>Specialist",stepsLabel:"Process Steps",
   topbarTitle:"Systematics Additive Manufacturing Application Specialist",
-  topbarSub:"Ashby Methodology · 51 materials · 13 printers",
+  topbarSub:"Ashby Methodology · 52 materials · 13 printers",
   inputPlaceholder:"Type your answer...",sendBtn:"Send",
   exportBtn:"⬇ Export PDF",newRunBtn:"↺ New Run",settingsBtn:"⚙ Settings",
   settingsTitle:"Settings",settingsSub:"Manage your API key and preferences.",
@@ -651,7 +651,8 @@ const MAT = [
   {n:"ESD Resin",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"yes",fr:"no",fs:"no",bio:"no",hdt:62.2,ts:44,em:1.9,el:12,imp:26,cost:1050,gn:"Protects critical electronics components from electrostatic discharge.",link:"https://shop.systematics.co.il/page_24733"},
   {n:"Silicone 40A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",ts:5,el:230,imp:12,cost:1550,shore:"40A",gn:"Challenging to print; not suitable for thin-walled parts.",link:"https://shop.systematics.co.il/page_24738"},
   {n:"Elastic 50A V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:3.4,el:160,imp:14,cost:1000,shore:"55A",gn:"Soft parts that bend, stretch, compress, and hold up to repeated cycles.",link:"https://shop.systematics.co.il/page_24737"},
-  {n:"Flexible 80A",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:8.9,el:120,imp:28,cost:930,shore:"80A",gn:"Hard elastomer; firm flexible material.",link:"https://shop.systematics.co.il/page_24736"},
+  {n:"Flexible 80A V1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",ts:8.9,el:120,imp:28,cost:930,shore:"80A",gn:"Hard elastomer; firm flexible material.",link:"https://shop.systematics.co.il/page_24736"},
+  {n:"Flexible 80A V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",ts:10,el:210,cost:930,shore:"83A",gn:"Simulate cast urethane, TPU and hard rubber; gaskets, seals, shock-absorbing bumpers.",link:"https://shop.systematics.co.il/page_24858"},
   {n:"Clear Cast V1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"no",bio:"no",hdt:73,ts:65,em:2.8,el:6,imp:25,cost:720,gn:"Intended for investment casting applications; minimum 2mm wall thickness.",link:"https://shop.systematics.co.il/page_24739"},
   {n:"BioMed Clear",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"yes",autoclave:"yes",hdt:67,ts:52,em:2.08,el:12,imp:35,cost:1550,std:"ISO 10993 / USP VI",gn:"Rigid biocompatible material for long-term skin or mucosal membrane contact; parts containing breathing gas pathways.",link:"https://shop.systematics.co.il/page_24741"},
   {n:"BioMed White",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",autoclave:"yes",hdt:67,ts:46,em:2.0,el:10,imp:15,cost:1260,std:"ISO 10993",gn:"Opaque white biocompatible material for long-term skin contact or short-term mucosal contact.",link:"https://shop.systematics.co.il/page_24744"},
@@ -999,7 +1000,7 @@ When the user mentions medical devices, surgical tools, patient contact, dental,
 RULE 2 — HIGH TOUGHNESS / IMPACT RESISTANCE:
 When the user mentions high toughness, impact resistance, drop tests, shock loads, or durable flexible parts — ask whether rigid stiffness or flexible energy-absorption is preferred, because these are fundamentally different solutions:
 - RIGID high-toughness: Markforged Onyx, Markforged continuous fiber, HP PA 11, Formlabs Tough 2000, Tough 1500
-- FLEXIBLE energy-absorbing: Formlabs TPU 90A (SLS), Formlabs Flexible 80A, Formlabs Elastic 50A, Formlabs Silicone 40A, HP TPU, Markforged TPU
+- FLEXIBLE energy-absorbing: Formlabs TPU 90A (SLS), Formlabs Flexible 80A V1, Formlabs Flexible 80A V2, Formlabs Elastic 50A, Formlabs Silicone 40A, HP TPU, Markforged TPU
 If the user says flexible is acceptable, always probe the elastic modulus range and Shore hardness to select the right flexible material.
 
 RULE 4 — GENERAL NOTES (gn field):
