@@ -988,7 +988,7 @@ function initAgent() {
   document.getElementById("verLabel").textContent=verStr;
   document.getElementById("verLabelKey").textContent=verStr;
   renderSteps();
-  addAgent(t("greeting"));
+  addAgent(t("greeting"), null, 0);
   addAgent(t("greetingStep1"), getStepQ()[0].opts);
 }
 
@@ -1065,9 +1065,9 @@ function closeSidebar(){
 function scrollBot(){ const m=document.getElementById("messages"); m.scrollTop=m.scrollHeight; }
 function focusInput(){ const b=document.getElementById("inputBox"); if(b&&!b.disabled) b.focus(); }
 
-function addAgent(text, options) {
+function addAgent(text, options, avatarOverride) {
   const id=++msgId;
-  const avatarLabel=(phase==="chat"&&step<=6)?step+1:"A";
+  const avatarLabel=avatarOverride!==undefined?avatarOverride:(phase==="chat"&&step<=6)?step+1:"A";
   const wrap=document.createElement("div");
   wrap.className="msg agent"; wrap.id="msg-"+id;
   wrap.innerHTML=`<div class="avatar agent">${avatarLabel}</div><div>
