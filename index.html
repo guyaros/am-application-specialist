@@ -278,14 +278,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   box-shadow:var(--shadow);
 }
 .rating-title{font-weight:700;font-size:13px;color:#6366f1;margin-bottom:10px}
-.rating-opts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
-.rating-opt-btn{
-  padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;
-  border:1.5px solid rgba(99,102,241,.25);background:rgba(99,102,241,.06);
-  color:#6366f1;font-family:var(--font);transition:all .13s;
-}
-.rating-opt-btn:hover{background:rgba(99,102,241,.14);border-color:#6366f1}
-.rating-opt-btn.selected{background:#6366f1;color:#fff;border-color:#6366f1}
+.rating-stars{display:flex;gap:4px;margin-bottom:4px}
+.star-btn{font-size:30px;cursor:pointer;color:#d1d5db;transition:color .1s,transform .1s;line-height:1;user-select:none}
+.star-btn:hover{transform:scale(1.2)}
+.star-btn.lit{color:#f59e0b}
 .rating-q2{font-size:12px;color:var(--text2);margin:12px 0 6px;font-weight:600}
 .rating-submit{
   margin-top:10px;padding:7px 18px;background:#6366f1;color:#fff;border:none;border-radius:7px;
@@ -590,7 +586,7 @@ en:{
   settingsTitle:"Settings",settingsSub:"Manage your API key and preferences.",
   settingsLangLabel:"Interface Language",settingsCurKeyLabel:"Current API Key",settingsChgKeyLabel:"Change API Key",
   settingsRemoveKeyBtn:"Remove saved key",settingsCloseBtn:"Close",
-  stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report"],
+  stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report","Rating"],
   processing:"Processing...",awaitingFeedback:"Awaiting feedback",approvedStatus:"Approved ✓",completeStatus:"Complete ✅",iterLabel:"Iteration #",
   greeting:"Hello!\nI'm your Systematics 3D Printing Advisor.\nI'll guide you through selecting the optimal material and printing technology for your application.\n\n⚠️ Disclaimer: As an AI tool, results may not always be accurate — please treat recommendations as a starting point and verify critical data with a qualified professional. Do not share sensitive or confidential information.\nThis tool covers Systematics solutions and materials only.\n\nLet's start — what is the application type?",
   stepQ:[
@@ -641,7 +637,7 @@ he:{
   settingsTitle:"הגדרות",settingsSub:"ניהול מפתח API והעדפות.",
   settingsLangLabel:"שפת ממשק",settingsCurKeyLabel:"מפתח API נוכחי",settingsChgKeyLabel:"שינוי מפתח API",
   settingsRemoveKeyBtn:"הסר מפתח",settingsCloseBtn:"סגור",
-  stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","דרישות סביבה","דרישות גיאומטריות","דרישות ייצור","ניתוח","לולאת שיפור","דוח סופי"],
+  stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","דרישות סביבה","דרישות גיאומטריות","דרישות ייצור","ניתוח","לולאת שיפור","דוח סופי","משוב"],
   processing:"מעבד...",awaitingFeedback:"ממתין למשוב",approvedStatus:"מאושר ✓",completeStatus:"הושלם ✅",iterLabel:"איטרציה #",
   greeting:"שלום!\nאני יועץ הדפסה תלת-ממדית של Systematics.\nאדריך אותך בבחירת החומר וטכנולוגיית הדפסה המיטביים עבור האפליקציה המבוקשת.\n\n⚠️ הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות בכל מקרה — יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש.\nהכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.\n\nנתחיל — מהו סוג היישום?",
   stepQ:[
@@ -809,6 +805,7 @@ const STEPS_CFG = [
   {id:4,lbl:"Environmental"},{id:5,lbl:"Geometry"},
   {id:6,lbl:"Manufacturing"},{id:7,lbl:"Analysis"},
   {id:8,lbl:"Feedback loop"},{id:9,lbl:"Final report"},
+  {id:10,lbl:"Rating"},
 ];
 
 const RC = [
@@ -994,7 +991,7 @@ function renderSteps() {
   const chip=document.getElementById("progressChip");
   if(chip) chip.textContent=(step<=6&&phase==="chat")?`${step+1}/7`:"";
   // progress bar: 0% at start, 100% when analysis complete
-  const totalSteps=9; // steps 0-8 represent full journey
+  const totalSteps=10; // steps 0-9 represent full journey, step 10 = rating
   const pct=Math.round(Math.min(step,totalSteps)/totalSteps*100);
   const fill=document.getElementById("progressBarFill");
   const pctEl=document.getElementById("progressBarPct");
@@ -1482,13 +1479,14 @@ function doApprove() {
 
 function showRatingPanel() {
   if(document.getElementById("ratingPanel")) return;
+  step=10; renderSteps();
   const panel = document.createElement("div");
   panel.className = "rating-panel";
   panel.id = "ratingPanel";
   panel.innerHTML = `
     <div class="rating-title">${t("ratingTitle")}</div>
-    <div class="rating-opts">
-      ${t("ratingOpts").map((o,i)=>`<button class="rating-opt-btn" onclick="selectRating(this,${i})">${o}</button>`).join("")}
+    <div class="rating-stars" id="ratingStars">
+      ${[1,2,3,4,5].map(v=>`<span class="star-btn" onclick="selectStar(${v})">★</span>`).join("")}
     </div>
     <div class="rating-q2">${t("ratingQ2")}</div>
     <textarea class="fb-ta" id="ratingTa" rows="3" placeholder="${t("ratingPlaceholder")}"></textarea>
@@ -1498,10 +1496,11 @@ function showRatingPanel() {
   panel.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
-function selectRating(btn, idx) {
-  document.querySelectorAll(".rating-opt-btn").forEach(b=>b.classList.remove("selected"));
-  btn.classList.add("selected");
-  window._selectedRatingIdx = idx;
+function selectStar(val) {
+  window._selectedRatingIdx = val;
+  document.querySelectorAll(".star-btn").forEach((b,i)=>{
+    b.classList.toggle("lit", i < val);
+  });
 }
 
 function submitRating() {
