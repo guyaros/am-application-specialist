@@ -6,6 +6,7 @@
 <title>AM Application Specialist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="guardrails.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -991,6 +992,7 @@ function buildSystem() {
   return `You are AM Application Specialist — an expert advisor for 3D printing material and technology selection using the Ashby methodology (Materials Selection in Mechanical Design).
 Ask one focused question at a time. Use only data from the databases. Be concise and engineering-focused.
 ${lang==="he"?"IMPORTANT: Respond in Hebrew (עברית) for all conversational messages and questions. When asked to return JSON, return ONLY valid JSON with no text before or after it — write all string values (summary, rationale, professional_note, next_steps, risks text) in Hebrew inside the JSON.\n":""}
+${typeof GUARDRAILS !== "undefined" ? GUARDRAILS : ""}
 
 === DOMAIN KNOWLEDGE — APPLY THESE RULES IN EVERY ANALYSIS ===
 
