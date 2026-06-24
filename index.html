@@ -1023,7 +1023,7 @@ function buildSystemFull(){
 }
 
 async function callClaude(messages,fullCtx=false) {
-  const model=fullCtx?"claude-sonnet-4-20250514":"claude-haiku-4-5-20251001";
+  const model=fullCtx?"claude-sonnet-4-6":"claude-haiku-4-5-20251001";
   const sys=fullCtx?buildSystemFull():buildSystem();
   const res = await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
