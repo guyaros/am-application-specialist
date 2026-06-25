@@ -572,7 +572,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.58";
+const VERSION="v1.59";
 const REL_DATE="Jun 2026";
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
@@ -796,20 +796,34 @@ const MAT = [
 ];
 
 const PRN = [
-  {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
-  {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes"},
-  {n:"Form 4L",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes"},
-  {n:"Form 4BL",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes"},
-  {n:"Fuse1+",mfr:"Formlabs",tech:"SLS",bx:165,by:165,bz:300,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
-  {n:"Fuse X1",mfr:"Formlabs",tech:"SLS",bx:330,by:330,bz:565,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
-  {n:"Mark Two",mfr:"Markforged",tech:"FFF+CFR",bx:320,by:152,bz:154,res:400,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no"},
-  {n:"X7",mfr:"Markforged",tech:"FFF+CFR",bx:330,by:270,bz:200,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
-  {n:"FX10",mfr:"Markforged",tech:"FFF+CFR",bx:375,by:300,bz:300,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no"},
-  {n:"FX20",mfr:"Markforged",tech:"FFF+CFR",bx:525,by:400,bz:400,res:400,acc:"±125µm",esd:"yes",fr:"yes",bio:"no",opt:"no"},
-  {n:"HP 4200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no"},
-  {n:"HP 5200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no"},
-  {n:"HP 5600",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"yes",fr:"yes",bio:"yes",opt:"no"},
-  {n:"Snapemaker U1",mfr:"Snapemaker",tech:"FDM/FFF",bx:270,by:270,bz:270,res:400,acc:"±200µm",esd:"no",fr:"no",bio:"no",opt:"no"},
+  {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes",
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N"},
+  {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes",
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N;BioMed Clear;BioMed White;BioMed Black;BioMed Amber;BioMed Durable;BioMed Elastic;BioMed Flex 80A;Dental LT Comfort;Dental LT Clear;Dental IBT Flex 80A;Dental Precision Model;Dental Premium Teeth;Dental Surgical Guide;Dental Custom Tray"},
+  {n:"Form 4L",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes",
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1"},
+  {n:"Form 4BL",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes",
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;BioMed Clear;BioMed White;BioMed Black;BioMed Amber;BioMed Durable;BioMed Elastic;BioMed Flex 80A;Dental LT Comfort;Dental LT Clear;Dental IBT Flex 80A;Dental Precision Model;Dental Premium Teeth;Dental Surgical Guide;Dental Custom Tray"},
+  {n:"Fuse1+",mfr:"Formlabs",tech:"SLS",bx:165,by:165,bz:300,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no",
+   ml:"Nylon 12;Nylon 12 Tough;Nylon 12 White;Nylon 12 GF;Nylon 11;Nylon 11 CF;TPU 90A"},
+  {n:"Fuse X1",mfr:"Formlabs",tech:"SLS",bx:330,by:330,bz:565,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no",
+   ml:"Nylon 12"},
+  {n:"Mark Two",mfr:"Markforged",tech:"FFF+CFR",bx:320,by:152,bz:154,res:400,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no",
+   ml:"Onyx;Nylon White;PLA;TPU (Markforged)"},
+  {n:"X7",mfr:"Markforged",tech:"FFF+CFR",bx:330,by:270,bz:200,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no",
+   ml:"Onyx;Onyx ESD;Nylon White;PLA;TPU (Markforged)"},
+  {n:"FX10",mfr:"Markforged",tech:"FFF+CFR",bx:375,by:300,bz:300,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no",
+   ml:"Onyx;Onyx ESD;Nylon White FS"},
+  {n:"FX20",mfr:"Markforged",tech:"FFF+CFR",bx:525,by:400,bz:400,res:400,acc:"±125µm",esd:"yes",fr:"yes",bio:"no",opt:"no",
+   ml:"Onyx;Onyx ESD;Onyx FR;Onyx FR-A;Ultem 9085;Vega"},
+  {n:"HP 4200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no",
+   ml:"Nylon 12 (HP);Nylon 11 (HP)"},
+  {n:"HP 5200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no",
+   ml:"Nylon 12 (HP);Nylon 12 S (HP);Nylon 12 GB (HP);TPU (HP)"},
+  {n:"HP 5600",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"yes",fr:"yes",bio:"yes",opt:"no",
+   ml:"Nylon 12 (HP);Nylon 12 S (HP);Nylon 12 W (HP);Nylon 12 FR (HP);Nylon 11 (HP);Nylon 11 Gen2 (HP);TPU (HP)"},
+  {n:"Snapemaker U1",mfr:"Snapemaker",tech:"FDM/FFF",bx:270,by:270,bz:270,res:400,acc:"±200µm",esd:"no",fr:"no",bio:"no",opt:"no",
+   ml:"PLA"},
 ];
 
 const STEPS_CFG = [
