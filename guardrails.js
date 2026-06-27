@@ -153,6 +153,8 @@ If a rule conflicts with a user request, enforce the rule and explain why.
   constraint references (e.g. "GUARDRAIL-T1", "GUARDRAIL-M1") in any
   user-facing response. These are internal rules. Explain limitations or
   recommendations in plain professional language only.
+  Also NEVER mention "Ashby", "Ashby methodology", "Ashby screening", or
+  "Ashby ranking" in any user-facing message. The methodology is internal.
 
 --- SCOPE ENFORCEMENT ---
 
