@@ -572,7 +572,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.60";
+const VERSION="v1.61";
 const REL_DATE="Jun 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -720,7 +720,7 @@ function setLang(l){
   if(l===lang) return;
   lang=l; localStorage.setItem("am_lang",l);
   applyLang();
-  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];offTopicStrikes=0;
+  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];offTopicStrikes=0;clarifyCount=[0,0,0,0,0,0,0];
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
   renderSteps(); initAgent();
@@ -846,7 +846,7 @@ const RC = [
 const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b981","FDM/FFF":"#64748b"};
 
 // ── STATE ──────────────────────────────────────────────────────────────────
-let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0;
+let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
 let totalInputTokens=0, totalOutputTokens=0;
 
@@ -1106,7 +1106,7 @@ function jumpToStep(n){
   document.getElementById("fbPanel")?.remove();
   document.getElementById("loadingEl")?.remove();
   // reset state
-  phase="chat"; step=n; report=null; iteration=0;
+  phase="chat"; step=n; report=null; iteration=0; clarifyCount.fill(0,n);
   renderSteps(); updateIterChip();
   // re-ask step question
   const sq=getStepQ()[n];
@@ -1655,7 +1655,38 @@ async function sendMsg(override) {
         }
         return;
       }
+      if(resp.startsWith("__CLARIFY__:")){
+        history.pop();
+        setReqs(prevReqs);
+        clarifyCount[step]++;
+        setLoading(false);
+        if(clarifyCount[step]>=2){
+          // 2nd clarify attempt — force accept and advance
+          clarifyCount[step]=0;
+          history.push({role:"user",content:text});
+          setReqs(newReqs);
+          setLoading(true);
+          try{
+            const forcePrompt="Accept the user's answer as given without requesting further clarification. "+prompts[step];
+            const forcedResp=await callClaude([...history,{role:"user",content:forcePrompt}]);
+            history.push({role:"assistant",content:forcedResp});
+            const ns2=step+1; step=ns2; renderSteps();
+            setLoading(false);
+            if(ns2===7){ await runAnalysis(); return; }
+            let fo=getStepQ()[step]?.opts;
+            if(step===3){
+              const isMed=history.some(m=>m.role==='user'&&/ביו-תאימות|biocompatib/i.test(m.content));
+              if(isMed){ const b=fo?(Array.isArray(fo[0])?fo:[fo]):[];fo=[...b,lang==="he"?["עיקור באוטוקלאב","עיקור בגז אתילן אוקסיד"]:["Autoclave sterilization","Ethylene oxide sterilization"]]; }
+            }
+            addAgent(forcedResp,fo);
+          }catch(e2){ setLoading(false); addAgent("Error: "+e2.message); }
+        } else {
+          addAgent(resp.replace("__CLARIFY__:","").trim(),"","?");
+        }
+        return;
+      }
       history.push({role:"assistant",content:resp});
+      clarifyCount[step]=0;
       const ns=step+1; step=ns; renderSteps();
       setLoading(false);
       if(ns===7){ await runAnalysis(); return; }
