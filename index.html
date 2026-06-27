@@ -572,8 +572,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.59";
+const VERSION="v1.60";
 const REL_DATE="Jun 2026";
+const BLOCK_DURATION_MS=10*60*1000;
+const MAX_STRIKES=3;
 
 // ── LANGUAGE ───────────────────────────────────────────────────────────────
 const LANG={
@@ -718,7 +720,7 @@ function setLang(l){
   if(l===lang) return;
   lang=l; localStorage.setItem("am_lang",l);
   applyLang();
-  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];
+  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];offTopicStrikes=0;
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
   renderSteps(); initAgent();
@@ -844,9 +846,54 @@ const RC = [
 const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b981","FDM/FFF":"#64748b"};
 
 // ── STATE ──────────────────────────────────────────────────────────────────
-let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat";
+let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0;
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
 let totalInputTokens=0, totalOutputTokens=0;
+
+// ── SCOPE BLOCK ────────────────────────────────────────────────────────────
+function blockUser() {
+  const unblockAt=Date.now()+BLOCK_DURATION_MS;
+  localStorage.setItem("am_blocked_until", String(unblockAt));
+  const box=document.getElementById("inputBox");
+  const btn=document.getElementById("sendBtn");
+  if(box) box.disabled=true;
+  if(btn) btn.disabled=true;
+  const mins=BLOCK_DURATION_MS/60000;
+  const msg=lang==="he"
+    ?`השיחה נפסקת. לאחר ${MAX_STRIKES} ניסיונות לא רלוונטיים, הגישה חסומה למשך ${mins} דקות.`
+    :`Conversation stopped. After ${MAX_STRIKES} off-topic attempts, access is blocked for ${mins} minutes.`;
+  addAgent(msg,"","!");
+  setTimeout(()=>{
+    localStorage.removeItem("am_blocked_until");
+    offTopicStrikes=0;
+    if(box) box.disabled=false;
+    if(btn) btn.disabled=false;
+    addAgent(lang==="he"?"החסימה הסתיימה. תוכל להמשיך.":"Block expired. You may continue.","","!");
+  }, BLOCK_DURATION_MS);
+}
+
+function checkBlock() {
+  const raw=localStorage.getItem("am_blocked_until");
+  if(!raw) return;
+  const remaining=parseInt(raw)-Date.now();
+  if(remaining<=0){ localStorage.removeItem("am_blocked_until"); return; }
+  const box=document.getElementById("inputBox");
+  const btn=document.getElementById("sendBtn");
+  if(box) box.disabled=true;
+  if(btn) btn.disabled=true;
+  const mins=Math.ceil(remaining/60000);
+  const msg=lang==="he"
+    ?`הגישה חסומה. נסה שוב בעוד ${mins} דקות.`
+    :`Access blocked. Try again in ${mins} minute(s).`;
+  addAgent(msg,"","!");
+  setTimeout(()=>{
+    localStorage.removeItem("am_blocked_until");
+    offTopicStrikes=0;
+    if(box) box.disabled=false;
+    if(btn) btn.disabled=false;
+    addAgent(lang==="he"?"החסימה הסתיימה. תוכל להמשיך.":"Block expired. You may continue.","","!");
+  }, remaining);
+}
 
 // ── API KEY ────────────────────────────────────────────────────────────────
 function startWithKey() {
@@ -1573,6 +1620,7 @@ async function sendMsg(override) {
   }
 
   addUser(text);
+  const prevReqs={...reqs};
   const newReqs={...reqs};
   const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
   if(step<keys.length){ stepHistory[step]=history.length; newReqs[keys[step]]=text; }
@@ -1593,6 +1641,20 @@ async function sendMsg(override) {
     setLoading(true);
     try{
       const resp=await callClaude([...history,{role:"user",content:prompts[step]}]);
+      if(resp.startsWith("__VIOLATION__:")){
+        history.pop();
+        setReqs(prevReqs);
+        setLoading(false);
+        offTopicStrikes++;
+        const cleanMsg=resp.replace("__VIOLATION__:","").trim();
+        if(offTopicStrikes>=MAX_STRIKES){ blockUser(); }
+        else{
+          const left=MAX_STRIKES-offTopicStrikes;
+          const warn=lang==="he"?`${cleanMsg}\n(${left} אזהרות נותרות)`:`${cleanMsg}\n(${left} warning(s) remaining)`;
+          addAgent(warn,"","⚠");
+        }
+        return;
+      }
       history.push({role:"assistant",content:resp});
       const ns=step+1; step=ns; renderSteps();
       setLoading(false);
@@ -1617,7 +1679,7 @@ function handleKey(e){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendM
 (function(){
   applyLang();
   const saved=localStorage.getItem("am_api_key");
-  if(saved){ apiKey=saved; document.getElementById("keyScreen").style.display="none"; document.getElementById("app").style.display="flex"; initAgent(); }
+  if(saved){ apiKey=saved; document.getElementById("keyScreen").style.display="none"; document.getElementById("app").style.display="flex"; initAgent(); checkBlock(); }
 })();
 </script>
 </body>
