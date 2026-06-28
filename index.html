@@ -450,17 +450,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div class="logo-mark">AM specialist</div>
       <div><div style="font-weight:700;font-size:15px;color:var(--text)">Application Specialist</div><div style="font-size:10px;color:var(--text3)">3D Printing Material Advisor</div></div>
     </div>
-    <div class="key-title">Enter your API Key</div>
-    <div class="key-sub">This tool requires an Anthropic API key. Your key is saved locally in your browser and never sent to any server other than Anthropic.</div>
-    <label class="key-label">Anthropic API Key</label>
-    <input class="key-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    <div class="key-title" id="keyTitle">Enter Access Code</div>
+    <div class="key-sub" id="keySub">This tool requires a pilot access code. Enter the code you were given to start.</div>
+    <label class="key-label" id="keyLabel">Access Code</label>
+    <input class="key-input" type="password" id="keyInput" placeholder="Enter your access code" autocomplete="off"/>
     <div class="key-err" id="keyErr"></div>
     <button class="key-btn" id="keyBtn" onclick="startWithKey()">
       <span id="keyBtnText">Launch Agent →</span>
     </button>
-    <div class="key-note">
-      🔒 Your key is only held in memory for this session.<br/>
-      Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+    <div class="key-note" id="keyNote">
+      🔒 Your access code is stored only in this browser for this session.
     </div>
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
       <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.3px;">Systematics</div>
@@ -487,7 +486,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div class="settings-current" id="settingsCurrentKey">—</div>
       <label class="settings-label" id="settingsChgKeyLabel">Change API Key</label>
       <div class="settings-row">
-        <input class="key-input" type="password" id="settingsKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" style="flex:1"/>
+        <input class="key-input" type="password" id="settingsKeyInput" placeholder="Enter new access code" autocomplete="off" style="flex:1"/>
         <button class="key-btn" id="settingsSaveBtn" onclick="saveSettingsKey()" style="width:auto;margin-top:0;padding:11px 16px;font-size:13px;">Save</button>
       </div>
       <div class="key-err" id="settingsErr" style="margin-top:6px;"></div>
@@ -585,9 +584,11 @@ en:{
   topbarSub:"Ashby Methodology · 52 materials · 14 printers",
   inputPlaceholder:"Type your answer...",sendBtn:"Send",
   exportBtn:"⬇ Export PDF",newRunBtn:"↺ New Run",settingsBtn:"⚙ Settings",
-  settingsTitle:"Settings",settingsSub:"Manage your API key and preferences.",
-  settingsLangLabel:"Interface Language",settingsCurKeyLabel:"Current API Key",settingsChgKeyLabel:"Change API Key",
-  settingsRemoveKeyBtn:"Remove saved key",settingsCloseBtn:"Close",
+  settingsTitle:"Settings",settingsSub:"Manage your access code and preferences.",
+  settingsLangLabel:"Interface Language",settingsCurKeyLabel:"Current Access Code",settingsChgKeyLabel:"Change Access Code",
+  settingsRemoveKeyBtn:"Remove saved code",settingsCloseBtn:"Close",
+  keyTitle:"Enter Access Code",keySub:"This tool requires a pilot access code. Enter the code you were given to start.",keyLabel:"Access Code",keyPlaceholder:"Enter your access code",keyNote:"🔒 Your access code is stored only in this browser for this session.",
+  errEnterCode:"Please enter your access code",errInvalidCode:"Invalid access code: ",
   stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report","Rating"],
   processing:"Processing...",awaitingFeedback:"Awaiting feedback",approvedStatus:"Approved ✓",completeStatus:"Complete ✅",iterLabel:"Iteration #",
   greeting:"Hello!\nI'm your Systematics 3D Printing Advisor.\nI'll guide you through selecting the optimal material and printing technology for your application.\n\n⚠️ Disclaimer: As an AI tool, results may not always be accurate — please treat recommendations as a starting point and verify critical data with a qualified professional. Do not share sensitive or confidential information.\nThis tool covers Systematics solutions and materials only.",
@@ -621,8 +622,8 @@ en:{
   volLbl:"Volume",resLbl:"XY Res.",accLbl:"Accuracy",
   riskHigh:"HIGH RISK",riskMed:"NOTE",riskLow:"ADVANTAGE",proNoteLbl:"Expert Note",
   confirmNewRun:"Start a new run? This will clear the current session.",
-  confirmRemoveKey:"Remove saved API key? You will need to enter it again on next visit.",
-  keyUpdated:"API key updated successfully ✓",
+  confirmRemoveKey:"Remove saved access code? You will need to enter it again on next visit.",
+  keyUpdated:"Access code updated successfully ✓",
   langSwitch:"Switch to Hebrew? A new session will start.",
   ratingTitle:"Rate the response quality",
   ratingOpts:["Not useful","Reasonable","Excellent"],
@@ -637,9 +638,11 @@ he:{
   topbarSub:"52 חומרים · 14 מדפסות",
   inputPlaceholder:"הקלד את תשובתך...",sendBtn:"שלח",
   exportBtn:"⬇ ייצוא PDF",newRunBtn:"↺ הפעלה חדשה",settingsBtn:"⚙ הגדרות",
-  settingsTitle:"הגדרות",settingsSub:"ניהול מפתח API והעדפות.",
-  settingsLangLabel:"שפת ממשק",settingsCurKeyLabel:"מפתח API נוכחי",settingsChgKeyLabel:"שינוי מפתח API",
-  settingsRemoveKeyBtn:"הסר מפתח",settingsCloseBtn:"סגור",
+  settingsTitle:"הגדרות",settingsSub:"ניהול קוד גישה והעדפות.",
+  settingsLangLabel:"שפת ממשק",settingsCurKeyLabel:"קוד גישה נוכחי",settingsChgKeyLabel:"שינוי קוד גישה",
+  settingsRemoveKeyBtn:"הסר קוד גישה",settingsCloseBtn:"סגור",
+  keyTitle:"הזן קוד גישה",keySub:"הכלי דורש קוד גישה לפיילוט. הזן את הקוד שקיבלת כדי להתחיל.",keyLabel:"קוד גישה",keyPlaceholder:"הזן את קוד הגישה שלך",keyNote:"🔒 קוד הגישה נשמר בדפדפן זה בלבד ולמשך הסשן הנוכחי.",
+  errEnterCode:"אנא הזן את קוד הגישה",errInvalidCode:"קוד גישה שגוי: ",
   stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","דרישות סביבה","דרישות גיאומטריות","דרישות ייצור","ניתוח","לולאת שיפור וחידוד","דוח סופי","משוב"],
   processing:"מעבד...",awaitingFeedback:"ממתין למשוב",approvedStatus:"מאושר ✓",completeStatus:"הושלם ✅",iterLabel:"איטרציה #",
   greeting:"שלום!\nאני יועץ הדפסה תלת-ממדית של Systematics.\nאדריך אותך בבחירת החומר וטכנולוגיית הדפסה המיטביים עבור האפליקציה המבוקשת.\n\n⚠️ הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות.\n בכל מקרה - יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש.\n\nהכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.",
@@ -673,8 +676,8 @@ he:{
   volLbl:"נפח",resLbl:"רזולוציה",accLbl:"דיוק",
   riskHigh:"סיכון גבוה",riskMed:"הערה",riskLow:"יתרון",proNoteLbl:"הערה מקצועית",
   confirmNewRun:"להתחיל הפעלה חדשה? הסשן הנוכחי יימחק.",
-  confirmRemoveKey:"להסיר את מפתח ה-API השמור? תצטרך להזינו מחדש.",
-  keyUpdated:"מפתח API עודכן בהצלחה ✓",
+  confirmRemoveKey:"להסיר את קוד הגישה השמור? תצטרך להזינו מחדש בכניסה הבאה.",
+  keyUpdated:"קוד הגישה עודכן בהצלחה ✓",
   langSwitch:"Switch to English? A new session will start.",
   ratingTitle:"דרג את איכות התשובה",
   ratingOpts:["לא סביר","סביר","מעולה"],
@@ -689,6 +692,11 @@ function applyLang(){
   const L=LANG[lang];
   document.documentElement.lang=lang;
   document.documentElement.dir=lang==="he"?"rtl":"ltr";
+  document.getElementById("keyTitle").textContent=L.keyTitle;
+  document.getElementById("keySub").textContent=L.keySub;
+  document.getElementById("keyLabel").textContent=L.keyLabel;
+  document.getElementById("keyInput").placeholder=L.keyPlaceholder;
+  document.getElementById("keyNote").textContent=L.keyNote;
   const logoEl=document.getElementById("logoTextEl"); if(logoEl) logoEl.innerHTML=L.logoText;
   document.getElementById("stepsLabelEl").textContent=L.stepsLabel;
   document.getElementById("topbarTitleEl").textContent=L.topbarTitle;
@@ -846,8 +854,9 @@ const RC = [
 const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b981","FDM/FFF":"#64748b"};
 
 // ── STATE ──────────────────────────────────────────────────────────────────
-let apiKey="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
+let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
+const PROXY_URL="https://am-application-specialist.onrender.com/v1/messages";
 let totalInputTokens=0, totalOutputTokens=0;
 
 // ── SCOPE BLOCK ────────────────────────────────────────────────────────────
@@ -902,32 +911,31 @@ function startWithKey() {
   const btn = document.getElementById("keyBtn");
   const btnText = document.getElementById("keyBtnText");
 
-  if (!k) { errEl.textContent="Please enter your API key"; return; }
-  if (!k.startsWith("sk-ant-")) { errEl.textContent="Invalid key — must start with sk-ant-"; return; }
+  if (!k) { errEl.textContent=t("errEnterCode"); return; }
 
   errEl.textContent="";
   btn.disabled=true;
   btnText.innerHTML='<div class="spinner"></div> Verifying...';
 
-  fetch("https://api.anthropic.com/v1/messages",{
+  fetch(PROXY_URL,{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    headers:{"Content-Type":"application/json","x-access-token":k},
     body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:10,messages:[{role:"user",content:"hi"}]})
-  }).then(r=>r.json()).then(d=>{
-    if(d.error){ errEl.textContent="Invalid key: "+d.error.message; btn.disabled=false; btnText.textContent="Launch Agent →"; return; }
-    apiKey=k;
-    localStorage.setItem("am_api_key",k);
+  }).then(async r=>{
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok){ errEl.textContent=t("errInvalidCode")+(d.detail||r.status); btn.disabled=false; btnText.textContent="Launch Agent →"; return; }
+    accessToken=k;
+    localStorage.setItem("am_access_token",k);
     document.getElementById("keyScreen").style.display="none";
     document.getElementById("app").style.display="flex";
     applyLang(); initAgent();
   }).catch(e=>{ errEl.textContent="Network error. Try again."; btn.disabled=false; btnText.textContent="Launch Agent →"; });
 }
 
-function clearKey(){ apiKey=""; localStorage.removeItem("am_api_key"); document.getElementById("keyScreen").style.display="flex"; document.getElementById("app").style.display="none"; document.getElementById("keyInput").value=""; }
+function clearKey(){ accessToken=""; localStorage.removeItem("am_access_token"); document.getElementById("keyScreen").style.display="flex"; document.getElementById("app").style.display="none"; document.getElementById("keyInput").value=""; }
 
 function openSettings(){
-  const masked=apiKey?apiKey.slice(0,10)+"..."+apiKey.slice(-4):"No key saved";
-  document.getElementById("settingsCurrentKey").textContent=masked;
+  document.getElementById("settingsCurrentKey").textContent=accessToken?"••••••••":"—";
   document.getElementById("settingsKeyInput").value="";
   document.getElementById("settingsErr").textContent="";
   document.getElementById("emailToInput").value=localStorage.getItem("email_to")||"";
@@ -1025,17 +1033,17 @@ function saveSettingsKey(){
   const k=document.getElementById("settingsKeyInput").value.trim();
   const errEl=document.getElementById("settingsErr");
   const btn=document.getElementById("settingsSaveBtn");
-  if(!k){errEl.textContent="Please enter a key"; return;}
-  if(!k.startsWith("sk-ant-")){errEl.textContent="Invalid key — must start with sk-ant-"; return;}
+  if(!k){errEl.textContent=t("errEnterCode"); return;}
   errEl.textContent=""; btn.disabled=true; btn.textContent="Saving...";
-  fetch("https://api.anthropic.com/v1/messages",{
+  fetch(PROXY_URL,{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    headers:{"Content-Type":"application/json","x-access-token":k},
     body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:10,messages:[{role:"user",content:"hi"}]})
-  }).then(r=>r.json()).then(d=>{
+  }).then(async r=>{
+    const d=await r.json().catch(()=>({}));
     btn.disabled=false; btn.textContent="Save";
-    if(d.error){errEl.textContent="Invalid key: "+d.error.message; return;}
-    apiKey=k; localStorage.setItem("am_api_key",k);
+    if(!r.ok){errEl.textContent=t("errInvalidCode")+(d.detail||r.status); return;}
+    accessToken=k; localStorage.setItem("am_access_token",k);
     closeSettings();
     addAgent(t("keyUpdated"));
   }).catch(()=>{btn.disabled=false; btn.textContent="Save"; errEl.textContent="Network error. Try again.";});
@@ -1251,13 +1259,13 @@ function buildSystemFull(){
 async function callClaude(messages,fullCtx=false) {
   const model=fullCtx?"claude-sonnet-4-6":"claude-haiku-4-5-20251001";
   const sys=fullCtx?buildSystemFull():buildSystem();
-  const res = await fetch("https://api.anthropic.com/v1/messages",{
+  const res = await fetch(PROXY_URL,{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    headers:{"Content-Type":"application/json","x-access-token":accessToken},
     body:JSON.stringify({model,max_tokens:2500,system:sys,messages}),
   });
-  const d = await res.json();
-  if(d.error) throw new Error(d.error.message);
+  const d = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(d.detail||"Request failed");
   if(d.usage){totalInputTokens+=d.usage.input_tokens||0;totalOutputTokens+=d.usage.output_tokens||0;}
   return d.content?.[0]?.text||"";
 }
@@ -1709,8 +1717,8 @@ function handleKey(e){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendM
 // ── AUTO-LOAD SAVED KEY ────────────────────────────────────────────────────
 (function(){
   applyLang();
-  const saved=localStorage.getItem("am_api_key");
-  if(saved){ apiKey=saved; document.getElementById("keyScreen").style.display="none"; document.getElementById("app").style.display="flex"; initAgent(); checkBlock(); }
+  const saved=localStorage.getItem("am_access_token");
+  if(saved){ accessToken=saved; document.getElementById("keyScreen").style.display="none"; document.getElementById("app").style.display="flex"; initAgent(); checkBlock(); }
 })();
 </script>
 </body>
