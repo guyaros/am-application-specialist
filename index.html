@@ -571,7 +571,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.66";
+const VERSION="v1.67";
 const REL_DATE="Jun 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -985,10 +985,10 @@ function calcRunCost(){
 }
 
 async function sendEmailReport(ratingStars, ratingText){
-  const to=localStorage.getItem("email_to")||"";
-  const svc=localStorage.getItem("email_service")||"";
-  const tpl=localStorage.getItem("email_template")||"";
-  const pub=localStorage.getItem("email_pubkey")||"";
+  const to=localStorage.getItem("email_to")||"guy@systematics.co.il";
+  const svc=localStorage.getItem("email_service")||"service_zu9di72";
+  const tpl=localStorage.getItem("email_template")||"template_3u0lbcl";
+  const pub=localStorage.getItem("email_pubkey")||"ytRiCmkaz1zzuYR2S";
   if(!to||!svc||!tpl||!pub||!report) return;
   const cost=calcRunCost();
   const mats=(report.materials||[]).map((m,i)=>(i+1)+". "+m.name+" ("+m.vendor+" / "+m.technology+")\n   "+m.rationale).join("\n\n");
