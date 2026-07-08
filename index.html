@@ -576,7 +576,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.71";
+const VERSION="v1.72";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -633,6 +633,8 @@ en:{
   langSwitch:"Switch to Hebrew? A new session will start.",
   ratingTitle:"Rate the response quality",
   ratingOpts:["Not useful","Reasonable","Excellent"],
+  ratingNameQ:"Your name",
+  ratingNamePlaceholder:"Enter your name so we know who the feedback is from",
   ratingQ2:"What do you think should be improved in the agent?",
   ratingPlaceholder:"Share your feedback...",
   ratingSubmitBtn:"Send feedback",
@@ -688,6 +690,8 @@ he:{
   langSwitch:"Switch to English? A new session will start.",
   ratingTitle:"דרג את איכות התשובה",
   ratingOpts:["לא סביר","סביר","מעולה"],
+  ratingNameQ:"השם שלך",
+  ratingNamePlaceholder:"הזן את שמך כדי שנדע ממי המשוב",
   ratingQ2:"מה לדעתך כדאי לשפר בסוכן? הערות נוספות?",
   ratingPlaceholder:"שתף אותנו...",
   ratingSubmitBtn:"שלח משוב",
@@ -992,7 +996,7 @@ function calcRunCost(){
   return {inp:totalInputTokens,out:totalOutputTokens,tot:totalInputTokens+totalOutputTokens,usd:usd.toFixed(4)};
 }
 
-async function sendEmailReport(ratingStars, ratingText){
+async function sendEmailReport(ratingStars, ratingText, userName){
   const to=localStorage.getItem("email_to")||"guy@systematics.co.il";
   const svc=localStorage.getItem("email_service")||"service_zu9di72";
   const tpl=localStorage.getItem("email_template")||"template_3u0lbcl";
@@ -1016,6 +1020,7 @@ async function sendEmailReport(ratingStars, ratingText){
     "PROFESSIONAL NOTE","─".repeat(30),report.professional_note||"","",
     "NEXT STEPS","─".repeat(30),(report.next_steps||[]).map((s,i)=>(i+1)+". "+s).join("\n"),"",
     "USER FEEDBACK","─".repeat(30),
+    "Name: "+(userName||"(not provided)"),
     "Rating: "+(ratingStars||"—"),
     "Improvement suggestions: "+(ratingText||"(none)"),"",
     "RUN STATISTICS","─".repeat(30),
@@ -1024,7 +1029,7 @@ async function sendEmailReport(ratingStars, ratingText){
     "Total tokens:   "+cost.tot,
     "Estimated cost: $"+cost.usd+" USD (claude-sonnet-4)",
   ].join("\n");
-  const subject="AM Specialist — "+(reqs.application_type||"Run")+" — "+new Date().toLocaleDateString();
+  const subject="AM Specialist — "+(userName?userName+" — ":"")+(reqs.application_type||"Run")+" — "+new Date().toLocaleDateString();
   try{
     await _ejsSend(to,svc,tpl,pub,subject,body);
     addAgent("📧 "+t("emailSent")+" → "+to);
@@ -1616,13 +1621,16 @@ function showRatingPanel() {
   const panel = document.createElement("div");
   panel.className = "rating-panel";
   panel.id = "ratingPanel";
+  const savedName=localStorage.getItem("am_username")||"";
   panel.innerHTML = `
     <div class="rating-title">${t("ratingTitle")}</div>
     <div class="rating-stars" id="ratingStars">
       ${[1,2,3,4,5].map(v=>`<span class="star-btn" onclick="selectStar(${v})">★</span>`).join("")}
     </div>
+    <div class="rating-q2">${t("ratingNameQ")}</div>
+    <input class="fb-ta" id="ratingName" style="width:100%" maxlength="60" placeholder="${t("ratingNamePlaceholder")}" value="${esc2(savedName)}"/>
     <div class="rating-q2">${t("ratingQ2")}</div>
-    <textarea class="fb-ta" id="ratingTa" rows="3" placeholder="${t("ratingPlaceholder")}"></textarea>
+    <textarea class="fb-ta" id="ratingTa" rows="3" style="width:100%" placeholder="${t("ratingPlaceholder")}"></textarea>
     <button class="rating-submit" onclick="submitRating()">${t("ratingSubmitBtn")}</button>
   `;
   document.getElementById("messages").appendChild(panel);
@@ -1639,11 +1647,13 @@ function selectStar(val) {
 function submitRating() {
   const stars = window._selectedRatingIdx;
   const text = (document.getElementById("ratingTa")?.value||"").trim();
+  const userName = (document.getElementById("ratingName")?.value||"").trim();
+  if(userName) localStorage.setItem("am_username", userName);
   const starStr = stars ? "★".repeat(stars)+"☆".repeat(5-stars)+" ("+stars+"/5)" : "—";
-  console.log("[Agent Rating]", starStr, text);
+  console.log("[Agent Rating]", starStr, text, userName);
   const panel = document.getElementById("ratingPanel");
   if(panel) panel.innerHTML = `<div class="rating-thanks">${t("ratingThanks")}</div>`;
-  sendEmailReport(starStr, text);
+  sendEmailReport(starStr, text, userName);
 }
 
 // ── SEND ───────────────────────────────────────────────────────────────────
