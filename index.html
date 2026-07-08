@@ -14,7 +14,7 @@
   --green:#059669;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;
   --surface:#ffffff;--surface2:#f8f9fb;--surface3:#eef0f4;
   --border:#e2e6ed;--border2:#d0d5df;
-  --text:#1e2a3b;--text2:#5a6b82;--text3:#94a3b8;
+  --text:#1e2a3b;--text2:#5a6b82;--text3:#64748b;
   --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
   --shadow-lg:0 4px 24px rgba(0,0,0,.10),0 1px 4px rgba(0,0,0,.06);
   --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
@@ -27,7 +27,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ── SIDEBAR ── */
 #sidebar{
-  width:230px;background:var(--surface);border-right:1px solid var(--border);
+  width:260px;background:#f2f4f8;border-right:1px solid var(--border);
   display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
   box-shadow:2px 0 8px rgba(0,0,0,.04);
 }
@@ -44,22 +44,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .logo-sub{font-size:10px;color:var(--text3);font-weight:400}
 
 .steps-wrap{flex:1;overflow-y:auto;padding:14px 10px}
-.steps-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:0 6px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.progress-chip{font-size:10px;font-weight:700;color:var(--accent);background:rgba(37,99,235,.08);border-radius:10px;padding:2px 7px;letter-spacing:0;text-transform:none}
-.step{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;margin-bottom:2px;transition:background .15s}
-.step.active{background:rgba(37,99,235,.08)}
-.step.done{background:rgba(5,150,105,.07)}
+.steps-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;padding:0 6px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.progress-chip{font-size:11px;font-weight:700;color:var(--accent);background:rgba(37,99,235,.1);border-radius:10px;padding:2px 8px;letter-spacing:0;text-transform:none}
+.step{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;margin-bottom:4px;transition:background .15s;position:relative}
+.step::before{content:"";position:absolute;top:-13px;height:14px;width:2px;left:19px;background:var(--border2);border-radius:1px}
+.step:first-child::before{display:none}
+.step.done+.step::before{background:var(--green)}
+[dir=rtl] .step::before{left:auto;right:19px}
+.step.active{background:var(--blue);box-shadow:0 3px 12px rgba(37,99,235,.35)}
+.step.done{background:rgba(5,150,105,.08)}
+.step.flash{animation:stepFlash .5s ease}
+@keyframes stepFlash{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
 .step-num{
   width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-size:10px;font-weight:700;flex-shrink:0;
   background:var(--surface3);color:var(--text3);border:1.5px solid var(--border2);
   transition:all .2s;
 }
-.step.active .step-num{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.2)}
-.step.done .step-num{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 0 0 3px rgba(5,150,105,.15)}
-.step-lbl{font-size:11.5px;color:var(--text3);transition:color .15s}
-.step.active .step-lbl{color:var(--blue);font-weight:600}
-.step.done .step-lbl{color:var(--green);font-weight:500}
+.step.active .step-num{background:#fff;color:var(--blue);border-color:#fff}
+.step.done .step-num{background:var(--green);color:#fff;border-color:var(--green)}
+.step-lbl{font-size:13px;color:var(--text2);transition:color .15s}
+.step.active .step-lbl{color:#fff;font-weight:700}
+.step.done .step-lbl{color:var(--green);font-weight:600}
 .step.editable{cursor:pointer}
 .step.editable:hover{background:rgba(37,99,235,.07)!important}
 .step.editable:hover .step-lbl{color:var(--blue)!important}
@@ -118,7 +124,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .avatar.user{background:var(--surface3);color:var(--text2);border:1px solid var(--border2)}
 
 .bubble{
-  padding:11px 15px;font-size:13px;line-height:1.7;white-space:pre-wrap;
+  padding:11px 15px;font-size:14px;line-height:1.7;white-space:pre-wrap;
   border-radius:3px 12px 12px 12px;
   background:var(--surface);border:1px solid var(--border);
   color:var(--text);box-shadow:var(--shadow);
@@ -133,7 +139,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .opt{
   padding:6px 14px;border-radius:8px;
   border:1px solid var(--border2);background:var(--surface);
-  color:var(--text2);font-size:12px;cursor:pointer;
+  color:var(--text2);font-size:13px;cursor:pointer;
   font-family:var(--font);transition:all .15s;font-weight:500;
   box-shadow:0 1px 3px rgba(0,0,0,.05);
 }
@@ -145,6 +151,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .opt.opt-alt2{border-color:#0891b2;color:#0891b2}
 .opt.opt-alt2:hover{border-color:#0891b2;color:#0891b2;background:rgba(8,145,178,.05)}
 .opt.opt-alt2.sel{background:#0891b2;color:#fff;border-color:#0891b2;box-shadow:0 2px 8px rgba(8,145,178,.25)}
+
+/* DISCLAIMER */
+.disclaimer-box{
+  display:flex;gap:8px;align-items:flex-start;align-self:flex-start;
+  background:var(--surface3);border:1px solid var(--border2);border-radius:10px;
+  padding:9px 12px;font-size:11.5px;color:var(--text2);line-height:1.6;
+  margin-left:37px;width:calc(100% - 37px);max-width:640px;
+}
+[dir=rtl] .disclaimer-box{margin-left:0;margin-right:37px}
 
 /* LOADING */
 .loading-bubble{
@@ -360,7 +375,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 #inputBox{
   flex:1;border:1.5px solid var(--border2);border-radius:10px;padding:9px 13px;
-  font-size:13px;font-family:var(--font);resize:none;outline:none;
+  font-size:14px;font-family:var(--font);resize:none;outline:none;
   background:var(--surface2);color:var(--text);transition:border .15s;line-height:1.5;
 }
 #inputBox:focus{border-color:var(--blue);background:#fff}
@@ -416,6 +431,25 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 @media print{#sidebar,#topbar,#inputArea,.fb-panel{display:none!important}#main{height:auto}#messages{overflow:visible}}
 
+/* MOBILE MINI-STEPPER (visible only ≤900px) */
+#miniStepper{display:none}
+.ms-dot{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;
+  background:var(--surface3);color:var(--text3);border:1.5px solid var(--border2);
+  transition:all .2s;
+}
+.ms-dot.done{background:var(--green);color:#fff;border-color:var(--green)}
+.ms-dot.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.ms-dot.work{
+  background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4);
+  background-size:200% 100%;color:#fff;border-color:transparent;
+  animation:pb-shimmer 1.2s linear infinite;
+}
+.ms-line{flex:1;max-width:18px;height:2px;background:var(--border2);border-radius:1px}
+.ms-line.done{background:var(--green)}
+
 /* ── MOBILE ── */
 #menu-btn{
   display:none;background:var(--blue);border:none;cursor:pointer;
@@ -428,6 +462,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 #sidebar-overlay.visible{display:block}
 
 @media(max-width:900px){
+  #miniStepper{
+    display:flex;align-items:center;justify-content:center;gap:4px;
+    padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;
+  }
   #menu-btn{display:flex!important;position:fixed;top:10px;z-index:500}
   [dir=rtl] #menu-btn{right:10px;left:auto}
   [dir=ltr] #menu-btn{left:10px;right:auto}
@@ -530,7 +568,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </div>
     </div>
     <div class="steps-wrap">
-      <div class="steps-label" id="stepsLabelEl">Ashby Steps<span class="progress-chip" id="progressChip"></span></div>
+      <div class="steps-label" id="stepsLabelEl"><span id="stepsLabelText">Process Steps</span><span class="progress-chip" id="progressChip"></span></div>
       <div id="stepsContainer"></div>
     </div>
     <div class="iter-chip" id="iterChip">
@@ -560,6 +598,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </div>
       <button id="menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
     </div>
+    <div id="miniStepper"></div>
     <div id="messages"></div>
     <div id="progressBarWrap">
       <div class="pb-header">
@@ -578,7 +617,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.76";
+const VERSION="v1.77";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -599,8 +638,9 @@ en:{
   stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report","Rating"],
   processing:"Processing...",awaitingFeedback:"Awaiting feedback",approvedStatus:"Approved ✓",completeStatus:"Complete ✅",iterLabel:"Iteration #",
   pbProgress:"Progress",pbStep:"Step",pbThinking:"Thinking",
-  greeting:"Hello!\nI'm your Systematics 3D Printing Advisor.\nI'll guide you through selecting the optimal material and printing technology for your application.\n\n⚠️ Disclaimer: As an AI tool, results may not always be accurate — please treat recommendations as a starting point and verify critical data with a qualified professional. Do not share sensitive or confidential information.\nThis tool covers Systematics solutions and materials only.",
-  greetingStep1:"Let's start — what is the application type?",
+  greeting:"Hello!\nI'm your Systematics 3D Printing Advisor.\nI'll guide you through selecting the optimal material and printing technology for your application.",
+  disclaimer:"Disclaimer: As an AI tool, results may not always be accurate — treat recommendations as a starting point and verify critical data with a qualified professional. Do not share sensitive or confidential information. This tool covers Systematics solutions and materials only.",
+  greetingStep1:"Let's get started!\n\nDefine the application type",
   stepQ:[
     {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
     {q:"Please describe the part — what does it do and what is its purpose?"},
@@ -657,8 +697,9 @@ he:{
   stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","דרישות סביבה","דרישות גיאומטריות","דרישות ייצור","ניתוח","לולאת שיפור וחידוד","דוח סופי","משוב"],
   processing:"מעבד...",awaitingFeedback:"ממתין למשוב",approvedStatus:"מאושר ✓",completeStatus:"הושלם ✅",iterLabel:"איטרציה #",
   pbProgress:"התקדמות",pbStep:"שלב",pbThinking:"מיכאל חושב",
-  greeting:"היי,\nאני מיכאל, יועץ הדפסה תלת ממדית של חברת Systematics.\nאשמח לסייע לך בבחירת חומר וטכנולוגיית ההדפסה שמתאימה לפרויקט שלך.\n\n⚠️ הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות.\nבכל מקרה - יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש.\nהכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.\n\nאז קדימה נתחיל!",
-  greetingStep1:"הגדר את סוג היישום",
+  greeting:"היי,\nאני מיכאל, יועץ הדפסה תלת ממדית של חברת Systematics.\nאשמח לסייע לך בבחירת חומר וטכנולוגיית ההדפסה שמתאימה לפרויקט שלך.",
+  disclaimer:"הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות. בכל מקרה — יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש. הכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.",
+  greetingStep1:"אז קדימה נתחיל!\n\nהגדר את סוג היישום",
   stepQ:[
     {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","עזר ייצור (jig/fixture)","חלק לשימוש לקוח קצה"]},
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
@@ -713,7 +754,7 @@ function applyLang(){
   document.getElementById("keyInput").placeholder=L.keyPlaceholder;
   document.getElementById("keyNote").textContent=L.keyNote;
   const logoEl=document.getElementById("logoTextEl"); if(logoEl) logoEl.innerHTML=L.logoText;
-  document.getElementById("stepsLabelEl").textContent=L.stepsLabel;
+  document.getElementById("stepsLabelText").textContent=L.stepsLabel;
   document.getElementById("topbarTitleEl").textContent=L.topbarTitle;
   document.getElementById("topbarSubEl").textContent=L.topbarSub;
   document.getElementById("inputBox").placeholder=L.inputPlaceholder;
@@ -872,6 +913,7 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
 let pbWorking=false;
+let _lastRenderedStep=-99; // for one-shot flash on the step that just became active
 const PROXY_URL="https://am-application-specialist.onrender.com/v1/messages";
 let totalInputTokens=0, totalOutputTokens=0;
 
@@ -1086,7 +1128,15 @@ function initAgent() {
   document.getElementById("verLabelKey").textContent=verStr;
   renderSteps();
   addAgent(t("greeting"), null, 0);
+  addDisclaimer();
   addAgent(t("greetingStep1"), getStepQ()[0].opts);
+}
+
+function addDisclaimer(){
+  const el=document.createElement("div");
+  el.className="disclaimer-box";
+  el.innerHTML=`<span style="flex-shrink:0">⚠️</span><span dir="auto">${esc(t("disclaimer"))}</span>`;
+  document.getElementById("messages").appendChild(el);
 }
 
 // ── PROGRESS BAR ───────────────────────────────────────────────────────────
@@ -1104,6 +1154,14 @@ function updateProgressBar(){
     const done=i<qDone;
     const work=pbWorking&&(i===qDone||(qDone===7&&i===6));
     return `<div class="pb-seg${done?" done":""}${work?" work":""}"></div>`;
+  }).join("");
+  const mini=document.getElementById("miniStepper");
+  if(mini) mini.innerHTML=Array.from({length:7},(_,i)=>{
+    const done=i<qDone;
+    const activeDot=phase==="chat"&&i===step&&step<=6;
+    const work=pbWorking&&(i===qDone||(qDone===7&&i===6));
+    const dot=`<div class="ms-dot${work?" work":done?" done":activeDot?" active":""}">${done?"✓":i+1}</div>`;
+    return (i>0?`<div class="ms-line${i<=qDone-1?" done":""}"></div>`:"")+dot;
   }).join("");
   if(pbWorking){
     lblEl.innerHTML=`<span class="pb-think">🤔 ${t("pbThinking")}<span class="pb-dots"><span>.</span><span>.</span><span>.</span></span></span>`;
@@ -1128,13 +1186,14 @@ function renderSteps() {
   if(chip) chip.textContent=(step<=6&&phase==="chat")?`${step+1}/7`:"";
   updateProgressBar();
   const c=document.getElementById("stepsContainer");
+  const stepChanged=step!==_lastRenderedStep; _lastRenderedStep=step;
   c.innerHTML=STEPS_CFG.map(s=>{
     const isIntro=s.id===-1;
     const active=isIntro ? step===0 : (step===s.id||(s.id===8&&phase==="feedback"));
     const done=isIntro ? step>0 : ((s.id<step)||(s.id===7&&["feedback","approved","done"].includes(phase))||(s.id===8&&["approved","done"].includes(phase)));
     const editable=done&&s.id>=0&&s.id<=6;
     const lbl=isIntro ? (lang==="he"?"הקדמה":"Introduction") : labels[s.id];
-    return`<div class="step${active?" active":""}${done?" done":""}${editable?" editable":""}"
+    return`<div class="step${active?" active":""}${active&&stepChanged?" flash":""}${done?" done":""}${editable?" editable":""}"
       ${editable?`onclick="jumpToStep(${s.id})" title="Click to edit"`:""}>
       <div class="step-num">${done?"✓":s.id+1}</div>
       <span class="step-lbl">${lbl}</span>
