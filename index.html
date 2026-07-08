@@ -616,7 +616,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.81";
+const VERSION="v1.82";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -702,7 +702,7 @@ he:{
   disclaimer:"הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות. בכל מקרה — יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש. הכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.",
   greetingStep1:"אז קדימה נתחיל!\n\nהגדר את סוג היישום",
   stepQ:[
-    {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","עזר ייצור (jig/fixture)","חלק לשימוש לקוח קצה"]},
+    {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","כלי עזר לייצור (Jig/Fixture)","חלק לשימוש לקוח קצה"]},
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
     {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","אטימות לזורמים","תכונות אנטי-סטטיות (ESD)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית","ללא דרישות פונקציונליות מיוחדות"]]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה גבוה","קשיחות גבוהה","עמידות בפגיעה / נגיפה (חסינות לשבר גבוהה)","גמיש / אלסטי (בולם אנרגיה)"]},
@@ -1794,7 +1794,7 @@ async function sendMsg(override) {
   history.push({role:"user",content:text});
 
   const prompts=[
-    `User selected: "${text}". ${(text.includes("Manufacturing aid")||text.includes("עזר ייצור"))?"Ask exactly this question (in the interface language): מה התפקיד הספציפי של העזר? / What is the specific role of the aid? Then on a new line add examples — Hebrew: למשל: תבנית, כלי עזר לקידוח, כלי עזר למיקום, כלי דפינה — English: e.g. drill guide, locating fixture, assembly jig, inspection gauge":"Ask for a brief description of what the part does and its purpose."}`,
+    `User selected: "${text}". ${(text.includes("Manufacturing aid")||text.includes("עזר ייצור")||text.includes("עזר לייצור"))?"Ask exactly this question (in the interface language): מה התפקיד הספציפי של העזר? / What is the specific role of the aid? Then on a new line add examples — Hebrew: למשל: תבנית, כלי עזר לקידוח, כלי עזר למיקום, כלי דפינה — English: e.g. drill guide, locating fixture, assembly jig, inspection gauge":"Ask for a brief description of what the part does and its purpose."}`,
     `Part description: "${text}". Ask what special functional material requirements this part needs. Frame the question as: "What special functional requirements does this part need?" — then, based on the application type and part description already in this conversation, choose 2–3 examples that are plausible and relevant to this specific use case from: optical transparency / partial light transmission, RF transparency (antennas / radomes), fluid sealing / watertight, anti-static / ESD protection, flame retardancy, low self-weight, medical biocompatibility. Do NOT list examples that are clearly irrelevant for this application. STRICT EXCLUSIONS — never mention these in this step even if the application seems relevant: UV resistance, chemical resistance, temperature/heat resistance (all → step 5); mechanical strength, stiffness, impact, hardness (→ step 4); geometry, dimensions, feature size (→ step 6); quantity, cost, printers (→ step 7).`,
     `Answer: "${text}". Ask one mechanical requirements question (tensile strength, stiffness, impact resistance, elongation). If the answer implies high toughness or impact resistance, follow RULE 2 and ask whether rigid or flexible energy-absorbing behavior is preferred.`,
     `Answer: "${text}". Ask one environmental requirements question (service temperature, chemical resistance, UV/outdoor exposure).`,
