@@ -111,7 +111,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 #messages::-webkit-scrollbar{width:4px}
 #messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-.msg{display:flex;gap:9px;animation:fadeUp .2s ease}
+.msg{display:flex;gap:9px;animation:fadeUp .2s ease;transition:opacity .3s}
+.msg.locked{opacity:.55}
+.msg.locked .opt{pointer-events:none;cursor:default}
 .msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:75%}
 .msg.agent{align-self:flex-start;max-width:84%}
 
@@ -616,7 +618,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.79";
+const VERSION="v1.80";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -915,6 +917,7 @@ let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, phase
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
 let pbWorking=false;
 let _lastRenderedStep=-99; // for one-shot flash on the step that just became active
+let _lastMsgStep=null;     // lock chat messages of previous steps when a new step starts
 const PROXY_URL="https://am-application-specialist.onrender.com/v1/messages";
 let totalInputTokens=0, totalOutputTokens=0;
 
@@ -1113,6 +1116,7 @@ function clearSession(){
   totalInputTokens=0; totalOutputTokens=0;
   if(!confirm(t("confirmNewRun"))) return;
   step=0; reqs={}; history=[]; report=null; iteration=0; phase="chat"; msgId=0;
+  _lastMsgStep=null; _lastRenderedStep=-99;
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
   renderSteps();
@@ -1248,6 +1252,10 @@ function scrollBot(){ const m=document.getElementById("messages"); m.scrollTop=m
 function focusInput(){ const b=document.getElementById("inputBox"); if(b&&!b.disabled) b.focus(); }
 
 function addAgent(text, options, avatarOverride) {
+  if(_lastMsgStep!==null&&step!==_lastMsgStep){
+    document.querySelectorAll("#messages .msg:not(.locked)").forEach(m=>m.classList.add("locked"));
+  }
+  _lastMsgStep=step;
   const id=++msgId;
   const avatarLabel=avatarOverride!==undefined?avatarOverride:(phase==="chat"&&step<=6)?step+1:"A";
   const wrap=document.createElement("div");
