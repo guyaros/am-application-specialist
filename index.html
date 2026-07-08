@@ -338,9 +338,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .pb-track{height:8px;background:var(--surface3);border-radius:99px;overflow:hidden;position:relative}
 .pb-fill{
   height:100%;border-radius:99px;
+  background:var(--accent);
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+.pb-fill.working{
   background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4);
   background-size:200% 100%;
-  transition:width .5s cubic-bezier(.4,0,.2,1);
   animation:pb-shimmer 2s linear infinite;
 }
 @keyframes pb-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -571,8 +574,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.67";
-const REL_DATE="Jun 2026";
+const VERSION="v1.68";
+const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
 
@@ -1113,6 +1116,7 @@ function jumpToStep(n){
   document.querySelectorAll(".report-wrap").forEach(el=>el.remove());
   document.getElementById("fbPanel")?.remove();
   document.getElementById("loadingEl")?.remove();
+  document.getElementById("progressBarFill")?.classList.remove("working");
   // reset state
   phase="chat"; step=n; report=null; iteration=0; clarifyCount.fill(0,n);
   renderSteps(); updateIterChip();
@@ -1171,6 +1175,7 @@ function addUser(text) {
 function setLoading(on,txt="Analyzing requirements...") {
   document.getElementById("sendBtn").disabled=on;
   document.getElementById("inputBox").disabled=on;
+  document.getElementById("progressBarFill")?.classList.toggle("working",on);
   document.getElementById("loadingEl")?.remove();
   if(on){
     const el=document.createElement("div"); el.className="loading-bubble"; el.id="loadingEl";
