@@ -10,7 +10,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#eef0f4;--blue:#2563eb;--blue-light:#3b82f6;--cyan:#0891b2;
+  --bg:#eef0f4;--blue:#2563eb;--blue-light:#3b82f6;--cyan:#0891b2;--accent:#2563eb;
   --green:#059669;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;
   --surface:#ffffff;--surface2:#f8f9fb;--surface3:#eef0f4;
   --border:#e2e6ed;--border2:#d0d5df;
@@ -354,8 +354,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .pb-label{font-size:11px;font-weight:600;color:var(--text2)}
 .pb-pct{font-size:11px;font-weight:700;color:var(--accent)}
 .pb-segs{display:flex;gap:4px}
-.pb-seg{flex:1;height:8px;border-radius:99px;background:var(--surface3);transition:background .3s}
-.pb-seg.done{background:var(--accent)}
+.pb-seg{flex:1;height:10px;border-radius:99px;background:#dde3ec;transition:background .3s}
+.pb-seg.done{background:linear-gradient(90deg,var(--blue),var(--cyan))}
 .pb-seg.work{
   background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4);
   background-size:200% 100%;
@@ -417,12 +417,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 /* ── RTL (Hebrew) ── */
 [dir=rtl] #sidebar{border-right:none;border-left:1px solid var(--border);box-shadow:-2px 0 8px rgba(0,0,0,.04);text-align:right}
 [dir=rtl] .logo{flex-direction:row-reverse}
-[dir=rtl] .step{flex-direction:row-reverse}
 [dir=rtl] .step-num{margin-left:0}
-[dir=rtl] .steps-label{flex-direction:row-reverse}
 [dir=rtl] .sidebar-btn{text-align:right}
 [dir=rtl] .branding{text-align:right}
-[dir=rtl] .pb-header{flex-direction:row-reverse}
+[dir=rtl] .pb-header{justify-content:flex-start;gap:10px}
 [dir=rtl] .msg.agent{align-self:flex-end}
 [dir=rtl] .msg.user{align-self:flex-start;flex-direction:row}
 [dir=rtl] .bubble{border-radius:12px 3px 12px 12px}
@@ -618,7 +616,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.80";
+const VERSION="v1.81";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1165,7 +1163,7 @@ function updateProgressBar(){
     const done=i<qDone;
     const activeDot=phase==="chat"&&i===step&&step<=6;
     const work=pbWorking&&(i===qDone||(qDone===7&&i===6));
-    const dot=`<div class="ms-dot${work?" work":done?" done":activeDot?" active":""}">${done?"✓":i+1}</div>`;
+    const dot=`<div class="ms-dot${work?" work":done?" done":activeDot?" active":""}">${i+1}</div>`;
     return (i>0?`<div class="ms-line${i<=qDone-1?" done":""}"></div>`:"")+dot;
   }).join("");
   if(pbWorking){
@@ -1200,7 +1198,7 @@ function renderSteps() {
     const lbl=isIntro ? (lang==="he"?"הקדמה":"Introduction") : labels[s.id];
     return`<div class="step${active?" active":""}${active&&stepChanged?" flash":""}${done?" done":""}${editable?" editable":""}"
       ${editable?`onclick="jumpToStep(${s.id})" title="Click to edit"`:""}>
-      <div class="step-num">${done?"✓":s.id+1}</div>
+      <div class="step-num">${s.id+1}</div>
       <span class="step-lbl">${lbl}</span>
       ${editable?`<span class="step-edit-icon">✎</span>`:""}
     </div>`;
