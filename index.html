@@ -335,18 +335,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .pb-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .pb-label{font-size:11px;font-weight:600;color:var(--text2)}
 .pb-pct{font-size:11px;font-weight:700;color:var(--accent)}
-.pb-track{height:8px;background:var(--surface3);border-radius:99px;overflow:hidden;position:relative}
-.pb-fill{
-  height:100%;border-radius:99px;
-  background:var(--accent);
-  transition:width .5s cubic-bezier(.4,0,.2,1);
-}
-.pb-fill.working{
+.pb-segs{display:flex;gap:4px}
+.pb-seg{flex:1;height:8px;border-radius:99px;background:var(--surface3);transition:background .3s}
+.pb-seg.done{background:var(--accent)}
+.pb-seg.work{
   background:linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4);
   background-size:200% 100%;
-  animation:pb-shimmer 2s linear infinite;
+  animation:pb-shimmer 1.2s linear infinite;
 }
 @keyframes pb-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.pb-think{color:#8b5cf6;font-weight:700}
+.pb-dots span{opacity:0;animation:pb-dot 1.2s infinite}
+.pb-dots span:nth-child(2){animation-delay:.2s}
+.pb-dots span:nth-child(3){animation-delay:.4s}
+@keyframes pb-dot{0%{opacity:0}30%{opacity:1}60%,100%{opacity:0}}
 
 /* INPUT AREA */
 #inputArea{
@@ -562,7 +564,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <span class="pb-label" id="progressBarLabel">Progress</span>
         <span class="pb-pct" id="progressBarPct">0%</span>
       </div>
-      <div class="pb-track"><div class="pb-fill" id="progressBarFill" style="width:0%"></div></div>
+      <div class="pb-segs" id="progressSegs"></div>
     </div>
     <div id="inputArea">
       <textarea id="inputBox" placeholder="Type your answer..." rows="1" onkeydown="handleKey(event)"></textarea>
@@ -574,7 +576,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.70";
+const VERSION="v1.71";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -594,6 +596,7 @@ en:{
   errEnterCode:"Please enter your access code",errInvalidCode:"Invalid access code: ",
   stepLabels:["Application type","Part description","Functional req.","Mechanical req.","Environmental","Geometry","Manufacturing","Analysis","Feedback loop","Final report","Rating"],
   processing:"Processing...",awaitingFeedback:"Awaiting feedback",approvedStatus:"Approved ✓",completeStatus:"Complete ✅",iterLabel:"Iteration #",
+  pbProgress:"Progress",pbStep:"Step",pbThinking:"Thinking",
   greeting:"Hello!\nI'm your Systematics 3D Printing Advisor.\nI'll guide you through selecting the optimal material and printing technology for your application.\n\n⚠️ Disclaimer: As an AI tool, results may not always be accurate — please treat recommendations as a starting point and verify critical data with a qualified professional. Do not share sensitive or confidential information.\nThis tool covers Systematics solutions and materials only.",
   greetingStep1:"Let's start — what is the application type?",
   stepQ:[
@@ -648,6 +651,7 @@ he:{
   errEnterCode:"אנא הזן את קוד הגישה",errInvalidCode:"קוד גישה שגוי: ",
   stepLabels:["סוג יישום","תיאור חלק","דרישות פונקציונליות","דרישות מכניות","דרישות סביבה","דרישות גיאומטריות","דרישות ייצור","ניתוח","לולאת שיפור וחידוד","דוח סופי","משוב"],
   processing:"מעבד...",awaitingFeedback:"ממתין למשוב",approvedStatus:"מאושר ✓",completeStatus:"הושלם ✅",iterLabel:"איטרציה #",
+  pbProgress:"התקדמות",pbStep:"שלב",pbThinking:"מיכאל חושב",
   greeting:"היי,\nאני מיכאל, יועץ הדפסה תלת ממדית של חברת Systematics.\nאשמח לסייע לך בבחירת חומר וטכנולוגיית ההדפסה שמתאימה לפרויקט שלך.\n\n⚠️ הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות.\nבכל מקרה - יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש.\nהכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.\n\nאז קדימה נתחיל!",
   greetingStep1:"הגדר את סוג היישום",
   stepQ:[
@@ -859,6 +863,7 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 // ── STATE ──────────────────────────────────────────────────────────────────
 let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
 let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
+let pbWorking=false;
 const PROXY_URL="https://am-application-specialist.onrender.com/v1/messages";
 let totalInputTokens=0, totalOutputTokens=0;
 
@@ -1075,20 +1080,44 @@ function initAgent() {
   addAgent(t("greetingStep1"), getStepQ()[0].opts);
 }
 
+// ── PROGRESS BAR ───────────────────────────────────────────────────────────
+// 7 segments = the 7 requirement questions; analysis/report phases fill the tail %
+function updateProgressBar(){
+  const segsEl=document.getElementById("progressSegs");
+  const pctEl=document.getElementById("progressBarPct");
+  const lblEl=document.getElementById("progressBarLabel");
+  if(!segsEl||!pctEl||!lblEl) return;
+  const qDone=Math.min(step,7);
+  let pct=Math.round(qDone/7*90); // questions cover 0–90%
+  if(phase==="feedback") pct=95;
+  if(phase==="approved"||phase==="done") pct=100;
+  segsEl.innerHTML=Array.from({length:7},(_,i)=>{
+    const done=i<qDone;
+    const work=pbWorking&&(i===qDone||(qDone===7&&i===6));
+    return `<div class="pb-seg${done?" done":""}${work?" work":""}"></div>`;
+  }).join("");
+  if(pbWorking){
+    lblEl.innerHTML=`<span class="pb-think">🤔 ${t("pbThinking")}<span class="pb-dots"><span>.</span><span>.</span><span>.</span></span></span>`;
+  } else if(phase==="chat"&&step<=6){
+    lblEl.textContent=`${t("pbProgress")} · ${t("pbStep")} ${step+1}/7`;
+  } else if(phase==="feedback"){
+    lblEl.textContent=t("awaitingFeedback");
+  } else if(phase==="approved"){
+    lblEl.textContent=t("approvedStatus");
+  } else if(phase==="done"){
+    lblEl.textContent=t("completeStatus");
+  } else {
+    lblEl.textContent=t("pbProgress");
+  }
+  pctEl.textContent=pct+"%";
+}
+
 // ── STEPS ──────────────────────────────────────────────────────────────────
 function renderSteps() {
   const labels=LANG[lang].stepLabels;
   const chip=document.getElementById("progressChip");
   if(chip) chip.textContent=(step<=6&&phase==="chat")?`${step+1}/7`:"";
-  // progress bar: 0% at start, 100% when analysis complete
-  const totalSteps=10; // steps 0-9 represent full journey, step 10 = rating
-  const pct=Math.round(Math.min(step,totalSteps)/totalSteps*100);
-  const fill=document.getElementById("progressBarFill");
-  const pctEl=document.getElementById("progressBarPct");
-  const lblEl=document.getElementById("progressBarLabel");
-  if(fill) fill.style.width=pct+"%";
-  if(pctEl) pctEl.textContent=pct+"%";
-  if(lblEl) lblEl.textContent=lang==="he"?"התקדמות":"Progress";
+  updateProgressBar();
   const c=document.getElementById("stepsContainer");
   c.innerHTML=STEPS_CFG.map(s=>{
     const isIntro=s.id===-1;
@@ -1116,7 +1145,7 @@ function jumpToStep(n){
   document.querySelectorAll(".report-wrap").forEach(el=>el.remove());
   document.getElementById("fbPanel")?.remove();
   document.getElementById("loadingEl")?.remove();
-  document.getElementById("progressBarFill")?.classList.remove("working");
+  pbWorking=false;
   // reset state
   phase="chat"; step=n; report=null; iteration=0; clarifyCount.fill(0,n);
   renderSteps(); updateIterChip();
@@ -1175,7 +1204,7 @@ function addUser(text) {
 function setLoading(on,txt="Analyzing requirements...") {
   document.getElementById("sendBtn").disabled=on;
   document.getElementById("inputBox").disabled=on;
-  document.getElementById("progressBarFill")?.classList.toggle("working",on);
+  pbWorking=on; updateProgressBar();
   document.getElementById("loadingEl")?.remove();
   if(on){
     const el=document.createElement("div"); el.className="loading-bubble"; el.id="loadingEl";
