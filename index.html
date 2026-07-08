@@ -578,7 +578,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.75";
+const VERSION="v1.76";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1311,10 +1311,15 @@ const FOREIGN_SCRIPT_RE_G=new RegExp("["+FOREIGN_RANGES+"]+","g");
 async function callClaudeOnce(messages,fullCtx) {
   const model=fullCtx?"claude-sonnet-4-6":"claude-haiku-4-5-20251001";
   const sys=fullCtx?buildSystemFull():buildSystem();
+  // Conversational (Haiku) calls run at temperature 0.7 to suppress rare
+  // foreign-script tokens; analysis (Sonnet) calls keep the API default —
+  // report quality is tuned around it and must not change.
+  const body={model,max_tokens:2500,system:sys,messages};
+  if(!fullCtx) body.temperature=0.7;
   const res = await fetch(PROXY_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json","x-access-token":accessToken},
-    body:JSON.stringify({model,max_tokens:2500,system:sys,messages}),
+    body:JSON.stringify(body),
   });
   const d = await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(d.detail||"Request failed");
