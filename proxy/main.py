@@ -102,6 +102,7 @@ class MessagesRequest(BaseModel):
     messages: list[dict[str, Any]]
     max_tokens: int = Field(default=2500, ge=1, le=8192)
     system: str | None = None
+    temperature: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 # --- Helpers ----------------------------------------------------------------
@@ -166,6 +167,8 @@ async def proxy_messages(
     }
     if body.system:
         payload["system"] = body.system
+    if body.temperature is not None:
+        payload["temperature"] = body.temperature
 
     headers = {
         "Content-Type": "application/json",
