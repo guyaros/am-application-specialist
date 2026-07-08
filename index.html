@@ -616,7 +616,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.84";
+const VERSION="v1.85";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -645,7 +645,7 @@ en:{
     {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
     {q:"Please describe the part — what does it do and what is its purpose?"},
     {q:"Any special functional material requirements?",opts:[["Optical transparency / partial light","RF transparency","Fluid sealing","Anti-static (ESD)"],["Flame retardant","Low self-weight","Medical biocompatibility","None / no special functional req."]]},
-    {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Flexible / elastic (energy-absorbing)"]},
+    {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Elastic (energy-absorbing)","Elastomeric (rubber-like)"]},
     {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:[["Freezing 0°C","Room temp 15–28°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],["Chemical resistance"],["Outdoor / moisture / UV exposure"]]},
     {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:[["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. lighter","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. banana","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]]},
     {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:[["1","5","10","50","100","500","1,000","10,000","100,000"],["Cost priority","Performance priority"]]},
