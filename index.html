@@ -578,7 +578,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.74";
+const VERSION="v1.75";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1304,7 +1304,9 @@ function buildSystemFull(){
 
 // Arabic, Syriac, Thai, Cyrillic, Japanese kana, CJK ideographs, Hangul —
 // none of these should ever appear in a Hebrew/English response
-const FOREIGN_SCRIPT_RE=new RegExp("[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\u0700-\\u074F\\u0E00-\\u0E7F\\u0400-\\u04FF\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uAC00-\\uD7AF]");
+const FOREIGN_RANGES="\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\u0700-\\u074F\\u0E00-\\u0E7F\\u0400-\\u04FF\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uAC00-\\uD7AF";
+const FOREIGN_SCRIPT_RE=new RegExp("["+FOREIGN_RANGES+"]");
+const FOREIGN_SCRIPT_RE_G=new RegExp("["+FOREIGN_RANGES+"]+","g");
 
 async function callClaudeOnce(messages,fullCtx) {
   const model=fullCtx?"claude-sonnet-4-6":"claude-haiku-4-5-20251001";
@@ -1322,13 +1324,18 @@ async function callClaudeOnce(messages,fullCtx) {
 
 async function callClaude(messages,fullCtx=false) {
   let text=await callClaudeOnce(messages,fullCtx);
-  if(FOREIGN_SCRIPT_RE.test(text)){
-    console.warn("[lang-guard] foreign-script characters detected in response — retrying once");
-    const target=lang==="he"?"Hebrew (עברית)":"English";
+  const target=lang==="he"?"Hebrew (עברית)":"English";
+  for(let attempt=1;attempt<=2&&FOREIGN_SCRIPT_RE.test(text);attempt++){
+    console.warn(`[lang-guard] foreign-script characters detected — retry ${attempt}/2`);
     const retryMsgs=[...messages,
       {role:"assistant",content:text},
-      {role:"user",content:`Your previous reply contained words in a wrong language/script (e.g. Arabic or Chinese characters). Rewrite the exact same reply — same content, same format — strictly in ${target} only. English technical terms are allowed. No other scripts.`}];
+      {role:"user",content:`Your previous reply contained words in a wrong language/script (e.g. Arabic, Chinese or Korean characters). Rewrite the exact same reply — same content, same format — strictly in ${target} only. English technical terms are allowed. No other scripts.`}];
     text=await callClaudeOnce(retryMsgs,fullCtx);
+  }
+  // last resort: never show foreign-script characters to the user
+  if(FOREIGN_SCRIPT_RE.test(text)){
+    console.warn("[lang-guard] still foreign after retries — stripping characters");
+    text=text.replace(FOREIGN_SCRIPT_RE_G," ").replace(/[ \t]{2,}/g," ");
   }
   return text;
 }
