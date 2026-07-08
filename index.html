@@ -289,6 +289,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .rating-submit:hover{opacity:.85}
 .rating-thanks{font-size:13px;font-weight:700;color:#6366f1;text-align:center;padding:8px 0}
+.rating-err{font-size:11px;font-weight:600;color:#dc2626;margin-top:4px;display:none}
+.fb-ta.field-err{border-color:#dc2626}
 
 /* API KEY SCREEN */
 #keyScreen{
@@ -576,7 +578,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.72";
+const VERSION="v1.73";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -635,6 +637,7 @@ en:{
   ratingOpts:["Not useful","Reasonable","Excellent"],
   ratingNameQ:"Your name",
   ratingNamePlaceholder:"Enter your name so we know who the feedback is from",
+  ratingNameRequired:"Please enter your name before sending",
   ratingQ2:"What do you think should be improved in the agent?",
   ratingPlaceholder:"Share your feedback...",
   ratingSubmitBtn:"Send feedback",
@@ -692,6 +695,7 @@ he:{
   ratingOpts:["לא סביר","סביר","מעולה"],
   ratingNameQ:"השם שלך",
   ratingNamePlaceholder:"הזן את שמך כדי שנדע ממי המשוב",
+  ratingNameRequired:"נא להזין שם לפני שליחת המשוב",
   ratingQ2:"מה לדעתך כדאי לשפר בסוכן? הערות נוספות?",
   ratingPlaceholder:"שתף אותנו...",
   ratingSubmitBtn:"שלח משוב",
@@ -1627,8 +1631,10 @@ function showRatingPanel() {
     <div class="rating-stars" id="ratingStars">
       ${[1,2,3,4,5].map(v=>`<span class="star-btn" onclick="selectStar(${v})">★</span>`).join("")}
     </div>
-    <div class="rating-q2">${t("ratingNameQ")}</div>
-    <input class="fb-ta" id="ratingName" style="width:100%" maxlength="60" placeholder="${t("ratingNamePlaceholder")}" value="${esc2(savedName)}"/>
+    <div class="rating-q2">${t("ratingNameQ")} <span style="color:#dc2626">*</span></div>
+    <input class="fb-ta" id="ratingName" style="width:100%" maxlength="60" placeholder="${t("ratingNamePlaceholder")}" value="${esc2(savedName)}"
+      oninput="this.classList.remove('field-err');document.getElementById('ratingNameErr').style.display='none'"/>
+    <div class="rating-err" id="ratingNameErr">${t("ratingNameRequired")}</div>
     <div class="rating-q2">${t("ratingQ2")}</div>
     <textarea class="fb-ta" id="ratingTa" rows="3" style="width:100%" placeholder="${t("ratingPlaceholder")}"></textarea>
     <button class="rating-submit" onclick="submitRating()">${t("ratingSubmitBtn")}</button>
@@ -1648,7 +1654,15 @@ function submitRating() {
   const stars = window._selectedRatingIdx;
   const text = (document.getElementById("ratingTa")?.value||"").trim();
   const userName = (document.getElementById("ratingName")?.value||"").trim();
-  if(userName) localStorage.setItem("am_username", userName);
+  if(!userName){
+    const inp=document.getElementById("ratingName");
+    inp?.classList.add("field-err");
+    const err=document.getElementById("ratingNameErr");
+    if(err) err.style.display="block";
+    inp?.focus();
+    return;
+  }
+  localStorage.setItem("am_username", userName);
   const starStr = stars ? "★".repeat(stars)+"☆".repeat(5-stars)+" ("+stars+"/5)" : "—";
   console.log("[Agent Rating]", starStr, text, userName);
   const panel = document.getElementById("ratingPanel");
