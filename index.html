@@ -578,7 +578,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.73";
+const VERSION="v1.74";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1254,7 +1254,10 @@ STYLE RULES (strictly enforced):
 - Never add filler sentences about what you will do next ("Once I have this...", "ברגע שאקבל...", "אוכל להמליץ...")
 - Go straight to the question. One sentence of context at most, then the question.
 - No promotional or encouraging language.
-${lang==="he"?"IMPORTANT: Respond in Hebrew (עברית) for all conversational messages and questions. When asked to return JSON, return ONLY valid JSON with no text before or after it — write all string values (summary, rationale, professional_note, next_steps, risks text) in Hebrew inside the JSON.\n":""}
+CRITICAL LANGUAGE RULE (HIGHEST PRIORITY — overrides everything else):
+- Respond ONLY in ${lang==="he"?"Hebrew (עברית)":"English"}. Every single word must be ${lang==="he"?"Hebrew":"English"}${lang==="he"?", except English technical terms (SLS, MJF, FDM, material and printer names) which may stay in English":""}.
+- NEVER output words or characters in Arabic, Chinese, Japanese, Korean, Thai, Cyrillic or any other language or script — not even a single word. If a token feels uncertain, re-express it in ${lang==="he"?"Hebrew":"English"}.
+- When asked to return JSON, return ONLY valid JSON with no text before or after it — write all string values (summary, rationale, professional_note, next_steps, risks text) in ${lang==="he"?"Hebrew":"English"}.
 ${typeof GUARDRAILS !== "undefined" ? GUARDRAILS : ""}
 
 === DOMAIN KNOWLEDGE — APPLY THESE RULES IN EVERY ANALYSIS ===
@@ -1299,7 +1302,11 @@ function buildSystemFull(){
   return buildSystem()+`\n=== MATERIALS DB ===\n${JSON.stringify(MAT)}\n=== PRINTERS DB ===\n${JSON.stringify(PRN)}`;
 }
 
-async function callClaude(messages,fullCtx=false) {
+// Arabic, Syriac, Thai, Cyrillic, Japanese kana, CJK ideographs, Hangul —
+// none of these should ever appear in a Hebrew/English response
+const FOREIGN_SCRIPT_RE=new RegExp("[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\u0700-\\u074F\\u0E00-\\u0E7F\\u0400-\\u04FF\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uAC00-\\uD7AF]");
+
+async function callClaudeOnce(messages,fullCtx) {
   const model=fullCtx?"claude-sonnet-4-6":"claude-haiku-4-5-20251001";
   const sys=fullCtx?buildSystemFull():buildSystem();
   const res = await fetch(PROXY_URL,{
@@ -1311,6 +1318,19 @@ async function callClaude(messages,fullCtx=false) {
   if(!res.ok) throw new Error(d.detail||"Request failed");
   if(d.usage){totalInputTokens+=d.usage.input_tokens||0;totalOutputTokens+=d.usage.output_tokens||0;}
   return d.content?.[0]?.text||"";
+}
+
+async function callClaude(messages,fullCtx=false) {
+  let text=await callClaudeOnce(messages,fullCtx);
+  if(FOREIGN_SCRIPT_RE.test(text)){
+    console.warn("[lang-guard] foreign-script characters detected in response — retrying once");
+    const target=lang==="he"?"Hebrew (עברית)":"English";
+    const retryMsgs=[...messages,
+      {role:"assistant",content:text},
+      {role:"user",content:`Your previous reply contained words in a wrong language/script (e.g. Arabic or Chinese characters). Rewrite the exact same reply — same content, same format — strictly in ${target} only. English technical terms are allowed. No other scripts.`}];
+    text=await callClaudeOnce(retryMsgs,fullCtx);
+  }
+  return text;
 }
 
 // ── ANALYSIS ───────────────────────────────────────────────────────────────
