@@ -380,6 +380,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   background:var(--surface2);color:var(--text);transition:border .15s;line-height:1.5;
 }
 #inputBox:focus{border-color:var(--blue);background:#fff}
+#inputBox[readonly]{cursor:not-allowed;background:var(--surface2);opacity:.75}
 #inputBox::placeholder{color:var(--text3)}
 #sendBtn{
   padding:9px 20px;background:var(--blue);color:#fff;border:none;border-radius:10px;
@@ -616,7 +617,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.88";
+const VERSION="v1.89";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -628,7 +629,7 @@ en:{
   topbarTitle:"Systematics Additive Manufacturing Application Specialist",
   topbarSub:"Ashby Methodology · 52 materials · 14 printers",
   inputPlaceholder:"Type your answer...",
-  inputPlaceholderOpts:"Pick a suggested option or type your answer in your own words...",sendBtn:"Send",
+  inputPlaceholderOpts:"Pick a suggested option or type your answer in your own words...",inputPlaceholderStep1:"Please choose one of the options above",sendBtn:"Send",
   exportBtn:"⬇ Export PDF",newRunBtn:"↺ New Run",settingsBtn:"⚙ Settings",
   settingsTitle:"Settings",settingsSub:"Manage your access code and preferences.",
   settingsLangLabel:"Interface Language",settingsCurKeyLabel:"Current Access Code",settingsChgKeyLabel:"Change Access Code",
@@ -645,7 +646,7 @@ en:{
     {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
     {q:"Please describe the part — what does it do and what is its purpose?"},
     {q:"Any special functional material requirements?",opts:[["Optical transparency / partial light","RF transparency","Fluid sealing","Anti-static (ESD)"],["Flame retardant","Low self-weight","Medical biocompatibility","None / no special functional req."]]},
-    {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Elastic (energy-absorbing)","Elastomeric (rubber-like)"]},
+    {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Elastic (energy-absorbing)","Elastomeric (rubber-like)","Non-elastomeric (not rubber-like)"]},
     {q:"Any environmental requirements? (e.g. service temperature, chemical exposure, UV/outdoor use)",opts:[["Freezing 0°C","Room temp 15–28°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],["Chemical resistance"],["Outdoor / moisture / UV exposure"]]},
     {q:"Geometry: select the approximate maximum part size, then add smallest feature / min. wall thickness if known:",opts:[["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. lighter","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. banana","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]]},
     {q:"Manufacturing context? (e.g. quantity, cost vs. performance priority, available printers)",opts:[["1","5","10","50","100","500","1,000","10,000","100,000"],["Cost priority","Performance priority"]]},
@@ -688,7 +689,7 @@ he:{
   topbarTitle:"יועץ הדפסה תלת-ממדית — Systematics",
   topbarSub:"52 חומרים · 14 מדפסות",
   inputPlaceholder:"הקלד את תשובתך...",
-  inputPlaceholderOpts:"בחר אפשרות מוצעת או הקלד את תשובתך בשפה חופשית...",sendBtn:"שלח",
+  inputPlaceholderOpts:"בחר אפשרות מוצעת או הקלד את תשובתך בשפה חופשית...",inputPlaceholderStep1:"בחר/י אחת מהאפשרויות למעלה",sendBtn:"שלח",
   exportBtn:"⬇ ייצוא PDF",newRunBtn:"↺ הפעלה חדשה",settingsBtn:"⚙ הגדרות",
   settingsTitle:"הגדרות",settingsSub:"ניהול קוד גישה והעדפות.",
   settingsLangLabel:"שפת ממשק",settingsCurKeyLabel:"קוד גישה נוכחי",settingsChgKeyLabel:"שינוי קוד גישה",
@@ -705,7 +706,7 @@ he:{
     {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","כלי עזר לייצור (Jig/Fixture)","חלק לשימוש לקוח קצה"]},
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
     {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","אטימות לזורמים","תכונות אנטי-סטטיות (ESD)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית","ללא דרישות פונקציונליות מיוחדות"]]},
-    {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה גבוה","קשיחות גבוהה","עמידות בפגיעה / נגיפה (חסינות לשבר גבוהה)","אלסטי (סופג אנרגיה)","אלסטומרי (גומי)"]},
+    {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה גבוה","קשיחות גבוהה","עמידות בפגיעה / נגיפה (חסינות לשבר גבוהה)","אלסטי (סופג אנרגיה)","אלסטומרי (גומי)","לא אלסטומרי (לא גמיש כמו גומי)"]},
     {q:"האם יש דרישות סביבתיות? (טמפרטורת שירות, כימיקלים, UV/שימוש חיצוני)",opts:[["טמפ קיפאון 0°C","טמפ חדר 15-28°C","מקסימום 45°C","תנאי חוץ ישראל בין -10 ל +55","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],["עמידות בכימיקלים"],["עמידות בתנאי חוץ — רטיבות וקרינת UV"]]},
     {q:"גאומטריה: בחר גודל חלק מרבי בקירוב, הוסף פיצ'ר קטן ביותר / עובי דופן מינימלי אם ידוע:",opts:[["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: מצית","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: בננה","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"],["פיצ'ר מינימלי 0.5 מ\"מ","פיצ'ר מינימלי 1 מ\"מ","פיצ'ר מינימלי 2 מ\"מ ומעלה"]]},
     {q:"כמה יחידות צריך לייצר?",opts:[["1","5","10","50","100","500","1,000","10,000","100,000"],["עדיפות לעלות נמוכה","עדיפות לביצועים"]]},
@@ -1203,6 +1204,17 @@ function renderSteps() {
       ${editable?`<span class="step-edit-icon">✎</span>`:""}
     </div>`;
   }).join("");
+  updateInputMode();
+}
+
+// Step 1 (application type) is buttons-only: free typing is disabled;
+// selOpt still fills the box programmatically and auto-sends.
+function step1Locked(){ return phase==="chat"&&step===0; }
+function updateInputMode(){
+  const box=document.getElementById("inputBox");
+  if(!box) return;
+  box.readOnly=step1Locked();
+  if(step1Locked()) box.placeholder=t("inputPlaceholderStep1");
 }
 
 function jumpToStep(n){
@@ -1265,7 +1277,7 @@ function addAgent(text, options, avatarOverride) {
   </div>`;
   document.getElementById("messages").appendChild(wrap);
   const box=document.getElementById("inputBox");
-  if(box) box.placeholder=options?t("inputPlaceholderOpts"):t("inputPlaceholder");
+  if(box) box.placeholder=step1Locked()?t("inputPlaceholderStep1"):options?t("inputPlaceholderOpts"):t("inputPlaceholder");
   scrollBot();
   setTimeout(focusInput, 50);
 }
@@ -1773,6 +1785,8 @@ async function sendMsg(override) {
   const box=document.getElementById("inputBox");
   const text=(override||box.value).trim();
   if(!text||box.disabled) return;
+  // Step 1 accepts only the predefined option buttons
+  if(step1Locked()&&!isPureOptionAnswer(text,0)){ box.value=""; return; }
   if(!override) box.value="";
 
   if(phase==="approved"){
@@ -1889,11 +1903,12 @@ async function sendMsg(override) {
 function setReqs(r){ reqs=r; }
 
 // True when the answer is composed only of the step's predefined option buttons
-// (options are joined with ", " by selOpt; no option text contains ", ")
+// (options are joined with ", " by selOpt; no option text contains ", ").
+// Buttons whose label contains " — " send only the prefix — match against that form.
 function isPureOptionAnswer(text,stepIdx){
   const opts=getStepQ()[stepIdx]?.opts;
   if(!opts) return false;
-  const flat=Array.isArray(opts[0])?opts.flat():opts;
+  const flat=(Array.isArray(opts[0])?opts.flat():opts).map(o=>o.includes(" — ")?o.split(" — ")[0]:o);
   const parts=text.split(", ");
   return parts.length>0&&parts.every(p=>flat.includes(p.trim()));
 }
