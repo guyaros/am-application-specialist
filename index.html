@@ -275,14 +275,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .fb-ta::placeholder{color:var(--text3)}
 .fb-actions{display:flex;flex-direction:column;gap:6px}
 .btn-refine{
-  padding:7px 14px;background:var(--amber);color:#fff;border:none;border-radius:7px;
-  font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .13s;white-space:nowrap;
+  padding:12px 22px;background:var(--amber);color:#fff;border:none;border-radius:9px;
+  font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .13s;white-space:nowrap;
   box-shadow:0 2px 8px rgba(217,119,6,.25);
 }
 .btn-refine:disabled{opacity:.4}
 .btn-approve{
-  padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:7px;
-  font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;
+  padding:12px 22px;background:var(--green);color:#fff;border:none;border-radius:9px;
+  font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;
   box-shadow:0 2px 8px rgba(5,150,105,.25);
 }
 
@@ -616,7 +616,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.85";
+const VERSION="v1.86";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -653,7 +653,7 @@ en:{
   thankMsg:"Thank you! Running Ashby analysis now...",
   fbTitle:"Refinement Loop — Ashby Step 4",fbSub:"Does this meet your requirements? Refine or approve for final report.",
   quickFeedback:["Higher mechanical requirements","Better temperature resistance","Cost is priority","Medical/biocompatibility needed","Outdoor UV resistance","Higher accuracy needed"],
-  fbPlaceholder:"Custom refinement...",refineBtn:"Refine ↻",approveBtn:"✓ Approve",
+  fbPlaceholder:"Custom refinement...",refineBtn:"Refine ↻",approveBtn:"✓ Approve for Final Report",
   refiningMsg:"Refining analysis... ⟳",loadingMsg:"Running Ashby screening & ranking...",
   approvedMsg:"Analysis approved ✓\n\nWould you like to export the professional PDF report?",
   exportOpts:["Export PDF Report","Not now"],
@@ -713,7 +713,7 @@ he:{
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
   fbTitle:"לולאת שיפור וחידוד",fbSub:"האם זה עונה על דרישותיך? שפר או אשר לדוח הסופי.",
   quickFeedback:["דרישות מכניות גבוהות יותר","עמידות טמפרטורה גבוהה יותר","עלות היא עדיפות","נדרשת ביו-תאימות רפואית","עמידות UV חיצונית","דיוק גבוה יותר"],
-  fbPlaceholder:"שיפור מותאם אישית...",refineBtn:"שפר ↻",approveBtn:"✓ אשר",
+  fbPlaceholder:"שיפור מותאם אישית...",refineBtn:"שפר ↻",approveBtn:"✓ אשר לקבלת דוח סופי",
   refiningMsg:"מעדכן ניתוח... ⟳",loadingMsg:"מריץ אלגוריתם ניתוח...",
   approvedMsg:"הניתוח אושר ✓\n\nהאם תרצה לייצא את הדוח המקצועי?",
   exportOpts:["ייצוא דוח PDF","לא עכשיו"],
@@ -1683,13 +1683,11 @@ function exportPDF() {
 function renderFeedback() {
   document.getElementById("fbPanel")?.remove();
   const panel=document.createElement("div"); panel.className="fb-panel"; panel.id="fbPanel";
-  const quick=t("quickFeedback");
   panel.innerHTML=`
     <div class="fb-header"><span class="fb-icon">🔄</span>
       <div><div class="fb-title">${t("fbTitle")}</div>
       <div class="fb-sub">${t("fbSub")}</div></div>
     </div>
-    <div class="quick-btns">${quick.map(q=>`<button class="quick-btn" onclick="doFeedback('${q}')">${q}</button>`).join("")}</div>
     <div class="fb-row">
       <textarea class="fb-ta" id="customFb" rows="2" placeholder="${t("fbPlaceholder")}"></textarea>
       <div class="fb-actions">
