@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.01";
+const VERSION="v2.02";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1359,7 +1359,7 @@ function setLoading(on,txt="Analyzing requirements...",showTimer=false) {
         if(!c){ clearInterval(_loadTimer); _loadTimer=null; return; }
         const s=Math.floor((Date.now()-start)/1000);
         c.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
-        if(s>0&&s%10===0) renderFact();
+        if(s>0&&s%15===0) renderFact();
       },1000);
     }
   }
