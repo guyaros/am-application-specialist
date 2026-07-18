@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.99";
+const VERSION="v2.00";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1339,11 +1339,17 @@ function setLoading(on,txt="Analyzing requirements...",showTimer=false) {
     document.getElementById("messages").appendChild(el); scrollBot();
     if(showTimer){
       const start=Date.now();
-      let fi=Math.floor(Math.random()*(facts.length||1));
+      // Fisher-Yates shuffle — random order each run, no repeats until all facts shown
+      const shuffled=facts.slice();
+      for(let i=shuffled.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+      }
+      let fi=0;
       const renderFact=()=>{
         const f=document.getElementById("loadingFact");
-        if(!f||!facts.length) return;
-        f.innerHTML=`<span class="fact-inner"><b>${t("didYouKnowLabel")}</b> ${esc(facts[fi++%facts.length])}</span>`;
+        if(!f||!shuffled.length) return;
+        f.innerHTML=`<span class="fact-inner"><b>${t("didYouKnowLabel")}</b> ${esc(shuffled[fi++%shuffled.length])}</span>`;
       };
       renderFact();
       _loadTimer=setInterval(()=>{
