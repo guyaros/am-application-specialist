@@ -1,0 +1,17 @@
+# "Did you know?" facts (English) — shown while the analysis is running.
+# How to edit: each fact is one paragraph. Separate facts with a blank line.
+# Lines starting with # are comments and will not be shown to the user.
+
+SLS printers use thermoplastic polymer powder as raw material, producing high-quality, highly durable parts with no support structures
+
+SLA printers use liquid photopolymer resin, printing high-resolution parts with a smooth surface finish from a wide range of thermoset materials
+
+FDM 3D printers extrude thermoplastic filament, enabling lightweight models thanks to partial infill and low-cost parts from a wide range of thermoplastics
+
+HP's MJF printers fuse nylon powder using a binding agent and heat, enabling fast production of functional part series with uniform mechanical properties
+
+CFR 3D printers build parts with a composite structure — a polymer matrix reinforced by a continuous fiber — improving strength and stiffness to the point of replacing lightweight metal parts
+
+The thermoplastic "Nylon", professionally known as polyamide, was first invented by DuPont in 1935. It was initially used for toothbrushes and stockings, and today it is used for strong, durable engineering parts
+
+Systematics was founded in 1979 and today employs over 180 skilled professionals across GIS, CAD & PLM systems, algorithmics and simulation tools, 3D printing technologies, and digital manufacturing & operations systems

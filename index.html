@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.96";
+const VERSION="v1.97";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1321,6 +1321,23 @@ function addUser(text) {
   scrollBot();
 }
 
+// "Did you know?" facts are loaded from editable text files (didyouknow-he.txt /
+// didyouknow-en.txt): one fact per paragraph, blank-line separated, # lines are
+// comments. Falls back to the built-in LANG didYouKnow arrays if a file is missing.
+let _extFacts={he:null,en:null};
+(async function loadExtFacts(){
+  for(const l of ["he","en"]){
+    try{
+      const r=await fetch(`didyouknow-${l}.txt`,{cache:"no-store"});
+      if(!r.ok) continue;
+      const facts=(await r.text()).split(/\r?\n\s*\r?\n/)
+        .map(b=>b.split(/\r?\n/).filter(line=>!line.trim().startsWith("#")).join("\n").trim())
+        .filter(Boolean);
+      if(facts.length) _extFacts[l]=facts;
+    }catch(e){}
+  }
+})();
+
 let _loadTimer=null;
 function setLoading(on,txt="Analyzing requirements...",showTimer=false) {
   document.getElementById("sendBtn").disabled=on;
@@ -1339,7 +1356,7 @@ function setLoading(on,txt="Analyzing requirements...",showTimer=false) {
     document.getElementById("messages").appendChild(el); scrollBot();
     if(showTimer){
       const start=Date.now();
-      const facts=t("didYouKnow")||[];
+      const facts=_extFacts[lang]||t("didYouKnow")||[];
       let fi=Math.floor(Math.random()*facts.length);
       const renderFact=()=>{
         const f=document.getElementById("loadingFact");
