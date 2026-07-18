@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.97";
+const VERSION="v1.98";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -667,15 +667,6 @@ en:{
   fbPlaceholder:"Custom refinement...",refineBtn:"Refine ↻",approveBtn:"✓ Approve for Final Report",
   refiningMsg:"Refining analysis... ⟳",loadingMsg:"Running Ashby screening & ranking...",
   didYouKnowLabel:"Did you know?",
-  didYouKnow:[
-    "SLS printers use thermoplastic polymer powder as raw material, producing high-quality, highly durable parts with no support structures",
-    "SLA printers use liquid photopolymer resin, printing high-resolution parts with a smooth surface finish from a wide range of thermoset materials",
-    "FDM 3D printers extrude thermoplastic filament, enabling lightweight models thanks to partial infill and low-cost parts from a wide range of thermoplastics",
-    "HP's MJF printers fuse nylon powder using a binding agent and heat, enabling fast production of functional part series with uniform mechanical properties",
-    "CFR 3D printers build parts with a composite structure — a polymer matrix reinforced by a continuous fiber — improving strength and stiffness to the point of replacing lightweight metal parts",
-    "The thermoplastic \"Nylon\", professionally known as polyamide, was first invented by DuPont in 1935. It was initially used for toothbrushes and stockings, and today it is used for strong, durable engineering parts",
-    "Systematics was founded in 1979 and today employs over 180 skilled professionals across GIS, CAD & PLM systems, algorithmics and simulation tools, 3D printing technologies, and digital manufacturing & operations systems",
-  ],
   approvedMsg:"Analysis approved ✓\n\nOpening the professional report... You can re-export anytime using the Export PDF button.",
   exportOpts:["Export PDF Report","Not now"],
   exportingMsg:"Opening PDF report... ✅",
@@ -737,15 +728,6 @@ he:{
   fbPlaceholder:"שיפור מותאם אישית...",refineBtn:"שפר ↻",approveBtn:"✓ אשר לקבלת דוח סופי",
   refiningMsg:"מעדכן ניתוח... ⟳",loadingMsg:"מריץ אלגוריתם ניתוח...",
   didYouKnowLabel:"הידעת?",
-  didYouKnow:[
-    "מדפסות בטכנולוגיית SLS מדפיסות בחומר גלם אבקה פולימרית תרמופלסטית ומאפשרות הדפסה איכותית של חלקים עמידים מאוד ללא תמיכות",
-    "מדפסות SLA מדפיסות בחומר גלם נוזלי — שרף פוטופולימרי — ומאפשרות הדפסה של חלקים ברזולוציה גבוהה, בטיב פני שטח חלק וממגוון גדול של חומרים תרמוסטים",
-    "מדפסות תלת ממד בטכנולוגיית FDM מדפיסות חומר גלם תרמופלסטי המגיע בתצורה של חוט, ומאפשרות הדפסת מודלים בעלי משקל עצמי נמוך בזכות מילוי פנימי חלקי והדפסת חלקים בעלות נמוכה ממגוון חומרים תרמופלסטים",
-    "מדפסות בטכנולוגיית MJF של HP ממזגות אבקת ניילון באמצעות חומר מקשר וחום, ומאפשרות ייצור מהיר של סדרות חלקים פונקציונליים עם תכונות מכניות אחידות",
-    "מדפסות תלת ממד בטכנולוגיית CFR מדפיסות חלקים במבנה מרוכב הכולל מטריצת פולימר וסיב משריין רציף שמשפר את תכונות החוזק והקשיחות של החלק עד כדי חלופה לחלקי מתכת קלי משקל",
-    "החומר התרמופלסטי \"ניילון\", הנקרא באופן מקצועי פוליאמיד, הומצא לראשונה על ידי חברת דופונט בשנת 1935. בהתחלה שימש לייצור מברשות שיניים וגרביונים, וכיום משמש בין היתר לייצור חלקים הנדסיים חזקים ועמידים",
-    "חברת סיסטמטיקס נוסדה בשנת 1979, וכיום מועסקים בחברה למעלה מ-180 אנשי מקצוע מיומנים בתחומים השונים: מערכות מידע גאוגרפי, מערכות תיב\"ם וניהול חיי מוצר, כלי אלגוריתמיקה וסימולציות, טכנולוגיות להדפסה תלת-ממדית, מערכות לדיגיטציה של תהליכי ייצור ותפעול",
-  ],
   approvedMsg:"הניתוח אושר ✓\n\nפותח את הדוח המקצועי... ניתן לייצא שוב בכל עת דרך כפתור ייצוא PDF.",
   exportOpts:["ייצוא דוח PDF","לא עכשיו"],
   exportingMsg:"פותח דוח PDF... ✅",
@@ -1321,9 +1303,9 @@ function addUser(text) {
   scrollBot();
 }
 
-// "Did you know?" facts are loaded from editable text files (didyouknow-he.txt /
+// "Did you know?" facts live ONLY in the editable text files (didyouknow-he.txt /
 // didyouknow-en.txt): one fact per paragraph, blank-line separated, # lines are
-// comments. Falls back to the built-in LANG didYouKnow arrays if a file is missing.
+// comments. If a file is missing or unreachable, no facts are shown.
 let _extFacts={he:null,en:null};
 (async function loadExtFacts(){
   for(const l of ["he","en"]){
@@ -1347,17 +1329,17 @@ function setLoading(on,txt="Analyzing requirements...",showTimer=false) {
   if(_loadTimer){ clearInterval(_loadTimer); _loadTimer=null; }
   if(on){
     const el=document.createElement("div"); el.className="loading-bubble"; el.id="loadingEl";
+    const facts=showTimer?(_extFacts[lang]||[]):[];
     if(showTimer){
       el.classList.add("with-fact");
-      el.innerHTML=`<div class="loading-main"><div class="spinner"></div><span>${txt}</span><span class="loading-clock" id="loadingClock">0:00</span></div><div class="loading-fact" id="loadingFact"></div>`;
+      el.innerHTML=`<div class="loading-main"><div class="spinner"></div><span>${txt}</span><span class="loading-clock" id="loadingClock">0:00</span></div>${facts.length?'<div class="loading-fact" id="loadingFact"></div>':''}`;
     } else {
       el.innerHTML=`<div class="spinner"></div><span>${txt}</span>`;
     }
     document.getElementById("messages").appendChild(el); scrollBot();
     if(showTimer){
       const start=Date.now();
-      const facts=_extFacts[lang]||t("didYouKnow")||[];
-      let fi=Math.floor(Math.random()*facts.length);
+      let fi=Math.floor(Math.random()*(facts.length||1));
       const renderFact=()=>{
         const f=document.getElementById("loadingFact");
         if(!f||!facts.length) return;
