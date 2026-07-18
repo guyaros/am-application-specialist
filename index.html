@@ -169,6 +169,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   border-radius:10px;padding:10px 14px;font-size:12px;color:var(--blue);
   align-self:flex-start;box-shadow:var(--shadow);
 }
+.loading-clock{
+  font-variant-numeric:tabular-nums;font-weight:700;color:var(--text2);
+  background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+  padding:2px 7px;font-size:11px;flex-shrink:0;
+}
 .spinner{
   width:13px;height:13px;border:2px solid rgba(37,99,235,.2);
   border-top-color:var(--blue);border-radius:50%;
@@ -617,7 +622,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.92";
+const VERSION="v1.93";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -656,7 +661,7 @@ en:{
   quickFeedback:["Higher mechanical requirements","Better temperature resistance","Cost is priority","Medical/biocompatibility needed","Outdoor UV resistance","Higher accuracy needed"],
   fbPlaceholder:"Custom refinement...",refineBtn:"Refine ↻",approveBtn:"✓ Approve for Final Report",
   refiningMsg:"Refining analysis... ⟳",loadingMsg:"Running Ashby screening & ranking...",
-  approvedMsg:"Analysis approved ✓\n\nWould you like to export the professional PDF report?",
+  approvedMsg:"Analysis approved ✓\n\nOpening the professional report... You can re-export anytime using the Export PDF button.",
   exportOpts:["Export PDF Report","Not now"],
   exportingMsg:"Opening PDF report... ✅",
   exportDoneMsg:"Done! You can export anytime using the Export PDF button in the sidebar.",
@@ -716,7 +721,7 @@ he:{
   quickFeedback:["דרישות מכניות גבוהות יותר","עמידות טמפרטורה גבוהה יותר","עלות היא עדיפות","נדרשת ביו-תאימות רפואית","עמידות UV חיצונית","דיוק גבוה יותר"],
   fbPlaceholder:"שיפור מותאם אישית...",refineBtn:"שפר ↻",approveBtn:"✓ אשר לקבלת דוח סופי",
   refiningMsg:"מעדכן ניתוח... ⟳",loadingMsg:"מריץ אלגוריתם ניתוח...",
-  approvedMsg:"הניתוח אושר ✓\n\nהאם תרצה לייצא את הדוח המקצועי?",
+  approvedMsg:"הניתוח אושר ✓\n\nפותח את הדוח המקצועי... ניתן לייצא שוב בכל עת דרך כפתור ייצוא PDF.",
   exportOpts:["ייצוא דוח PDF","לא עכשיו"],
   exportingMsg:"פותח דוח PDF... ✅",
   exportDoneMsg:"סיים! ניתן לייצא בכל עת דרך כפתור ייצוא PDF.",
@@ -1291,15 +1296,26 @@ function addUser(text) {
   scrollBot();
 }
 
-function setLoading(on,txt="Analyzing requirements...") {
+let _loadTimer=null;
+function setLoading(on,txt="Analyzing requirements...",showTimer=false) {
   document.getElementById("sendBtn").disabled=on;
   document.getElementById("inputBox").disabled=on;
   pbWorking=on; updateProgressBar();
   document.getElementById("loadingEl")?.remove();
+  if(_loadTimer){ clearInterval(_loadTimer); _loadTimer=null; }
   if(on){
     const el=document.createElement("div"); el.className="loading-bubble"; el.id="loadingEl";
-    el.innerHTML=`<div class="spinner"></div><span>${txt}</span>`;
+    el.innerHTML=`<div class="spinner"></div><span>${txt}</span>${showTimer?'<span class="loading-clock" id="loadingClock">0:00</span>':''}`;
     document.getElementById("messages").appendChild(el); scrollBot();
+    if(showTimer){
+      const start=Date.now();
+      _loadTimer=setInterval(()=>{
+        const c=document.getElementById("loadingClock");
+        if(!c){ clearInterval(_loadTimer); _loadTimer=null; return; }
+        const s=Math.floor((Date.now()-start)/1000);
+        c.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+      },1000);
+    }
   }
 }
 
@@ -1482,7 +1498,7 @@ function extractJSONObject(raw) {
 }
 
 async function runAnalysis(feedbackNote="") {
-  setLoading(true,t("loadingMsg"));
+  setLoading(true,t("loadingMsg"),true);
   const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rf_transp":"yes or no or partial — based on material dielectric properties (Ultem/PC=yes, carbon-fiber/ESD/metal-filled=no, standard polymers=partial)","rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rf_transp":"yes/no/partial","rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rf_transp":"yes/no/partial","rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
   const jsonRule="CRITICAL: output raw JSON only — no markdown, no code fences, no text before or after. All string values must be single-line (use \\n for line breaks, never a literal newline inside a string).";
   const prompt = feedbackNote
@@ -1733,9 +1749,10 @@ async function doCustomFb() {
 }
 
 function doApprove() {
-  document.getElementById("fbPanel")?.remove(); phase="approved"; step=9; renderSteps(); updateIterChip();
-  addAgent(t("approvedMsg"), t("exportOpts"));
-  setTimeout(showRatingPanel, 400);
+  document.getElementById("fbPanel")?.remove(); phase="done"; step=9; renderSteps(); updateIterChip();
+  addAgent(t("approvedMsg"));
+  setTimeout(()=>exportPDF(),400);
+  setTimeout(showRatingPanel, 800);
 }
 
 function showRatingPanel() {
