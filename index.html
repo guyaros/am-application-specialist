@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.00";
+const VERSION="v2.01";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -653,11 +653,12 @@ en:{
   disclaimer:"Disclaimer: As an AI tool, results may not always be accurate — treat recommendations as a starting point and verify critical data with a qualified professional. Do not share sensitive or confidential information. This tool covers Systematics solutions and materials only.",
   greetingStep1:"Let's get started!\n\nDefine the application type",
   stepQ:[
-    {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"]},
+    {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"],
+     descQ:["Briefly describe the part, e.g. a scaled-down tank model for marketing purposes","Describe the prototype and what it is used for (e.g. a sensor housing, a development gear, a motor bracket, etc.)","What is the specific role of the aid? e.g. a template, drill guide, locating fixture, clamping fixture","What is the main role of the part? Briefly describe what it does and what it is used for."]},
     {q:"Please describe the part — what does it do and what is its purpose?"},
-    {q:"Any special functional material requirements?",opts:[["Optical transparency / partial light","RF transparency","Fluid sealing","Anti-static (ESD)"],["Flame retardant","Low self-weight","Medical biocompatibility","None / no special functional req."]]},
+    {q:"Any special functional material requirements?",opts:[["None / no special functional req.","Optical transparency / partial light","RF transparency","Fluid sealing","Anti-static (ESD)"],["Flame retardant","Low self-weight","Medical biocompatibility"]]},
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Elastic (energy-absorbing)","Elastomeric (rubber-like)","Non-elastomeric (not rubber-like)"]},
-    {q:"What environmental conditions does the part need to operate in?",opts:["Freezing 0°C","Room temp 15–28°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],q2:"Any additional environmental resistance required?",opts2:["No additional requirements","Chemical resistance","Outdoor / moisture / UV exposure"]},
+    {q:"What environmental conditions does the part need to operate in?",opts:["Room temp 15–28°C","Freezing 0°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],q2:"Any additional environmental resistance required?",opts2:["No additional requirements","Chemical resistance","Outdoor / moisture / UV exposure"]},
     {q:"Geometry: what is the approximate maximum part size?",opts:["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. lighter","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. banana","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],q2:"And what is the smallest feature / minimum wall thickness in the design?",opts2:["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]},
     {q:"How many units need to be produced — single items, small, medium or large series?",opts:["1","5","10","50","100","500","1,000","10,000","100,000"],q2:"And what matters more to you?",opts2:["Cost priority","Performance priority"],single2:true},
   ],
@@ -714,11 +715,12 @@ he:{
   disclaimer:"הבהרה: ככלי בינה מלאכותית, ההמלצות מבוססות על הנתונים שסופקו ועשויות שלא להיות מדויקות. בכל מקרה — יש לאמת נתונים קריטיים מול גורם מקצועי. אין להזין מידע סודי או רגיש. הכלי מתייחס לפתרונות ולחומרים המוצעים על ידי Systematics בלבד.",
   greetingStep1:"אז קדימה נתחיל!\n\nהגדר את סוג היישום",
   stepQ:[
-    {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","כלי עזר לייצור (Jig/Fixture)","חלק לשימוש לקוח קצה"]},
+    {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","כלי עזר לייצור (Jig/Fixture)","חלק לשימוש לקוח קצה"],
+     descQ:["תאר בקצרה את החלק, למשל: דגם מוקטן של טנק לצרכי שיווק","תאר את האב טיפוס ועבור מה הוא משמש? (למשל: מארז לחיישן, גלגל שיניים לפיתוח, תושבת למנוע וכו')","מה התפקיד הספציפי של כלי העזר? למשל: תבנית, מוביל לקידוח, כלי עזר למיקום, כלי דפינה","מה התפקיד העיקרי של החלק? תאר בקצרה מה הוא עושה ועבור מה הוא משמש."]},
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
-    {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","אטימות לזורמים","תכונות אנטי-סטטיות (ESD)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית","ללא דרישות פונקציונליות מיוחדות"]]},
+    {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["ללא דרישות פונקציונליות מיוחדות","שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","אטימות לזורמים","תכונות אנטי-סטטיות (ESD)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית"]]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה גבוה","קשיחות גבוהה","עמידות בפגיעה / נגיפה (חסינות לשבר גבוהה)","אלסטי (סופג אנרגיה)","אלסטומרי (גומי)","לא אלסטומרי (לא גמיש כמו גומי)"]},
-    {q:"באילו תנאי סביבה החלק נדרש לשרת?",opts:["טמפ קיפאון 0°C","טמפ חדר 15-28°C","מקסימום 45°C","תנאי חוץ ישראל בין -10 ל +55","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],q2:"האם נדרשת עמידות סביבתית נוספת?",opts2:["ללא דרישות נוספות","עמידות בכימיקלים","עמידות בתנאי חוץ — רטיבות וקרינת UV"]},
+    {q:"באילו תנאי סביבה החלק נדרש לשרת?",opts:["טמפ חדר 15-28°C","טמפ קיפאון 0°C","מקסימום 45°C","תנאי חוץ ישראל בין -10 ל +55","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],q2:"האם נדרשת עמידות סביבתית נוספת?",opts2:["ללא דרישות נוספות","עמידות בכימיקלים","עמידות בתנאי חוץ — רטיבות וקרינת UV"]},
     {q:"גאומטריה: מהו גודל החלק המרבי בקירוב?",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: מצית","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: בננה","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"],q2:"ומהו הפיצ'ר הקטן ביותר / עובי הדופן המינימלי בעיצוב?",opts2:["פיצ'ר מינימלי 0.5 מ\"מ","פיצ'ר מינימלי 1 מ\"מ","פיצ'ר מינימלי 2 מ\"מ ומעלה"]},
     {q:"כמה יחידות נדרש לייצר — פריטים בודדים, סדרה קטנה, בינונית או גדולה?",opts:["1","5","10","50","100","500","1,000","10,000","100,000"],q2:"ומה חשוב יותר לך למקסם?",opts2:["עדיפות לעלות נמוכה","עדיפות לביצועים"],single2:true},
   ],
@@ -1888,6 +1890,20 @@ async function sendMsg(override) {
   if(step<keys.length){ stepHistory[step]=history.length; newReqs[keys[step]]=answer; }
   setReqs(newReqs);
   history.push({role:"user",content:answer});
+
+  // Fast path 1→2: step 1 is buttons-only, so the description question (fixed per
+  // application type) is shown instantly without an API call.
+  if(step===0&&isPureOptionAnswer(answer,0)){
+    const q0=getStepQ()[0];
+    const nq=(q0.descQ||[])[q0.opts.indexOf(answer)];
+    if(nq){
+      clarifyCount[0]=0;
+      history.push({role:"assistant",content:nq});
+      step=1; renderSteps();
+      addAgent(nq);
+      return;
+    }
+  }
 
   // Fast path (steps 5→6, 6→7, 7→analysis): a pure button-click answer needs no
   // Haiku validation, and questions 6-7 are fixed — show them without an API call.
