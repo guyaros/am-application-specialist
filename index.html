@@ -617,7 +617,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v1.91";
+const VERSION="v1.92";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -647,9 +647,9 @@ en:{
     {q:"Please describe the part — what does it do and what is its purpose?"},
     {q:"Any special functional material requirements?",opts:[["Optical transparency / partial light","RF transparency","Fluid sealing","Anti-static (ESD)"],["Flame retardant","Low self-weight","Medical biocompatibility","None / no special functional req."]]},
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Elastic (energy-absorbing)","Elastomeric (rubber-like)","Non-elastomeric (not rubber-like)"]},
-    {q:"What environmental conditions does the part need to operate in?",opts:[["Freezing 0°C","Room temp 15–28°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],["Chemical resistance"],["Outdoor / moisture / UV exposure"]]},
+    {q:"What environmental conditions does the part need to operate in?",opts:["Freezing 0°C","Room temp 15–28°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],q2:"Any additional environmental resistance required?",opts2:["Chemical resistance","Outdoor / moisture / UV exposure","No additional requirements"]},
     {q:"Geometry: what is the approximate maximum part size?",opts:["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. lighter","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. banana","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],q2:"And what is the smallest feature / minimum wall thickness in the design?",opts2:["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]},
-    {q:"How many units need to be produced — single items, small, medium or large series?",opts:["1","5","10","50","100","500","1,000","10,000","100,000"],q2:"And what matters more to you?",opts2:["Cost priority","Performance priority"]},
+    {q:"How many units need to be produced — single items, small, medium or large series?",opts:["1","5","10","50","100","500","1,000","10,000","100,000"],q2:"And what matters more to you?",opts2:["Cost priority","Performance priority"],single2:true},
   ],
   thankMsg:"Thank you! Running Ashby analysis now...",
   fbTitle:"Refinement Loop — Ashby Step 4",fbSub:"Does this meet your requirements? Refine or approve for final report.",
@@ -707,9 +707,9 @@ he:{
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
     {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","אטימות לזורמים","תכונות אנטי-סטטיות (ESD)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית","ללא דרישות פונקציונליות מיוחדות"]]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה גבוה","קשיחות גבוהה","עמידות בפגיעה / נגיפה (חסינות לשבר גבוהה)","אלסטי (סופג אנרגיה)","אלסטומרי (גומי)","לא אלסטומרי (לא גמיש כמו גומי)"]},
-    {q:"באילו תנאי סביבה החלק נדרש לשרת?",opts:[["טמפ קיפאון 0°C","טמפ חדר 15-28°C","מקסימום 45°C","תנאי חוץ ישראל בין -10 ל +55","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],["עמידות בכימיקלים"],["עמידות בתנאי חוץ — רטיבות וקרינת UV"]]},
+    {q:"באילו תנאי סביבה החלק נדרש לשרת?",opts:["טמפ קיפאון 0°C","טמפ חדר 15-28°C","מקסימום 45°C","תנאי חוץ ישראל בין -10 ל +55","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],q2:"האם נדרשת עמידות סביבתית נוספת?",opts2:["עמידות בכימיקלים","עמידות בתנאי חוץ — רטיבות וקרינת UV","ללא דרישות נוספות"]},
     {q:"גאומטריה: מהו גודל החלק המרבי בקירוב?",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: מצית","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: בננה","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"],q2:"ומהו הפיצ'ר הקטן ביותר / עובי הדופן המינימלי בעיצוב?",opts2:["פיצ'ר מינימלי 0.5 מ\"מ","פיצ'ר מינימלי 1 מ\"מ","פיצ'ר מינימלי 2 מ\"מ ומעלה"]},
-    {q:"כמה יחידות נדרש לייצר — פריטים בודדים, סדרה קטנה, בינונית או גדולה?",opts:["1","5","10","50","100","500","1,000","10,000","100,000"],q2:"ומה חשוב יותר לך למקסם?",opts2:["עדיפות לעלות נמוכה","עדיפות לביצועים"]},
+    {q:"כמה יחידות נדרש לייצר — פריטים בודדים, סדרה קטנה, בינונית או גדולה?",opts:["1","5","10","50","100","500","1,000","10,000","100,000"],q2:"ומה חשוב יותר לך למקסם?",opts2:["עדיפות לעלות נמוכה","עדיפות לביצועים"],single2:true},
   ],
   thankMsg:"תודה! מריץ ניתוח אשבי כעת...",
   fbTitle:"לולאת שיפור וחידוד",fbSub:"האם זה עונה על דרישותיך? שפר או אשר לדוח הסופי.",
@@ -1262,7 +1262,7 @@ function closeSidebar(){
 function scrollBot(){ const m=document.getElementById("messages"); m.scrollTop=m.scrollHeight; }
 function focusInput(){ const b=document.getElementById("inputBox"); if(b&&!b.disabled) b.focus(); }
 
-function addAgent(text, options, avatarOverride) {
+function addAgent(text, options, avatarOverride, singleChoice) {
   if(_lastMsgStep!==null&&step!==_lastMsgStep){
     document.querySelectorAll("#messages .msg:not(.locked)").forEach(m=>m.classList.add("locked"));
   }
@@ -1273,7 +1273,7 @@ function addAgent(text, options, avatarOverride) {
   wrap.className="msg agent"; wrap.id="msg-"+id;
   wrap.innerHTML=`<div class="avatar agent">${avatarLabel}</div><div>
     <div class="bubble" dir="auto">${esc(text)}</div>
-    ${options?(Array.isArray(options[0])?options.map((row,ri)=>`<div class="opts">${row.map(o=>`<button class="opt${ri===1?' opt-alt':ri>=2?' opt-alt2':''}" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id})">${esc(o)}</button>`).join("")}</div>`):""}
+    ${options?(Array.isArray(options[0])?options.map((row,ri)=>`<div class="opts">${row.map(o=>`<button class="opt${ri===1?' opt-alt':ri>=2?' opt-alt2':''}" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id},${singleChoice?1:0})">${esc(o)}</button>`).join("")}</div>`).join(""):`<div class="opts">${options.map(o=>`<button class="opt" onclick="selOpt(this,'${esc2(o.includes(' — ')?o.split(' — ')[0]:o)}',${id},${singleChoice?1:0})">${esc(o)}</button>`).join("")}</div>`):""}
 
   </div>`;
   document.getElementById("messages").appendChild(wrap);
@@ -1306,7 +1306,7 @@ function setLoading(on,txt="Analyzing requirements...") {
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br/>"); }
 function esc2(s){ return String(s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
 
-function selOpt(btn,opt,id){
+function selOpt(btn,opt,id,single){
   const box=document.getElementById("inputBox");
   if(step===0){
     document.querySelectorAll(`#msg-${id} .opt`).forEach(b=>b.classList.remove("sel"));
@@ -1314,6 +1314,14 @@ function selOpt(btn,opt,id){
     box.value=opt;
     box.focus();
     setTimeout(sendMsg,120);
+    return;
+  }
+  if(single){
+    // Mutually exclusive group — picking one replaces any previous pick
+    document.querySelectorAll(`#msg-${id} .opt`).forEach(b=>b.classList.remove("sel"));
+    btn.classList.add("sel");
+    box.value=opt;
+    box.focus();
     return;
   }
   btn.classList.toggle("sel");
@@ -1806,7 +1814,7 @@ async function sendMsg(override) {
   if(twoPart&&_subAnswer===null){
     addUser(text);
     _subAnswer=text;
-    addAgent(sqCur.q2, sqCur.opts2);
+    addAgent(sqCur.q2, sqCur.opts2, undefined, sqCur.single2);
     return;
   }
   const answer=twoPart?_subAnswer+", "+text:text;
@@ -1843,7 +1851,7 @@ async function sendMsg(override) {
     `User selected: "${text}". ${(text.includes("Manufacturing aid")||text.includes("עזר ייצור")||text.includes("עזר לייצור"))?"Ask exactly this question (in the interface language): מה התפקיד הספציפי של העזר? / What is the specific role of the aid? Then on a new line add examples — Hebrew: למשל: תבנית, כלי עזר לקידוח, כלי עזר למיקום, כלי דפינה — English: e.g. drill guide, locating fixture, assembly jig, inspection gauge":"Ask for a brief description of what the part does and its purpose."}`,
     `Part description: "${text}". Ask what special functional material requirements this part needs. Frame the question as: "What special functional requirements does this part need?" — then, based on the application type and part description already in this conversation, choose 2–3 examples that are plausible and relevant to this specific use case from: optical transparency / partial light transmission, RF transparency (antennas / radomes), fluid sealing / watertight, anti-static / ESD protection, flame retardancy, low self-weight, medical biocompatibility. Do NOT list examples that are clearly irrelevant for this application. STRICT EXCLUSIONS — never mention these in this step even if the application seems relevant: UV resistance, chemical resistance, temperature/heat resistance (all → step 5); mechanical strength, stiffness, impact, hardness (→ step 4); geometry, dimensions, feature size (→ step 6); quantity, cost, printers (→ step 7).`,
     `Answer: "${answer}". Ask one mechanical requirements question (tensile strength, stiffness, impact resistance, elongation). If the answer implies high toughness or impact resistance, follow RULE 2 and ask whether rigid or flexible energy-absorbing behavior is preferred.`,
-    `Answer: "${answer}". Ask exactly this question (in the interface language): באילו תנאי סביבה החלק נדרש לשרת? / What environmental conditions does the part need to operate in?`,
+    `Answer: "${answer}". Ask exactly this question (in the interface language): באילו תנאי סביבה החלק נדרש לשרת? / What environmental conditions does the part need to operate in? Do NOT ask about chemical resistance or UV/outdoor exposure — the app asks that as a separate follow-up question automatically.`,
     `Answer: "${answer}". Ask exactly this question (in the interface language): גאומטריה: מהו גודל החלק המרבי בקירוב? / Geometry: what is the approximate maximum part size? Do NOT ask about the smallest feature or wall thickness — the app asks that as a separate follow-up question automatically.`,
     `Answer: "${answer}". Ask exactly this question (in the interface language): כמה יחידות נדרש לייצר — פריטים בודדים, סדרה קטנה, בינונית או גדולה? / How many units need to be produced — single items, small, medium or large series? Do NOT ask about cost vs performance priority — the app asks that as a separate follow-up question automatically.`,
     `Answer: "${answer}". Acknowledge briefly.`,
