@@ -14,4 +14,16 @@ CFR 3D printers build parts with a composite structure — a polymer matrix rein
 
 The thermoplastic "Nylon", professionally known as polyamide, was first invented by DuPont in 1935. It was initially used for toothbrushes and stockings, and today it is used for strong, durable engineering parts
 
+"Nylon" bags are not actually made of nylon — they are usually made of LDPE polyethylene, one of the most common polymers in industry, alongside the most widespread industrial polymer, polypropylene (PP) — a winning combination of low cost, low specific weight and exceptional chemical resistance, ideal for food packaging, bottles, the automotive industry and medical equipment
+
 Systematics was founded in 1979 and today employs over 180 skilled professionals across GIS, CAD & PLM systems, algorithmics and simulation tools, 3D printing technologies, and digital manufacturing & operations systems
+
+Formlabs is one of the world's leading and most influential 3D printing companies. Founded in 2011 by three students from an MIT lab, it employs today around 800 people worldwide and offers professional industrial printing solutions, including the Form 4 SLA series and the Fuse SLS series — the best-selling SLS printer in the world
+
+3D printing was invented in 1984 by engineer Chuck Hull, who developed the first SLA printer and patented the process. The biggest leap in the 3D printing market happened in the last decade — from prototyping to mass production of end-use parts. As of 2026 the global 3D printing market is estimated at $28-35 billion, and is expected to cross the $100 billion mark within the next decade
+
+3D printers are very common in medicine. Every person's anatomy is unique, and 3D printing is the only manufacturing method in the world that enables complex, personally customized products (Mass Customization) quickly and at low cost. Dentistry, orthodontics, temporary and permanent crowns, dentures, anatomical models for medical simulations, orthopedic splints and life-saving surgical guides are just a few of the medical applications
+
+Coatings and post-processing of printed parts are critical steps in turning a printed part from a raw prototype into a functional industrial end product. These processes include painting, surface smoothing by mechanical polishing or chemical processes, metal or ceramic coatings that provide UV and chemical resistance for improved environmental durability, and embedding inserts such as threaded inserts, locating pins, wear pins and magnets that upgrade parts to a higher-grade product
+
+The manufacturing process strongly affects product properties because it shapes the material's microstructure. Take the same raw material, such as ABS, and compare its properties when 3D printed, injection molded or CNC machined — you will find very different properties. Although the chemical composition stays the same, the way the molecules align, cool and bond changes completely between manufacturing methods
