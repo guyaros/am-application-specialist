@@ -433,8 +433,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 [dir=rtl] .sidebar-btn{text-align:right}
 [dir=rtl] .branding{text-align:right}
 [dir=rtl] .pb-header{justify-content:flex-start;gap:10px}
-[dir=rtl] #messages>.msg.agent{align-self:flex-end;flex-direction:row-reverse}
+[dir=rtl] #messages>.msg.agent{align-self:flex-start;flex-direction:row}
 [dir=rtl] #messages>.msg.user{align-self:flex-start;flex-direction:row}
+[dir=rtl] .bubble{border-radius:12px 3px 12px 12px}
 [dir=rtl] .report-wrap,[dir=rtl] .fb-panel{margin-left:0;margin-right:37px}
 [dir=rtl] .step-edit-icon{margin-left:0;margin-right:auto}
 
@@ -626,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.05";
+const VERSION="v2.06";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
