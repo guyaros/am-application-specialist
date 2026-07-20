@@ -399,6 +399,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 #sendBtn:hover{opacity:.9;box-shadow:0 4px 14px rgba(37,99,235,.35)}
 #sendBtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+[dir=rtl] #sendBtn{order:-1}
 
 /* SETTINGS MODAL */
 #settingsModal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:200;}
@@ -627,7 +628,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.03";
+const VERSION="v2.04";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
