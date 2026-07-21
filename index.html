@@ -318,6 +318,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .rating-submit:hover{opacity:.85}
 .rating-thanks{font-size:13px;font-weight:700;color:#6366f1;text-align:center;padding:8px 0}
+.rating-closing{font-size:12.5px;color:var(--text2);text-align:center;padding:0 0 4px;line-height:1.6;white-space:pre-line}
+.rating-newrun-btn{display:block;margin:8px auto 0}
 .rating-err{font-size:11px;font-weight:600;color:#dc2626;margin-top:4px;display:none}
 .fb-ta.field-err{border-color:#dc2626}
 
@@ -630,7 +632,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.07";
+const VERSION="v2.08";
 const REL_DATE="Jul 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -698,6 +700,9 @@ en:{
   ratingPlaceholder:"Share your feedback...",
   ratingSubmitBtn:"Send feedback",
   ratingThanks:"Thank you for your feedback! 🙏",
+  closingMsg:"Thank you for using the Application Specialist agent!\nWant to run a new analysis?",
+  startNewBtn:"↺ Start New Analysis",
+  comeBackTitle:"⭐ Your feedback awaits",
 },
 he:{
   logoText:"יועץ<br/>יישומים",stepsLabel:"שלבי התהליך",
@@ -760,6 +765,9 @@ he:{
   ratingPlaceholder:"שתף אותנו...",
   ratingSubmitBtn:"שלח משוב",
   ratingThanks:"תודה על המשוב! 🙏",
+  closingMsg:"תודה שהשתמשת בסוכן יועץ הדפסה תלת-ממדית!\nרוצה לבצע הרצה נוספת?",
+  startNewBtn:"↺ הרצה חדשה",
+  comeBackTitle:"⭐ מחכים למשוב שלך",
 },};
 function t(k){return LANG[lang][k]??LANG.en[k]??k;}
 function getStepQ(){return LANG[lang].stepQ;}
@@ -1816,9 +1824,31 @@ async function doCustomFb() {
 function doApprove() {
   document.getElementById("fbPanel")?.remove(); phase="done"; step=9; renderSteps(); updateIterChip();
   addAgent(t("approvedMsg"));
+  _attnPending=true;
   setTimeout(()=>exportPDF(),400);
-  setTimeout(showRatingPanel, 800);
+  setTimeout(showRatingPanel, 300);
 }
+
+// ── ATTENTION FLASH ──────────────────────────────────────────────────────────
+// The report opens in a new tab/print dialog, which steals focus. While that's
+// pending, flash this tab's title so the user notices they need to come back
+// here to leave feedback — the rating panel itself is already rendered and
+// waiting by the time they do.
+const _origTitle=document.title;
+let _attnTimer=null, _attnPending=false;
+function startAttentionFlash(){
+  if(_attnTimer||!_attnPending) return;
+  let on=false;
+  _attnTimer=setInterval(()=>{ document.title = on ? _origTitle : t("comeBackTitle"); on=!on; }, 1200);
+}
+function stopAttentionFlash(){
+  if(_attnTimer){ clearInterval(_attnTimer); _attnTimer=null; }
+  document.title=_origTitle;
+}
+document.addEventListener("visibilitychange", ()=>{
+  if(document.hidden){ if(_attnPending) startAttentionFlash(); }
+  else { stopAttentionFlash(); }
+});
 
 function showRatingPanel() {
   if(document.getElementById("ratingPanel")) return;
@@ -1867,7 +1897,10 @@ function submitRating() {
   const starStr = stars ? "★".repeat(stars)+"☆".repeat(5-stars)+" ("+stars+"/5)" : "—";
   console.log("[Agent Rating]", starStr, text, userName);
   const panel = document.getElementById("ratingPanel");
-  if(panel) panel.innerHTML = `<div class="rating-thanks">${t("ratingThanks")}</div>`;
+  if(panel) panel.innerHTML = `<div class="rating-thanks">${t("ratingThanks")}</div>
+    <div class="rating-closing">${esc(t("closingMsg"))}</div>
+    <button class="rating-submit rating-newrun-btn" onclick="clearSession()">${t("startNewBtn")}</button>`;
+  stopAttentionFlash(); _attnPending=false;
   sendEmailReport(starStr, text, userName);
 }
 
