@@ -632,7 +632,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.14";
+const VERSION="v2.15";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1479,7 +1479,7 @@ Always ask about the smallest feature or minimum wall thickness in the design. T
 - Features 0.5–1 mm → SLA/LFD preferred; SLS (Fuse1+) acceptable with reduced detail
 - Features 1–2 mm → SLA, SLS, or MJF all suitable
 - Features > 2 mm → Any technology viable; FDM/FFF (Markforged, Snapemaker) also acceptable
-NEVER recommend FDM/FFF when the smallest feature is < 0.8 mm.
+NEVER recommend FDM/FFF when the smallest feature is < 0.8 mm (0.8 mm is the FDM/FFF minimum; between 0.8–2 mm FDM/FFF is possible but with coarse detail).
 The smallest-feature question is asked automatically as a separate follow-up right after the max-part-size question — do NOT bundle both into one question.
 
 === Collected requirements ===\n${JSON.stringify(reqs,null,2)}`;
@@ -1580,9 +1580,21 @@ function extractJSONObject(raw) {
   return null;
 }
 
+// Report numbers come from MAT, never from the model, so they can't carry transcription errors.
+// A name not found in MAT gets nulls (shown as "—") rather than invented values.
+function fillMaterialProps(rep){
+  const num=v=>typeof v==="number"?v:null;
+  (rep.materials||[]).forEach(m=>{
+    const db=MAT.find(x=>x.n===m.name);
+    m.tensile=num(db?.ts); m.modulus=num(db?.em); m.hdt=num(db?.hdt);
+    m.elongation=num(db?.el); m.impact=num(db?.imp); m.cost=num(db?.cost);
+    if(db&&!m.vendor) m.vendor=db.v;
+  });
+}
+
 async function runAnalysis(feedbackNote="") {
   setLoading(true,t("loadingMsg"),true);
-  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","tensile":num_or_null,"modulus":num_or_null,"hdt":num_or_null,"elongation":num_or_null,"impact":num_or_null,"cost":num_or_null,"rf_transp":"yes or no or partial — based on material dielectric properties (Ultem/PC=yes, carbon-fiber/ESD/metal-filled=no, standard polymers=partial)","rationale":"string"},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rf_transp":"yes/no/partial","rationale":""},{"name":"","vendor":"","technology":"","tensile":null,"modulus":null,"hdt":null,"elongation":null,"impact":null,"cost":null,"rf_transp":"yes/no/partial","rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
+  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","rf_transp":"yes or no or partial — based on material dielectric properties (Ultem/PC=yes, carbon-fiber/ESD/metal-filled=no, standard polymers=partial)","rationale":"string"},{"name":"","vendor":"","technology":"","rf_transp":"yes/no/partial","rationale":""},{"name":"","vendor":"","technology":"","rf_transp":"yes/no/partial","rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
   const jsonRule="CRITICAL: output raw JSON only — no markdown, no code fences, no text before or after. All string values must be single-line (use \\n for line breaks, never a literal newline inside a string).";
   const prompt = feedbackNote
     ? `User feedback: "${feedbackNote}". Refine analysis accordingly. ${jsonRule}\n${spec}`
@@ -1599,6 +1611,7 @@ async function runAnalysis(feedbackNote="") {
         try { parsed=JSON.parse(m2); }
         catch(e2){ throw e1; }
       }
+      fillMaterialProps(parsed);
       report=parsed;
       iteration++; phase="feedback"; history.push({role:"assistant",content:resp});
       setLoading(false); renderReport(); renderFeedback(); step=8; renderSteps(); updateIterChip();
