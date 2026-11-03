@@ -228,9 +228,18 @@ function findObjectEnd(text, start) {
   return -1;
 }
 
-// Sets (or adds) one field on the MAT entry named `name`, leaving the rest of the line untouched.
-function setMatField(html, name, key, value) {
-  const block = extractArrayBlock(html, 'MAT');
+// Printer fields PRN copies from the printers CSV. Not acc (formatting differs)
+// or ml (PRN's list is the curated, exact-name version of the CSV's loose list).
+const PRINTER_VALUE_FIELDS = [
+  ['bx', 'build_x_mm'], ['by', 'build_y_mm'], ['bz', 'build_z_mm'], ['res', 'resolution_xy_um_raw'],
+  ['esd', 'supports_esd'], ['fr', 'supports_flame_retardant'],
+  ['bio', 'supports_biocompatible'], ['opt', 'supports_optically_clear'],
+];
+const PRINTER_NUMERIC = new Set(['bx', 'by', 'bz', 'res']);
+
+// Sets (or adds) one field on the MAT/PRN entry named `name`, leaving the rest of the entry untouched.
+function setEntryField(html, varName, name, key, value) {
+  const block = extractArrayBlock(html, varName);
   const start = block.text.indexOf(`{n:${JSON.stringify(name)},`);
   if (start === -1) return html;
   const obj = block.text.slice(start, findObjectEnd(block.text, start) + 1);
@@ -325,7 +334,26 @@ function main() {
       }
       if (String(csvVal) !== String(matVal)) {
         problems.push({ level: 'fatal', msg: `VALUE_DRIFT: "${db.n}" ${key} is ${JSON.stringify(csvVal)} in AM-Materials-DB.csv but ${matVal === undefined ? 'missing' : JSON.stringify(matVal)} in MAT` });
-        valueFixes.push({ name: db.n, key, value: csvVal });
+        valueFixes.push({ varName: 'MAT', name: db.n, key, value: csvVal });
+      }
+    });
+  });
+
+  // 8. printer dimensions/resolution and capability flags must match the printers CSV
+  const prnData = new Function(`return ${prnBlock.text}`)();
+  printers.rows.forEach(r => {
+    const fullName = r[printers.col('printer_name')].trim();
+    const mfr = r[printers.col('manufacturer')].trim();
+    const db = prnData.find(x => printerAliases(fullName, mfr).has(x.n));
+    if (!db) return;
+    PRINTER_VALUE_FIELDS.forEach(([key, column]) => {
+      const raw = r[printers.col(column)].trim();
+      if (raw === '') return;
+      const csvVal = PRINTER_NUMERIC.has(key) ? Number(raw) : raw.toLowerCase();
+      const prnVal = PRINTER_NUMERIC.has(key) ? db[key] : String(db[key] ?? '').toLowerCase();
+      if (String(csvVal) !== String(prnVal)) {
+        problems.push({ level: 'fatal', msg: `VALUE_DRIFT: printer "${db.n}" ${key} is ${JSON.stringify(csvVal)} in AM-Printers-DB.csv but ${JSON.stringify(db[key])} in PRN` });
+        valueFixes.push({ varName: 'PRN', name: db.n, key, value: csvVal });
       }
     });
   });
@@ -341,7 +369,7 @@ function main() {
 
   if (fix && (missingMaterialRows.length || missingPrinterRows.length || valueFixes.length)) {
     let newHtml = html;
-    valueFixes.forEach(f => { newHtml = setMatField(newHtml, f.name, f.key, f.value); });
+    valueFixes.forEach(f => { newHtml = setEntryField(newHtml, f.varName, f.name, f.key, f.value); });
     if (missingPrinterRows.length) {
       const b = extractArrayBlock(newHtml, 'PRN');
       const insertion = missingPrinterRows.map(r => buildPrinterEntry(r, printers.col)).join('\n') + '\n';
