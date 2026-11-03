@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.26";
+const VERSION="v2.27";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -804,7 +804,7 @@ function setLang(l){
   if(l===lang) return;
   lang=l; localStorage.setItem("am_lang",l);
   applyLang();
-  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;offTopicStrikes=0;clarifyCount=[0,0,0,0,0,0,0];_subAnswer=null;
+  step=0;reqs={};history=[];report=null;iteration=0;refineLog=[];phase="chat";msgId=0;offTopicStrikes=0;clarifyCount=[0,0,0,0,0,0,0];_subAnswer=null;
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
   renderSteps(); initAgent();
@@ -940,7 +940,7 @@ const RC = [
 const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b981","FDM/FFF":"#64748b"};
 
 // ── STATE ──────────────────────────────────────────────────────────────────
-let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
+let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, refineLog=[], phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
 let msgId=0, lang=localStorage.getItem("am_lang")||"he";
 let pbWorking=false;
 let _lastRenderedStep=-99; // for one-shot flash on the step that just became active
@@ -1082,6 +1082,15 @@ async function sendEmailReport(ratingStars, ratingText, userName){
   if(!to||!svc||!tpl||!pub||!report) return;
   const cost=calcRunCost();
   const mats=(report.materials||[]).map((m,i)=>(i+1)+". "+m.name+" ("+m.vendor+" / "+m.technology+")\n   "+m.rationale).join("\n\n");
+  const printers=(report.printers||[]).map(p=>p.name).join(" | ")||"—";
+  const refineLines=refineLog.length
+    ? refineLog.map((r,i)=>[
+        `#${i+1} (on report iteration ${r.iter})`,
+        "Feedback:        "+r.feedback,
+        "Materials before: "+(r.materials.join(" | ")||"—"),
+        "Printers before:  "+(r.printers.join(" | ")||"—"),
+        "Summary before:   "+r.summary].join("\n")).join("\n\n")
+    : "(none — approved on the first report)";
   const body=[
     "AM Application Specialist — Run Report","=".repeat(50),
     "Date: "+new Date().toLocaleString(),"Iterations: "+iteration,"",
@@ -1093,8 +1102,10 @@ async function sendEmailReport(ratingStars, ratingText, userName){
     "Environmental: "+(reqs.environmental_req||"—"),
     "Geometry:      "+(reqs.geometry_req||"—"),
     "Manufacturing: "+(reqs.production_req||"—"),"",
-    "SUMMARY","─".repeat(30),report.summary||"","",
+    "REFINEMENT LOG","─".repeat(30),refineLines,"",
+    "SUMMARY (final report)","─".repeat(30),report.summary||"","",
     "RECOMMENDED MATERIALS","─".repeat(30),mats,"",
+    "RECOMMENDED PRINTERS","─".repeat(30),printers,"",
     "PROFESSIONAL NOTE","─".repeat(30),report.professional_note||"","",
     "NEXT STEPS","─".repeat(30),(report.next_steps||[]).map((s,i)=>(i+1)+". "+s).join("\n"),"",
     "USER FEEDBACK","─".repeat(30),
@@ -1143,7 +1154,7 @@ function saveSettingsKey(){
 function clearSession(){
   if(!confirm(t("confirmNewRun"))) return;
   totalInputTokens=0; totalOutputTokens=0;
-  step=0; reqs={}; history=[]; report=null; iteration=0; phase="chat"; msgId=0; _subAnswer=null;
+  step=0; reqs={}; history=[]; report=null; iteration=0; refineLog=[]; phase="chat"; msgId=0; _subAnswer=null;
   _lastMsgStep=null; _lastRenderedStep=-99;
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
@@ -1814,6 +1825,9 @@ function renderFeedback() {
 }
 
 async function doFeedback(text) {
+  // Snapshot the report this feedback refers to, for the refinement log in the run email.
+  if(report) refineLog.push({iter:iteration, feedback:text, summary:report.summary||"",
+    materials:(report.materials||[]).map(m=>m.name), printers:(report.printers||[]).map(p=>p.name)});
   addUser(text); document.getElementById("fbPanel")?.remove(); phase="chat";
   reqs.latest_feedback=text; history.push({role:"user",content:"Feedback: "+text});
   addAgent(t("refiningMsg"));
