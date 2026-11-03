@@ -632,7 +632,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.11";
+const VERSION="v2.12";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -828,6 +828,7 @@ const MAT = [
   {n:"Precision Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:53.5,ts:50,em:2.2,el:8.6,imp:32,cost:630,gn:"High-accuracy material with crisp margin lines; beige color, smooth matte finish.",link:"https://shop.systematics.co.il/page_24748"},
   {n:"Tough 2000 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:70,ts:43,em:1.8,el:79,imp:25,cost:685,gn:"Simulates molded ABS; good balance of stiffness and toughness.",link:"https://shop.systematics.co.il/page_24850"},
   {n:"Tough 1500 V2",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"yes",hdt:66,ts:34,em:1.46,el:155,imp:42,cost:685,gn:"Simulates Polypropylene (PP); flexible and resilient.",link:"https://shop.systematics.co.il/page_24844"},
+  {n:"Tough 1500 V2 (Form Studio 1)",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:66,ts:34,em:1.46,el:155,cost:439,gn:"Same Tough 1500 V2 resin, sold/documented separately for Form Studio 1; impact strength not confirmed for this listing (CSV source had a work-of-fracture figure miscategorized as impact strength — fixed, not substituted).",link:"https://shop.systematics.co.il/page_24895"},
   {n:"Tough 1000",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:55.3,ts:26.3,em:0.93,el:180,imp:72,cost:685,gn:"Simulates High Density Polyethylene (HDPE); high elongation, snap joints.",link:"https://shop.systematics.co.il/page_24851"},
   {n:"Rigid 10K V1.1",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:163,ts:65,em:10,el:1,imp:16,cost:1340,gn:"Excellent thermal properties; NOT suitable for impact/shock absorption.",link:"https://shop.systematics.co.il/page_24732"},
   {n:"Rigid 10K + Heat Treatment",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"yes",fs:"no",bio:"no",hdt:218,ts:53,em:10,el:1,imp:18,cost:1340,gn:"Post-cured Rigid 10K; highest HDT (218°C); NOT suitable for impact/shock absorption.",link:"https://shop.systematics.co.il/page_24732"},
@@ -897,7 +898,7 @@ const MAT = [
 
 const PRN = [
   {n:"Form Studio 1",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:235,res:35,acc:"±0.5%",esd:"no",fr:"no",bio:"yes",opt:"yes",
-   ml:"Alpha Grey;Alpha Clear;Alpha White;Alpha Black;Alpha Model;Alpha Fast;Tough 1500 V2;Flexible 80A V2"},
+   ml:"Alpha Grey;Alpha Clear;Alpha White;Alpha Black;Alpha Model;Alpha Fast;Tough 1500 V2 (Form Studio 1);Flexible 80A V2"},
   {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes",
    ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N"},
   {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes",

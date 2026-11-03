@@ -1,0 +1,23 @@
+name: Check material/printer DB sync
+
+on:
+  push:
+    paths:
+      - 'AM-Materials-DB.csv'
+      - 'AM-Printers-DB.csv'
+      - 'index.html'
+  pull_request:
+    paths:
+      - 'AM-Materials-DB.csv'
+      - 'AM-Printers-DB.csv'
+      - 'index.html'
+
+jobs:
+  check-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node tools/check-sync.js

@@ -249,14 +249,23 @@ Reset in `clearSession()`.
 
 ---
 
-## How to update materials from CSV
+## How to update materials/printers from CSV
 
-The `MAT` array is hardcoded in `index.html`. When the CSV is updated:
-1. Edit `AM-Materials-DB.csv`
-2. Run a Node.js sync script to update the relevant fields in the `MAT` array
-3. For shop links specifically: match `Shop_Link` column (col 28) to `MAT[].n` by material name
+`MAT` and `PRN` are hardcoded arrays in `index.html` — that's the data the agent
+actually sees at runtime (the CSVs are documentation / source of truth, but are
+never loaded by the app itself). When a CSV changes, these arrays must be kept
+in sync by hand, or they silently drift and the agent won't recognize new
+materials/printers.
 
-Fields in MAT that come from CSV: all properties + `gn` (general_notes col 19) + `link` (Shop_Link col 28).
+`tools/check-sync.js` catches this:
+```
+node tools/check-sync.js          # report drift (missing entries, broken PRN.ml refs)
+node tools/check-sync.js --fix    # also insert AUTO-ADDED entries for anything missing — review before shipping
+```
+A git pre-commit hook (`.githooks/pre-commit`, active via `git config core.hooksPath .githooks`)
+and a GitHub Actions workflow (`.github/workflows/check-material-sync.yml`) both
+run this check, so a CSV edit that isn't synced into `index.html` should get
+caught before or during push rather than silently shipping.
 
 ---
 

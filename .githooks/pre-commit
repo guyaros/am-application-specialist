@@ -1,0 +1,19 @@
+#!/bin/sh
+# Blocks the commit if AM-Materials-DB.csv / AM-Printers-DB.csv changed
+# without index.html's embedded MAT/PRN arrays (the data the agent actually
+# runs on) being kept in sync. See tools/check-sync.js.
+
+if git diff --cached --name-only | grep -qE '^(AM-Materials-DB\.csv|AM-Printers-DB\.csv)$'; then
+  node "$(git rev-parse --show-toplevel)/tools/check-sync.js"
+  status=$?
+  if [ $status -ne 0 ]; then
+    echo ""
+    echo "COMMIT BLOCKED: tools/check-sync.js found materials/printers in the CSV"
+    echo "that are missing from index.html's MAT/PRN arrays (or a broken PRN.ml reference)."
+    echo ""
+    echo "Fix it with:  node tools/check-sync.js --fix   (then review the AUTO-ADDED entries)"
+    echo "or edit index.html by hand, then re-stage and commit again."
+    exit 1
+  fi
+fi
+exit 0

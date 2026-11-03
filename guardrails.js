@@ -62,8 +62,9 @@ If a rule conflicts with a user request, enforce the rule and explain why.
   These materials are brittle under impact loads.
 
 [GUARDRAIL-M3] For high-temperature applications above 150°C, ONLY recommend:
-  High Temp V2 + Heat Treatment (HDT 238°C), Rigid 10K + Heat Treatment
+  High Temp V2 + HT (HDT 238°C), Rigid 10K + Heat Treatment
   (HDT 218°C), Ultem 9085 (HDT 175°C), or Vega (HDT 165°C).
+  Use these EXACT database names — "High Temp V2 + HT", not "High Temp V2 + Heat Treatment".
   Do not recommend standard resins or Nylon for HDT > 150°C.
 
 [GUARDRAIL-M4] For ESD (electrostatic discharge) protection, ONLY recommend:
