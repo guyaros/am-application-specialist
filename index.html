@@ -65,12 +65,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .step-lbl{font-size:13px;color:var(--text2);transition:color .15s}
 .step.active .step-lbl{color:#fff;font-weight:700}
 .step.done .step-lbl{color:var(--text3);font-weight:500}
-.step.editable{cursor:pointer}
-.step.editable:hover{background:rgba(37,99,235,.07)!important;opacity:1}
-.step.editable:hover .step-lbl{color:var(--blue)!important}
-.step.editable:hover .step-num{background:var(--blue)!important;border-color:var(--blue)!important;box-shadow:0 0 0 3px rgba(37,99,235,.15)!important}
-.step-edit-icon{font-size:9px;color:var(--blue);margin-left:auto;opacity:0;transition:opacity .15s;flex-shrink:0}
-.step.editable:hover .step-edit-icon{opacity:1}
 
 .iter-chip{
   margin:0 10px 10px;padding:8px 10px;
@@ -444,7 +438,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 [dir=rtl] #messages>.msg.user{align-self:flex-start;flex-direction:row}
 [dir=rtl] .bubble{border-radius:12px 3px 12px 12px}
 [dir=rtl] .report-wrap,[dir=rtl] .fb-panel{margin-left:0;margin-right:37px}
-[dir=rtl] .step-edit-icon{margin-left:0;margin-right:auto}
 
 @media print{#sidebar,#topbar,#inputArea,.fb-panel{display:none!important}#main{height:auto}#messages{overflow:visible}}
 
@@ -634,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.19";
+const VERSION="v2.20";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -679,7 +672,6 @@ en:{
   exportOpts:["Export PDF Report","Not now"],
   exportingMsg:"Opening PDF report... ✅",
   exportDoneMsg:"Done! You can export anytime using the Export PDF button in the sidebar.",
-  editingLabel:"↩ Editing:",
   emailSection:"Email Report",emailDesc:"Auto-send a summary email after each approved run.",
   emailToPlaceholder:"you@company.com",
   emailSaveBtn:"Save",emailTestBtn:"Test",emailSaved:"Email settings saved ✓",
@@ -744,7 +736,6 @@ he:{
   exportOpts:["ייצוא דוח PDF","לא עכשיו"],
   exportingMsg:"פותח דוח PDF... ✅",
   exportDoneMsg:"סיים! ניתן לייצא בכל עת דרך כפתור ייצוא PDF.",
-  editingLabel:"↩ עריכה:",
   emailSection:"שליחת דוח במייל",emailDesc:"שליחה אוטומטית של סיכום לאחר כל הרצה מאושרת.",
   emailToPlaceholder:"you@company.com",
   emailSaveBtn:"שמור",emailTestBtn:"בדיקה",emailSaved:"הגדרות מייל נשמרו ✓",
@@ -813,7 +804,7 @@ function setLang(l){
   if(l===lang) return;
   lang=l; localStorage.setItem("am_lang",l);
   applyLang();
-  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;stepHistory=[];offTopicStrikes=0;clarifyCount=[0,0,0,0,0,0,0];_subAnswer=null;
+  step=0;reqs={};history=[];report=null;iteration=0;phase="chat";msgId=0;offTopicStrikes=0;clarifyCount=[0,0,0,0,0,0,0];_subAnswer=null;
   document.getElementById("messages").innerHTML="";
   document.getElementById("iterChip").classList.remove("visible");
   renderSteps(); initAgent();
@@ -950,7 +941,7 @@ const TC = {"LFD/SLA":"#8b5cf6","SLS":"#f59e0b","MJF":"#06b6d4","FFF+CFR":"#10b9
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let accessToken="", step=0, reqs={}, history=[], report=null, iteration=0, phase="chat", offTopicStrikes=0, clarifyCount=[0,0,0,0,0,0,0];
-let msgId=0, stepHistory=[], lang=localStorage.getItem("am_lang")||"he";
+let msgId=0, lang=localStorage.getItem("am_lang")||"he";
 let pbWorking=false;
 let _lastRenderedStep=-99; // for one-shot flash on the step that just became active
 let _lastMsgStep=null;     // lock chat messages of previous steps when a new step starts
@@ -1233,13 +1224,10 @@ function renderSteps() {
     const isIntro=s.id===-1;
     const active=isIntro ? step===0 : (step===s.id||(s.id===8&&phase==="feedback"));
     const done=isIntro ? step>0 : ((s.id<step)||(s.id===7&&["feedback","approved","done"].includes(phase))||(s.id===8&&["approved","done"].includes(phase)));
-    const editable=done&&s.id>=0&&s.id<=6;
     const lbl=isIntro ? (lang==="he"?"הקדמה":"Introduction") : labels[s.id];
-    return`<div class="step${active?" active":""}${active&&stepChanged?" flash":""}${done?" done":""}${editable?" editable":""}"
-      ${editable?`onclick="jumpToStep(${s.id})" title="Click to edit"`:""}>
+    return`<div class="step${active?" active":""}${active&&stepChanged?" flash":""}${done?" done":""}">
       <div class="step-num">${s.id+1}</div>
       <span class="step-lbl">${lbl}</span>
-      ${editable?`<span class="step-edit-icon">✎</span>`:""}
     </div>`;
   }).join("");
   updateInputMode();
@@ -1253,26 +1241,6 @@ function updateInputMode(){
   if(!box) return;
   box.readOnly=step1Locked();
   if(step1Locked()) box.placeholder=t("inputPlaceholderStep1");
-}
-
-function jumpToStep(n){
-  if(n>6||n>=step) return;
-  // trim Claude history back to before this step was answered
-  if(stepHistory[n]!=null) history=history.slice(0,stepHistory[n]);
-  // clear reqs from step n onwards
-  const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
-  keys.slice(n).forEach(k=>delete reqs[k]);
-  // remove report and feedback from DOM
-  document.querySelectorAll(".report-wrap").forEach(el=>el.remove());
-  document.getElementById("fbPanel")?.remove();
-  document.getElementById("loadingEl")?.remove();
-  pbWorking=false;
-  // reset state
-  phase="chat"; step=n; report=null; iteration=0; clarifyCount.fill(0,n); _subAnswer=null;
-  renderSteps(); updateIterChip();
-  // re-ask step question
-  const sq=getStepQ()[n];
-  addAgent(`${t("editingLabel")} ${LANG[lang].stepLabels[n]}\n\n${sq.q}`, sq.opts||null);
 }
 
 function updateIterChip() {
@@ -1970,7 +1938,7 @@ async function sendMsg(override) {
   const prevReqs={...reqs};
   const newReqs={...reqs};
   const keys=["application_type","part_description","functional_req","mechanical_req","environmental_req","geometry_req","production_req"];
-  if(step<keys.length){ stepHistory[step]=history.length; newReqs[keys[step]]=answer; }
+  if(step<keys.length){ newReqs[keys[step]]=answer; }
   setReqs(newReqs);
   history.push({role:"user",content:answer});
 
