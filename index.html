@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.24";
+const VERSION="v2.25";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -656,7 +656,7 @@ en:{
     {q:"What is the application type?",opts:["Visual prototype","Functional prototype","Manufacturing aid (jig/fixture)","End-use part"],
      descQ:["Briefly describe the part, e.g. a scaled-down tank model for marketing purposes","Describe the prototype and what it is used for (e.g. a sensor housing, a development gear, a motor bracket, etc.)","What is the specific role of the aid? e.g. a template, drill guide, locating fixture, clamping fixture","What is the main role of the part? Briefly describe what it does and what it is used for."]},
     {q:"Please describe the part — what does it do and what is its purpose?"},
-    {q:"Any special functional material requirements?",opts:[["None / no special functional req.","Optical transparency / partial light","RF transparency","Fluid sealing","Anti-static (ESD)"],["Flame retardant","Low self-weight","Medical biocompatibility"]]},
+    {q:"Any special functional material requirements?",opts:[["None / no special functional req.","Optical transparency / partial light","RF transparency","Anti-static (ESD)","Fluid sealing (atmospheric pressure)","Fluid sealing (under pressure)"],["Flame retardant","Low self-weight","Medical biocompatibility","Smooth surface finish"]]},
     {q:"Any mechanical requirements? (e.g. tensile strength, stiffness, impact resistance — if high toughness or impact is needed, specify whether rigid or flexible/energy-absorbing behavior is preferred)",opts:["No special requirements","High tensile strength / stiffness","Impact / toughness (rigid)","Elastic (energy-absorbing)","Elastomeric (rubber-like)","Non-elastomeric (not rubber-like)"]},
     {q:"What environmental conditions does the part need to operate in?",opts:["Room temp 15–28°C","Freezing 0°C","Car interior summer 85°C","Boiling water 100°C","Polymer max temp 240°C"],q2:"Any additional environmental resistance required?",opts2:["No additional requirements","Chemical resistance","Outdoor / moisture / UV exposure"]},
     {q:"Geometry: what is the approximate maximum part size?",opts:["Miniature (≤10 mm) — e.g. Phillips screw head","Small (≤50 mm) — e.g. lighter","Medium (≤100 mm) — e.g. hammer head","Large (≤200 mm) — e.g. banana","Very Large (≤300 mm) — e.g. screwdriver","Huge (≤500 mm) — e.g. microwave"],q2:"And what is the smallest feature / minimum wall thickness in the design?",opts2:["Min. feature 0.5 mm","Min. feature 1 mm","Min. feature 2 mm"]},
@@ -720,7 +720,7 @@ he:{
     {q:"מהו סוג היישום?",opts:["אב-טיפוס חזותי (המחשה)","אב-טיפוס פונקציונלי","כלי עזר לייצור (Jig/Fixture)","חלק לשימוש לקוח קצה"],
      descQ:["תאר בקצרה את החלק, למשל: דגם מוקטן של טנק לצרכי שיווק","תאר את האב טיפוס ועבור מה הוא משמש? (למשל: מארז לחיישן, גלגל שיניים לפיתוח, תושבת למנוע וכו')","מה התפקיד הספציפי של כלי העזר? למשל: תבנית, מוביל לקידוח, כלי עזר למיקום, כלי דפינה","מה התפקיד העיקרי של החלק? תאר בקצרה מה הוא עושה ועבור מה הוא משמש."]},
     {q:"תאר את החלק — מה הוא עושה ומה מטרתו?"},
-    {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["ללא דרישות פונקציונליות מיוחדות","שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","אטימות לזורמים","תכונות אנטי-סטטיות (ESD)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית"]]},
+    {q:"האם יש דרישות פונקציונליות מיוחדות לחומר?",opts:[["ללא דרישות פונקציונליות מיוחדות","שקיפות / מעבר חלקי של אור","שקיפות לקרינת RF","תכונות אנטי-סטטיות (ESD)","אטימות לזורמים (לחץ אטמוספרי)","אטימות לזורמים (תחת לחץ)"],["תכונות מעכבי בעירה","משקל עצמי נמוך","תאימות רפואית","גימור פני שטח חלק"]]},
     {q:"האם יש דרישות מכניות? (חוזק מתיחה, קשיחות, עמידות בפגיעה — ציין האם נדרש קשיח או גמיש)",opts:["ללא דרישות מיוחדות","חוזק מתיחה גבוה","קשיחות גבוהה","עמידות בפגיעה / נגיפה (חסינות לשבר גבוהה)","אלסטי (סופג אנרגיה)","אלסטומרי (גומי)","לא אלסטומרי (לא גמיש כמו גומי)"]},
     {q:"באילו תנאי סביבה החלק נדרש לשרת?",opts:["טמפ חדר 15-28°C","טמפ קיפאון 0°C","מקסימום 45°C","תנאי חוץ ישראל בין -10 ל +55","טמפ פנים הרכב בקיץ 85°C","טמפ רתיחת מים 100°C","טמפ קיצון לפולימרים 240°C"],q2:"האם נדרשת עמידות סביבתית נוספת?",opts2:["ללא דרישות נוספות","עמידות בכימיקלים","עמידות בתנאי חוץ — רטיבות וקרינת UV"]},
     {q:"גאומטריה: מהו גודל החלק המרבי בקירוב?",opts:["מזערי (≤10 מ\"מ) — למשל: ראש בורג פיליפס","קטן (≤50 מ\"מ) — למשל: מצית","בינוני (≤100 מ\"מ) — למשל: ראש פטיש","גדול (≤200 מ\"מ) — למשל: בננה","גדול מאוד (≤300 מ\"מ) — למשל: גוף מברגה","ענק (≤500 מ\"מ) — למשל: מיקרוגל"],q2:"ומהו הפיצ'ר הקטן ביותר / עובי הדופן המינימלי בעיצוב?",opts2:["פיצ'ר מינימלי 0.5 מ\"מ","פיצ'ר מינימלי 1 מ\"מ","פיצ'ר מינימלי 2 מ\"מ ומעלה"]},
@@ -891,35 +891,35 @@ const MAT = [
 
 const PRN = [
   {n:"Form Studio 1",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:235,res:35,acc:"±0.5%",esd:"no",fr:"no",bio:"partial",opt:"yes",
-   ml:"Alpha Grey;Alpha Clear;Alpha White;Alpha Black;Alpha Model;Alpha Fast;Tough 1500 V2 (Form Studio 1);Flexible 80A V2"},
+   ml:"Alpha Grey;Alpha Clear;Alpha White;Alpha Black;Alpha Model;Alpha Fast;Tough 1500 V2 (Form Studio 1);Flexible 80A V2",rn:"N6",ra:"0.5 - 4.3"},
   {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes",
-   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N"},
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N",rn:"N6",ra:"0.5 - 4.3"},
   {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes",
-   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N;BioMed Clear;BioMed White;BioMed Black;BioMed Amber;BioMed Durable;BioMed Elastic;BioMed Flex 80A;Dental LT Comfort;Dental LT Clear;Dental IBT Flex 80A;Dental Precision Model;Dental Premium Teeth;Dental Surgical Guide;Dental Custom Tray"},
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N;BioMed Clear;BioMed White;BioMed Black;BioMed Amber;BioMed Durable;BioMed Elastic;BioMed Flex 80A;Dental LT Comfort;Dental LT Clear;Dental IBT Flex 80A;Dental Precision Model;Dental Premium Teeth;Dental Surgical Guide;Dental Custom Tray",rn:"N6",ra:"0.5 - 4.3"},
   {n:"Form 4L",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes",
-   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1"},
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1",rn:"N6",ra:"0.5 - 4.3"},
   {n:"Form 4BL",mfr:"Formlabs",tech:"LFD/SLA",bx:353,by:196,bz:350,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes",
-   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;BioMed Clear;BioMed White;BioMed Black;BioMed Amber;BioMed Durable;BioMed Elastic;BioMed Flex 80A;Dental LT Comfort;Dental LT Clear;Dental IBT Flex 80A;Dental Precision Model;Dental Premium Teeth;Dental Surgical Guide;Dental Custom Tray"},
+   ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;BioMed Clear;BioMed White;BioMed Black;BioMed Amber;BioMed Durable;BioMed Elastic;BioMed Flex 80A;Dental LT Comfort;Dental LT Clear;Dental IBT Flex 80A;Dental Precision Model;Dental Premium Teeth;Dental Surgical Guide;Dental Custom Tray",rn:"N6",ra:"0.5 - 4.3"},
   {n:"Fuse1+",mfr:"Formlabs",tech:"SLS",bx:165,by:165,bz:300,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no",
-   ml:"Nylon 12;Nylon 12 Tough;Nylon 12 White;Nylon 12 GF;Nylon 11;Nylon 11 CF;TPU 90A"},
+   ml:"Nylon 12;Nylon 12 Tough;Nylon 12 White;Nylon 12 GF;Nylon 11;Nylon 11 CF;TPU 90A",rn:"N9",ra:"4.3 - 11.5"},
   {n:"Fuse X1",mfr:"Formlabs",tech:"SLS",bx:330,by:330,bz:565,res:250,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no",
-   ml:"Nylon 12"},
+   ml:"Nylon 12",rn:"N9",ra:"4.3 - 11.5"},
   {n:"Mark Two",mfr:"Markforged",tech:"FFF+CFR",bx:320,by:152,bz:154,res:400,acc:"±125µm",esd:"no",fr:"no",bio:"no",opt:"no",
-   ml:"Onyx;Nylon White;PLA;TPU (Markforged)"},
+   ml:"Onyx;Nylon White;PLA;TPU (Markforged)",rn:"N10"},
   {n:"X7",mfr:"Markforged",tech:"FFF+CFR",bx:330,by:270,bz:200,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no",
-   ml:"Onyx;Onyx ESD;Nylon White;PLA;TPU (Markforged)"},
+   ml:"Onyx;Onyx ESD;Nylon White;PLA;TPU (Markforged)",rn:"N10"},
   {n:"FX10",mfr:"Markforged",tech:"FFF+CFR",bx:375,by:300,bz:300,res:400,acc:"±125µm",esd:"yes",fr:"no",bio:"no",opt:"no",
-   ml:"Onyx;Onyx ESD;Nylon White FS"},
+   ml:"Onyx;Onyx ESD;Nylon White FS",rn:"N10"},
   {n:"FX20",mfr:"Markforged",tech:"FFF+CFR",bx:525,by:400,bz:400,res:400,acc:"±125µm",esd:"yes",fr:"yes",bio:"no",opt:"no",
-   ml:"Onyx;Onyx ESD;Onyx FR;Onyx FR-A;Ultem 9085;Vega"},
+   ml:"Onyx;Onyx ESD;Onyx FR;Onyx FR-A;Ultem 9085;Vega",rn:"N10"},
   {n:"HP 4200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no",
-   ml:"Nylon 12 (HP);Nylon 11 (HP)"},
+   ml:"Nylon 12 (HP);Nylon 11 (HP)",rn:"N9",ra:"2.7 - 8.9"},
   {n:"HP 5200",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"no",fr:"no",bio:"yes",opt:"no",
-   ml:"Nylon 12 (HP);Nylon 12 S (HP);Nylon 12 GB (HP);TPU (HP)"},
+   ml:"Nylon 12 (HP);Nylon 12 S (HP);Nylon 12 GB (HP);TPU (HP)",rn:"N9",ra:"2.7 - 8.9"},
   {n:"HP 5600",mfr:"HP",tech:"MJF",bx:380,by:284,bz:380,res:300,acc:"±200µm",esd:"yes",fr:"yes",bio:"yes",opt:"no",
-   ml:"Nylon 12 (HP);Nylon 12 S (HP);Nylon 12 W (HP);Nylon 12 FR (HP);Nylon 11 (HP);Nylon 11 Gen2 (HP);TPU (HP)"},
+   ml:"Nylon 12 (HP);Nylon 12 S (HP);Nylon 12 W (HP);Nylon 12 FR (HP);Nylon 11 (HP);Nylon 11 Gen2 (HP);TPU (HP)",rn:"N9",ra:"2.7 - 8.9"},
   {n:"Snapemaker U1",mfr:"Snapemaker",tech:"FDM/FFF",bx:270,by:270,bz:270,res:400,acc:"±200µm",esd:"no",fr:"no",bio:"no",opt:"no",
-   ml:"PLA"},
+   ml:"PLA",rn:"N10"},
 ];
 
 const STEPS_CFG = [
@@ -1436,7 +1436,8 @@ RULE 5 — FUNCTIONAL REQUIREMENTS STEP (STEP 3) — STRICT SCOPE:
 Step 3 covers ONLY special functional/physical properties of the material itself:
   • Optical transparency or partial light transmission (light pipes, lenses, covers)
   • RF transparency — dielectric properties for antennas, radomes, RF housings
-  • Fluid sealing — watertight / liquid resistance
+  • Fluid sealing — watertight / liquid resistance, at atmospheric pressure or under pressure
+  • Smooth surface finish — cosmetic/visible surfaces, sealing faces, sliding or contact surfaces
   • Anti-static / ESD — electrostatic discharge protection for electronics
   • Flame retardant — UL94 or similar fire/smoke standards
   • Low self-weight — mass is a design constraint
@@ -1982,7 +1983,7 @@ async function sendMsg(override) {
 
   const prompts=[
     `User selected: "${text}". ${(text.includes("Manufacturing aid")||text.includes("עזר ייצור")||text.includes("עזר לייצור"))?"Ask exactly this question (in the interface language): מה התפקיד הספציפי של העזר? / What is the specific role of the aid? Then on a new line add examples — Hebrew: למשל: תבנית, כלי עזר לקידוח, כלי עזר למיקום, כלי דפינה — English: e.g. drill guide, locating fixture, assembly jig, inspection gauge":"Ask for a brief description of what the part does and its purpose."}`,
-    `Part description: "${text}". Ask what special functional material requirements this part needs. Frame the question as: "What special functional requirements does this part need?" — then, based on the application type and part description already in this conversation, choose 2–3 examples that are plausible and relevant to this specific use case from: optical transparency / partial light transmission, RF transparency (antennas / radomes), fluid sealing / watertight, anti-static / ESD protection, flame retardancy, low self-weight, medical biocompatibility. Do NOT list examples that are clearly irrelevant for this application. STRICT EXCLUSIONS — never mention these in this step even if the application seems relevant: UV resistance, chemical resistance, temperature/heat resistance (all → step 5); mechanical strength, stiffness, impact, hardness (→ step 4); geometry, dimensions, feature size (→ step 6); quantity, cost, printers (→ step 7).`,
+    `Part description: "${text}". Ask what special functional material requirements this part needs. Frame the question as: "What special functional requirements does this part need?" — then, based on the application type and part description already in this conversation, choose 2–3 examples that are plausible and relevant to this specific use case from: optical transparency / partial light transmission, RF transparency (antennas / radomes), fluid sealing / watertight (atmospheric or under pressure), anti-static / ESD protection, flame retardancy, low self-weight, medical biocompatibility, smooth surface finish. Do NOT list examples that are clearly irrelevant for this application. STRICT EXCLUSIONS — never mention these in this step even if the application seems relevant: UV resistance, chemical resistance, temperature/heat resistance (all → step 5); mechanical strength, stiffness, impact, hardness (→ step 4); geometry, dimensions, feature size (→ step 6); quantity, cost, printers (→ step 7).`,
     `Answer: "${answer}". Ask one mechanical requirements question (tensile strength, stiffness, impact resistance, elongation). If the answer implies high toughness or impact resistance, follow RULE 2 and ask whether rigid or flexible energy-absorbing behavior is preferred.`,
     `Answer: "${answer}". Ask exactly this question (in the interface language): באילו תנאי סביבה החלק נדרש לשרת? / What environmental conditions does the part need to operate in? Do NOT ask about chemical resistance or UV/outdoor exposure — the app asks that as a separate follow-up question automatically.`,
     `Answer: "${answer}". Ask exactly this question (in the interface language): גאומטריה: מהו גודל החלק המרבי בקירוב? / Geometry: what is the approximate maximum part size? Do NOT ask about the smallest feature or wall thickness — the app asks that as a separate follow-up question automatically.`,

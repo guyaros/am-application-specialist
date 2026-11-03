@@ -234,8 +234,10 @@ const PRINTER_VALUE_FIELDS = [
   ['bx', 'build_x_mm'], ['by', 'build_y_mm'], ['bz', 'build_z_mm'], ['res', 'resolution_xy_um_raw'],
   ['esd', 'supports_esd'], ['fr', 'supports_flame_retardant'],
   ['bio', 'supports_biocompatible'], ['opt', 'supports_optically_clear'],
+  ['rn', 'Surface_Roughness_No_Post_Process_ISO_N_Grade'], ['ra', 'Surface_Roughness_No_Post_Process_um'],
 ];
 const PRINTER_NUMERIC = new Set(['bx', 'by', 'bz', 'res']);
+const PRINTER_FLAGS = new Set(['esd', 'fr', 'bio', 'opt']); // yes/no, compared case-insensitively
 
 // Sets (or adds) one field on the MAT/PRN entry named `name`, leaving the rest of the entry untouched.
 function setEntryField(html, varName, name, key, value) {
@@ -349,8 +351,8 @@ function main() {
     PRINTER_VALUE_FIELDS.forEach(([key, column]) => {
       const raw = r[printers.col(column)].trim();
       if (raw === '') return;
-      const csvVal = PRINTER_NUMERIC.has(key) ? Number(raw) : raw.toLowerCase();
-      const prnVal = PRINTER_NUMERIC.has(key) ? db[key] : String(db[key] ?? '').toLowerCase();
+      const csvVal = PRINTER_NUMERIC.has(key) ? Number(raw) : PRINTER_FLAGS.has(key) ? raw.toLowerCase() : raw;
+      const prnVal = PRINTER_NUMERIC.has(key) ? db[key] : PRINTER_FLAGS.has(key) ? String(db[key] ?? '').toLowerCase() : (db[key] ?? '');
       if (String(csvVal) !== String(prnVal)) {
         problems.push({ level: 'fatal', msg: `VALUE_DRIFT: printer "${db.n}" ${key} is ${JSON.stringify(csvVal)} in AM-Printers-DB.csv but ${JSON.stringify(db[key])} in PRN` });
         valueFixes.push({ varName: 'PRN', name: db.n, key, value: csvVal });

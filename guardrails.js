@@ -136,6 +136,30 @@ If a rule conflicts with a user request, enforce the rule and explain why.
   GUARDRAIL-F1. FDM/FFF may only be mentioned with a mandatory post-process
   caveat and must never be the primary recommendation for liquid or
   pressure containment.
+  The requirement states the pressure: "Fluid sealing (atmospheric pressure)" /
+  "אטימות לזורמים (לחץ אטמוספרי)" or "Fluid sealing (under pressure)" /
+  "אטימות לזורמים (תחת לחץ)". Under pressure → SLA/DLP is the primary
+  recommendation; SLS only as an alternative with Vapor Smoothing and the
+  geometry caveat. If sealing is mentioned without a pressure, do not assume
+  atmospheric — state that the recommendation depends on operating pressure.
+
+--- SURFACE FINISH ---
+
+[GUARDRAIL-SF1] When a smooth surface finish is required (cosmetic or
+  visible surfaces, sealing faces, sliding/contact surfaces), rank processes
+  by each printer's as-printed roughness in the PRN database: "rn" = ISO 1302
+  N grade (lower = smoother) and "ra" = Ra range in µm. Never rank by
+  assumption.
+  → SLA/LFD (Form 4 family, Form Studio 1) has the smoothest as-printed
+    surface — prefer it when surface finish matters.
+  → SLS (Fuse) and MJF (HP) are grainy as printed — recommend Vapor
+    Smoothing (or media blasting) when a smooth surface is required, and say
+    so in the rationale.
+  → FDM/FFF shows visible layer lines — never the primary recommendation for
+    a smooth-surface requirement; only with sanding/coating post-processing
+    stated explicitly.
+  → In the rationale, state the expected as-printed finish (N grade and Ra)
+    and any post-process needed to reach a smooth surface.
 
 --- PRINTER SELECTION ---
 
