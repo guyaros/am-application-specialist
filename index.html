@@ -632,8 +632,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.08";
-const REL_DATE="Jul 2026";
+const VERSION="v2.09";
+const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
 
@@ -1138,8 +1138,8 @@ function saveSettingsKey(){
 }
 
 function clearSession(){
-  totalInputTokens=0; totalOutputTokens=0;
   if(!confirm(t("confirmNewRun"))) return;
+  totalInputTokens=0; totalOutputTokens=0;
   step=0; reqs={}; history=[]; report=null; iteration=0; phase="chat"; msgId=0; _subAnswer=null;
   _lastMsgStep=null; _lastRenderedStep=-99;
   document.getElementById("messages").innerHTML="";
@@ -1852,6 +1852,7 @@ document.addEventListener("visibilitychange", ()=>{
 
 function showRatingPanel() {
   if(document.getElementById("ratingPanel")) return;
+  window._selectedRatingIdx = null;
   step=10; renderSteps();
   const panel = document.createElement("div");
   panel.className = "rating-panel";
@@ -1913,7 +1914,7 @@ async function sendMsg(override) {
   if(step1Locked()&&!isPureOptionAnswer(text,0)){ box.value=""; return; }
   if(!override) box.value="";
 
-  if(phase==="approved"){
+  if(phase==="done"){
     addUser(text);
     if(text.toLowerCase().includes("export")||text.toLowerCase().includes("yes")||text.toLowerCase().includes("pdf")||text.includes("ייצוא")){
       phase="done"; addAgent(t("exportingMsg")); setTimeout(()=>exportPDF(),400);
