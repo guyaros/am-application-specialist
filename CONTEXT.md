@@ -259,7 +259,7 @@ materials/printers.
 
 `tools/check-sync.js` catches this:
 ```
-node tools/check-sync.js          # report drift (missing entries, broken PRN.ml refs)
+node tools/check-sync.js          # report drift (missing entries, broken PRN.ml refs, price/link/property values that differ)
 node tools/check-sync.js --fix    # also insert AUTO-ADDED entries for anything missing — review before shipping
 ```
 A git pre-commit hook (`.githooks/pre-commit`, active via `git config core.hooksPath .githooks`)

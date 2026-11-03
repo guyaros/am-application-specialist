@@ -196,6 +196,51 @@ function materialAliases(name, vendor) {
   return aliases;
 }
 
+// ── value drift: fields MAT copies from the materials CSV ──
+// Numeric fields go through numOrZ, so an anisotropic "25XY,15Z" compares as its
+// Z value — the convention MAT already uses.
+const VALUE_FIELDS = [
+  ['cost', 'material_cost_ILS_kg'], ['link', 'Shop_Link'],
+  ['hdt', 'Heat_Defletion_Temperture_hdt_c'], ['ts', 'tensile_strength_mpa'],
+  ['em', 'elastic_modulus_gpa'], ['el', 'elongation_at_break_pct_min'],
+  ['imp', 'impact_strength__notched_j_per_m'],
+];
+
+function csvFieldValue(key, raw) {
+  const s = String(raw == null ? '' : raw).trim();
+  if (s === '') return undefined;
+  return key === 'link' ? s : numOrZ(s);
+}
+
+function findObjectEnd(text, start) {
+  let depth = 0, inStr = false, strCh = '';
+  for (let i = start; i < text.length; i++) {
+    const c = text[i];
+    if (inStr) {
+      if (c === '\\') { i++; continue; }
+      if (c === strCh) inStr = false;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { inStr = true; strCh = c; continue; }
+    if (c === '{') depth++;
+    else if (c === '}') { depth--; if (depth === 0) return i; }
+  }
+  return -1;
+}
+
+// Sets (or adds) one field on the MAT entry named `name`, leaving the rest of the line untouched.
+function setMatField(html, name, key, value) {
+  const block = extractArrayBlock(html, 'MAT');
+  const start = block.text.indexOf(`{n:${JSON.stringify(name)},`);
+  if (start === -1) return html;
+  const obj = block.text.slice(start, findObjectEnd(block.text, start) + 1);
+  const re = new RegExp(`([,{])${key}:(null|-?\\d+(?:\\.\\d+)?|"(?:[^"\\\\]|\\\\.)*")`);
+  const v = jsVal(value);
+  const newObj = re.test(obj) ? obj.replace(re, (_, sep) => `${sep}${key}:${v}`) : `${obj.slice(0, -1)},${key}:${v}}`;
+  const absStart = block.openIdx + start;
+  return html.slice(0, absStart) + newObj + html.slice(absStart + obj.length);
+}
+
 // ── main ──
 function main() {
   const fix = process.argv.includes('--fix');
@@ -262,6 +307,29 @@ function main() {
     });
   });
 
+  // 7. values MAT copies from the CSV (price, shop link, mechanical properties) must match it
+  const matData = new Function(`return ${matBlock.text}`)();
+  const valueFixes = [];
+  materials.rows.forEach(r => {
+    const name = r[materials.col('material_name')].trim();
+    const vendor = r[materials.col('vendor')].trim();
+    const aliases = materialAliases(name, vendor);
+    const db = matData.find(x => aliases.has(x.n) && x.v === vendor) || matData.find(x => aliases.has(x.n));
+    if (!db) return;
+    VALUE_FIELDS.forEach(([key, column]) => {
+      const csvVal = csvFieldValue(key, r[materials.col(column)]);
+      const matVal = db[key] == null || db[key] === '' ? undefined : db[key];
+      if (csvVal === undefined) {
+        if (matVal !== undefined) problems.push({ level: 'warn', msg: `VALUE_ONLY_IN_MAT: "${db.n}" ${key}=${JSON.stringify(matVal)} in MAT but empty in AM-Materials-DB.csv (kept as is)` });
+        return;
+      }
+      if (String(csvVal) !== String(matVal)) {
+        problems.push({ level: 'fatal', msg: `VALUE_DRIFT: "${db.n}" ${key} is ${JSON.stringify(csvVal)} in AM-Materials-DB.csv but ${matVal === undefined ? 'missing' : JSON.stringify(matVal)} in MAT` });
+        valueFixes.push({ name: db.n, key, value: csvVal });
+      }
+    });
+  });
+
   // ── report ──
   const fatals = problems.filter(p => p.level === 'fatal');
   const warns = problems.filter(p => p.level === 'warn');
@@ -271,19 +339,21 @@ function main() {
     if (warns.length) { console.log(`! ${warns.length} warning(s):`); warns.forEach(p => console.log('  ' + p.msg)); }
   }
 
-  if (fix && (missingMaterialRows.length || missingPrinterRows.length)) {
+  if (fix && (missingMaterialRows.length || missingPrinterRows.length || valueFixes.length)) {
     let newHtml = html;
+    valueFixes.forEach(f => { newHtml = setMatField(newHtml, f.name, f.key, f.value); });
     if (missingPrinterRows.length) {
+      const b = extractArrayBlock(newHtml, 'PRN');
       const insertion = missingPrinterRows.map(r => buildPrinterEntry(r, printers.col)).join('\n') + '\n';
-      newHtml = newHtml.slice(0, prnBlock.closeIdx) + insertion + newHtml.slice(prnBlock.closeIdx);
+      newHtml = newHtml.slice(0, b.closeIdx) + insertion + newHtml.slice(b.closeIdx);
     }
-    // recompute matBlock close index in case PRN insertion shifted offsets (PRN comes after MAT, so MAT indices are unaffected)
     if (missingMaterialRows.length) {
+      const b = extractArrayBlock(newHtml, 'MAT');
       const insertion = missingMaterialRows.map(r => buildMaterialEntry(r, materials.col)).join('\n') + '\n';
-      newHtml = newHtml.slice(0, matBlock.closeIdx) + insertion + newHtml.slice(matBlock.closeIdx);
+      newHtml = newHtml.slice(0, b.closeIdx) + insertion + newHtml.slice(b.closeIdx);
     }
     fs.writeFileSync(HTML_PATH, newHtml, 'utf8');
-    console.log(`\n→ Inserted ${missingMaterialRows.length} material(s) and ${missingPrinterRows.length} printer(s) into index.html, marked AUTO-ADDED. Review them, then run this check again.`);
+    console.log(`\n→ Updated ${valueFixes.length} value(s) from the CSV; inserted ${missingMaterialRows.length} material(s) and ${missingPrinterRows.length} printer(s), marked AUTO-ADDED. Review the diff, then run this check again.`);
     process.exit(0);
   }
 
