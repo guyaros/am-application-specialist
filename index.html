@@ -632,7 +632,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.17";
+const VERSION="v2.18";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1683,6 +1683,11 @@ function buildOverview() {
   }).join("")}</div>`;
 }
 
+// The RF row is noise unless the user asked for RF transparency (or an antenna/radome part).
+function rfRequested(){
+  return Object.values(reqs).some(v=>/\bRF\b|radome|antenna|רדום|ראדום|אנטנ/i.test(String(v||"")));
+}
+
 function buildCompare() {
   const cols=[{k:"tensile",l:"Tensile Strength (MPa)",mx:120},{k:"modulus",l:"Elastic Modulus (GPa)",mx:12},{k:"hdt",l:"HDT (°C)",mx:250},{k:"elongation",l:"Elongation at Break (%)",mx:200},{k:"impact",l:"Impact Strength (J/m)",mx:400},{k:"cost",l:"Cost (₪/kg)",mx:2500}];
   const mats=report.materials||[];
@@ -1697,7 +1702,7 @@ function buildCompare() {
         if(!vals.some(v=>v!=null)) return "";
         return `<tr><td>${col.l}</td>${vals.map((v,vi)=>v!=null?`<td><span style="font-weight:700;font-family:var(--mono)">${v}</span><div class="bar-wrap"><div class="bar" style="width:${Math.min(100,(v/col.mx)*100)}%;background:${RC[vi]?.acc||"#3b82f6"}"></div></div></td>`:`<td style="color:var(--text3)">—</td>`).join("")}</tr>`;
       }).join("")}
-      ${mats.some(m=>m.rf_transp)?`<tr><td>${lang==="he"?"שקיפות RF":"RF Transparency"}</td>${mats.map(m=>{const v=m.rf_transp||"—";const c=v==="yes"?"#059669":v==="partial"?"#d97706":"#dc2626";return`<td><span style="font-weight:700;color:${c};font-family:var(--mono)">${v}</span></td>`;}).join("")}</tr>`:""}
+      ${rfRequested()&&mats.some(m=>m.rf_transp)?`<tr><td>${lang==="he"?"שקיפות RF":"RF Transparency"}</td>${mats.map(m=>{const v=m.rf_transp||"—";const c=v==="yes"?"#059669":v==="partial"?"#d97706":"#dc2626";return`<td><span style="font-weight:700;color:${c};font-family:var(--mono)">${v}</span></td>`;}).join("")}</tr>`:""}
     </tbody>
   </table></div>`;
 }
@@ -1784,7 +1789,7 @@ function exportPDF() {
     {color:'#7c3aed',light:'#faf5ff',border:'#e9d5ff',label:PL.altLabels[2]},
   ];
   const rc2={high:{bg:'#fef2f2',border:'#dc2626',label:PL.riskHigh,icon:'⚠'},medium:{bg:'#fffbeb',border:'#d97706',label:PL.riskMed,icon:'ℹ'},low:{bg:'#f0fdf4',border:'#059669',label:PL.riskAdv,icon:'✓'}};
-  const propRows=PL.propRows;
+  const propRows=PL.propRows.filter(r=>r[1]!=="rf_transp"||rfRequested());
   const reqRows=PL.reqLabels.map((lbl,i)=>[lbl,[reqs.application_type,reqs.part_description,reqs.functional_req,reqs.mechanical_req,reqs.environmental_req,reqs.geometry_req,reqs.production_req][i]]).filter(r=>r[1]);
   const e=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const dir=isHe?'rtl':'ltr';
