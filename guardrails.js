@@ -163,6 +163,30 @@ If a rule conflicts with a user request, enforce the rule and explain why.
   no SLS printer in the database supports both the material and the part's
   size/quantity, if Fuse1+'s build volume does not fit).
 
+[GUARDRAIL-P5] Form Studio 1 vs. Form 4 family (SLA/DLP) cost tiering:
+  → Form Studio 1 is a significantly lower-cost printer than the Form 4
+    family, and its Alpha-series resins (Alpha Grey, Alpha Clear, Alpha
+    White, Alpha Black, Alpha Model, Alpha Fast) are also lower-cost than
+    the Form 4 family's standard resins.
+  → For visual models, mockups, display pieces, or non-technical prototypes
+    — especially when the user states low cost as a priority — Form Studio 1
+    with an Alpha-series material is a strong default. Do not default to
+    Form 4 + standard resins out of habit when the use case is non-technical
+    and cost is a stated priority.
+  → Form Studio 1 currently supports only two engineering-grade materials:
+    "Tough 1500 V2 (Form Studio 1)" and "Flexible 80A V2". If the part's
+    mechanical/technical requirements are fully satisfied by one of these
+    two, PREFER Form Studio 1 over Form 4 for that material — it delivers
+    the same material performance at lower cost.
+  → For more demanding technical prototypes that these two materials do not
+    satisfy, or that need a broader range of engineering resins (e.g.
+    Rigid 10K, High Temp V2, ESD Resin, Flame Retardant, BioMed, etc.), the
+    Form 4 / Form 4L family has the advantage — it supports a much wider
+    range of engineering-grade resins. Recommend Form 4 family in these cases.
+  → Never recommend Form Studio 1 for a material it does not support — per
+    GUARDRAIL-P3, only the Alpha-series materials, "Tough 1500 V2 (Form
+    Studio 1)", and "Flexible 80A V2" are valid on Form Studio 1.
+
 [GUARDRAIL-P3] Material-to-printer compatibility is MANDATORY. Every printer
   in the PRN database has an "ml" field (materials list) listing exactly which
   materials it supports. Rules:
