@@ -283,6 +283,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .fb-ta:focus{border-color:var(--amber)}
 .fb-ta::placeholder{color:var(--text3)}
 .fb-actions{display:flex;flex-direction:column;gap:6px}
+.fb-panel.locked{background:var(--surface2);box-shadow:none}
+.fb-panel.locked .fb-ta{cursor:default;background:#fff}
+.fb-received{align-self:center;font-size:12px;font-weight:700;color:#059669;white-space:nowrap}
+.report-wrap.superseded .report-box{opacity:.7;filter:grayscale(.4);transition:opacity .15s}
+.report-wrap.superseded .report-box:hover{opacity:.95}
+.superseded-tag{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;margin-inline-end:6px;letter-spacing:0}
 .btn-refine{
   padding:12px 22px;background:var(--amber);color:#fff;border:none;border-radius:9px;
   font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .13s;white-space:nowrap;
@@ -627,7 +633,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.27";
+const VERSION="v2.28";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1601,9 +1607,15 @@ async function runAnalysis(feedbackNote="") {
       fillMaterialProps(parsed);
       report=parsed;
       iteration++; phase="feedback"; history.push({role:"assistant",content:resp});
-      setLoading(false); renderReport(); renderFeedback(); step=8; renderSteps(); updateIterChip();
-    } else { setLoading(false); addAgent(resp); }
-  } catch(e) { setLoading(false); addAgent("Error: "+e.message); }
+      setLoading(false); supersedeReports(); renderReport(); renderFeedback(); step=8; renderSteps(); updateIterChip();
+    } else { setLoading(false); addAgent(resp); refineRetry(); }
+  } catch(e) { setLoading(false); addAgent("Error: "+e.message); refineRetry(); }
+}
+
+// A failed refinement leaves the previous report current — give the user a fresh panel to retry.
+function refineRetry(){
+  if(!report) return;
+  phase="feedback"; renderFeedback();
 }
 
 // ── REPORT ─────────────────────────────────────────────────────────────────
@@ -1612,6 +1624,7 @@ let activeTab="overview";
 function renderReport() {
   const wrap=document.createElement("div");
   wrap.className="report-wrap"; wrap.id="report-iter-"+iteration;
+  wrap._report=report;
   wrap.innerHTML=`<div class="report-box">
     <div class="report-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -1636,7 +1649,28 @@ function switchTab(id,btn) {
   const box=btn.closest(".report-box");
   box.querySelectorAll(".tab").forEach(t=>{t.classList.remove("active");t.setAttribute("aria-selected","false");});
   btn.classList.add("active"); btn.setAttribute("aria-selected","true");
-  box.querySelector(".tab-body").innerHTML=buildTab(id);
+  // Render from this report's own data, not the latest one, so older reports keep their content.
+  const latest=report; report=btn.closest(".report-wrap")?._report||latest;
+  try{ box.querySelector(".tab-body").innerHTML=buildTab(id); } finally { report=latest; }
+}
+
+// Marks every report already on screen as replaced; called just before a new report renders.
+function supersedeReports(){
+  document.querySelectorAll(".report-wrap:not(.superseded)").forEach(w=>{
+    w.classList.add("superseded");
+    w.querySelector(".report-meta")?.insertAdjacentHTML("afterbegin",`<span class="superseded-tag">${lang==="he"?"גרסה קודמת — הוחלפה בעדכון למטה":"Previous version — replaced by the update below"}</span>`);
+  });
+}
+
+// Keeps the submitted refinement panel on screen, read-only, so the new report reads as its answer.
+function lockFeedbackPanel(text){
+  const p=document.getElementById("fbPanel");
+  if(!p){ addUser(text); return; }
+  p.removeAttribute("id"); p.classList.add("locked");
+  const ta=p.querySelector(".fb-ta");
+  if(ta){ ta.textContent=text; ta.value=text; ta.readOnly=true; ta.removeAttribute("id"); }
+  const act=p.querySelector(".fb-actions");
+  if(act) act.outerHTML=`<div class="fb-received">✓ ${lang==="he"?"השיפור נקלט — הניתוח המעודכן מופיע למטה":"Refinement received — updated analysis below"}</div>`;
 }
 
 function buildTab(id) {
@@ -1828,7 +1862,7 @@ async function doFeedback(text) {
   // Snapshot the report this feedback refers to, for the refinement log in the run email.
   if(report) refineLog.push({iter:iteration, feedback:text, summary:report.summary||"",
     materials:(report.materials||[]).map(m=>m.name), printers:(report.printers||[]).map(p=>p.name)});
-  addUser(text); document.getElementById("fbPanel")?.remove(); phase="chat";
+  lockFeedbackPanel(text); phase="chat";
   reqs.latest_feedback=text; history.push({role:"user",content:"Feedback: "+text});
   addAgent(t("refiningMsg"));
   await runAnalysis(text);
