@@ -632,7 +632,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.1";
+const VERSION="v2.11";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -858,6 +858,13 @@ const MAT = [
   {n:"Dental Custom Tray",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"yes",cost:null,std:"ISO 10993",gn:"Custom dental impression trays. Print on Form 4B or Form 4BL only.",link:"https://shop.systematics.co.il/page_24752"},
   // ── Formlabs Ceramic ──
   {n:"Alumina 4N",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:1500,em:380,cost:null,gn:"Alumina ceramic material; extreme temperature resistance (HDT 1500°C) and very high stiffness (E=380 GPa). For high-performance ceramic functional parts. Print on Form 4 or Form 4B.",link:"https://shop.systematics.co.il/page_24824"},
+  // ── Formlabs Form Studio 1 (SLA/LFD) ──
+  {n:"Alpha Grey",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:55.4,ts:43,em:2.15,el:34,imp:39,cost:null,gn:"Versatile general purpose resin for aesthetic, functional parts; fine detail and rich matte finish at fast print speeds."},
+  {n:"Alpha Clear",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"yes",esd:"no",fr:"no",fs:"yes",bio:"no",hdt:57.1,ts:38,em:1.87,el:32,imp:39,cost:null},
+  {n:"Alpha White",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:51.7,ts:35,em:1.69,el:26,imp:34,cost:null},
+  {n:"Alpha Black",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:55.5,ts:42,em:2.02,el:36,imp:33,cost:null},
+  {n:"Alpha Model",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:49.8,ts:40,em:1.98,el:24,imp:35,cost:null},
+  {n:"Alpha Fast",v:"Formlabs",f:"resin",p:"SLA/DLP",transp:"no",esd:"no",fr:"no",fs:"no",bio:"no",hdt:59,ts:46,em:2.23,el:34,imp:37,cost:null,gn:"Fast-printing general purpose resin with print speeds up to 130 mm/h; ideal for rapid iterative prototypes, jigs, and fixtures."},
   // ── Formlabs SLS ──
   {n:"Nylon 12",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:171,ts:50,em:1.85,el:6,imp:32,cost:430,std:"UL94 HB",gn:"Most common SLS material; high tensile strength, ductility, and environmental stability."},
   {n:"Nylon 12 Tough",v:"Formlabs",f:"powder",p:"SLS",transp:"no",esd:"no",fr:"yes",fs:"yes",bio:"yes",hdt:161,ts:42,em:1.45,el:15,imp:60,cost:430,std:"UL94 HB",gn:"Best-in-class refresh rate; high ductility, great dimensional accuracy, reduced warpage."},
@@ -889,6 +896,8 @@ const MAT = [
 ];
 
 const PRN = [
+  {n:"Form Studio 1",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:235,res:35,acc:"±0.5%",esd:"no",fr:"no",bio:"yes",opt:"yes",
+   ml:"Alpha Grey;Alpha Clear;Alpha White;Alpha Black;Alpha Model;Alpha Fast;Tough 1500 V2;Flexible 80A V2"},
   {n:"Form 4",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"no",opt:"yes",
    ml:"Black V5;Grey V5;White V5;Clear V5;Fast Model;Precision Model;Tough 2000 V2;Tough 1500 V2;Tough 1000;Rigid 10K V1.1;Rigid 10K + Heat Treatment;Rigid 4000 V1.1;High Temp V2;High Temp V2 + HT;Flame Retardant;ESD Resin;Silicone 40A;Elastic 50A V2;Flexible 80A V1;Flexible 80A V2;Clear Cast V1;Alumina 4N"},
   {n:"Form 4B",mfr:"Formlabs",tech:"LFD/SLA",bx:200,by:125,bz:210,res:50,acc:"±0.2%",esd:"yes",fr:"yes",bio:"yes",opt:"yes",
