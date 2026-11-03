@@ -627,7 +627,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 // ── VERSION ────────────────────────────────────────────────────────────────
-const VERSION="v2.23";
+const VERSION="v2.24";
 const REL_DATE="Nov 2026";
 const BLOCK_DURATION_MS=10*60*1000;
 const MAX_STRIKES=3;
@@ -1564,8 +1564,13 @@ function fillMaterialProps(rep){
 
 async function runAnalysis(feedbackNote="") {
   setLoading(true,t("loadingMsg"),true);
-  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string","rf_transp":"yes or no or partial — based on material dielectric properties (Ultem/PC=yes, carbon-fiber/ESD/metal-filled=no, standard polymers=partial)","rationale":"string"},{"name":"","vendor":"","technology":"","rf_transp":"yes/no/partial","rationale":""},{"name":"","vendor":"","technology":"","rf_transp":"yes/no/partial","rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
-  const jsonRule="CRITICAL: output raw JSON only — no markdown, no code fences, no text before or after. All string values must be single-line (use \\n for line breaks, never a literal newline inside a string).";
+  // Asking for rf_transp on every run made the model write about RF even when nobody asked.
+  const rf=rfRequested();
+  const rfField=rf?`"rf_transp":"yes or no or partial — based on material dielectric properties (Ultem/PC=yes, carbon-fiber/ESD/metal-filled=no, standard polymers=partial)",`:"";
+  const rfShort=rf?`"rf_transp":"yes/no/partial",`:"";
+  const spec=`{"summary":"string","materials":[{"name":"exact from DB","vendor":"string","technology":"string",${rfField}"rationale":"string"},{"name":"","vendor":"","technology":"",${rfShort}"rationale":""},{"name":"","vendor":"","technology":"",${rfShort}"rationale":""}],"printers":[{"name":"exact from DB","technology":"string","note":"string"},{"name":"","technology":"","note":""}],"risks":[{"level":"high","text":""},{"level":"medium","text":""},{"level":"low","text":""}],"professional_note":"string","next_steps":["action step 1","action step 2","action step 3","action step 4"]}`;
+  const rfRule=rf?"":" The user did not ask about RF transparency — do not mention RF transparency or dielectric properties anywhere in the report.";
+  const jsonRule="CRITICAL: output raw JSON only — no markdown, no code fences, no text before or after. All string values must be single-line (use \\n for line breaks, never a literal newline inside a string)."+rfRule;
   const prompt = feedbackNote
     ? `User feedback: "${feedbackNote}". Refine analysis accordingly. ${jsonRule}\n${spec}`
     : `Analyze all collected requirements using Ashby screening and ranking. ${jsonRule}\n${spec}`;
